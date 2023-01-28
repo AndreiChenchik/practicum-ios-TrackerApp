@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        let tracker = TrackerViewController()
+        let tracker = TrackerViewController(nibName: nil, bundle: nil)
 
         window.rootViewController = tracker
 
@@ -34,6 +34,6 @@ private extension SceneDelegate {
     func showOnboarding(over viewController: UIViewController) {
         let onboarding = OnboardingViewController()
         onboarding.modalPresentationStyle = .fullScreen
-        viewController.present(onboarding, animated: true)
+        viewController.present(onboarding, animated: false)
     }
 }

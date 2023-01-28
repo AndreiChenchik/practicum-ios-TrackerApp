@@ -37,10 +37,9 @@ final class OnboardingPageViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
 
         NSLayoutConstraint.activate([
-            textLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             textLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -270),
             textLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-            textLabel.leadingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
+            textLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
     }
 }

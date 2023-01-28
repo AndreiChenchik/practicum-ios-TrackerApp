@@ -3,7 +3,7 @@ import UIKit
 enum FontAsset: String, CaseIterable {
     case ysDisplayBold = "YSDisplay-Bold"
     case ysDisplayMedium = "YSDisplay-Medium"
-    case ysDisplayRegular = "YSDisplay-Regular"
+    case ysDisplayRegular = "YandexSansDisplay-Regular"
 }
 
 extension UIFont {

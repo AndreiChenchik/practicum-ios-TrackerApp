@@ -13,6 +13,7 @@ class TrackerViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .asset(.blue)
         // Do any additional setup after loading the view.
+
     }
 
 }
