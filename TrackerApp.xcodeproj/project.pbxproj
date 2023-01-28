@@ -20,6 +20,8 @@
 		38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5829852AC800AB7B0E /* FontAsset+UIFont.swift */; };
 		38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5A29852ADC00AB7B0E /* ImageAsset+UIKit.swift */; };
 		38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */; };
+		38C1AB5F2985710C00AB7B0E /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5E2985710C00AB7B0E /* HomeViewController.swift */; };
+		38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB61298574D200AB7B0E /* StatisticsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,8 @@
 		38C1AB5829852AC800AB7B0E /* FontAsset+UIFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontAsset+UIFont.swift"; sourceTree = "<group>"; };
 		38C1AB5A29852ADC00AB7B0E /* ImageAsset+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageAsset+UIKit.swift"; sourceTree = "<group>"; };
 		38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorAsset+UIColor.swift"; sourceTree = "<group>"; };
+		38C1AB5E2985710C00AB7B0E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		38C1AB61298574D200AB7B0E /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,8 +103,10 @@
 		38C1AB4A298519C800AB7B0E /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				38C1AB602985749E00AB7B0E /* Statistics */,
 				38C1AB4C298528E500AB7B0E /* Tracker */,
 				38C1AB4B298528CE00AB7B0E /* Onboarding */,
+				38C1AB5E2985710C00AB7B0E /* HomeViewController.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -130,6 +136,14 @@
 				38C1AB5429852A8400AB7B0E /* YSDisplay-Bold.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		38C1AB602985749E00AB7B0E /* Statistics */ = {
+			isa = PBXGroup;
+			children = (
+				38C1AB61298574D200AB7B0E /* StatisticsViewController.swift */,
+			);
+			path = Statistics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,10 +243,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */,
+				38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */,
 				38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */,
 				38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */,
 				38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */,
 				38C1AB4E298528FC00AB7B0E /* TrackerViewController.swift in Sources */,
+				38C1AB5F2985710C00AB7B0E /* HomeViewController.swift in Sources */,
 				38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */,
 				38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */,
 				38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */,

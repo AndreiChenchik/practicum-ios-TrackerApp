@@ -12,7 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        let tracker = TrackerViewController(onboarding: OnboardingViewController())
+        let tracker = HomeViewController(onboarding: OnboardingViewController())
 
         window.rootViewController = tracker
 

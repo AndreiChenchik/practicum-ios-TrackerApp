@@ -3,6 +3,8 @@ import UIKit
 enum ImageAsset: String, CaseIterable {
     case practicumLogo
     case onboarding1, onboarding2
+    case statisticsTabIcon, trackerTabIcon
+    case statsPlaceholder
 }
 
 extension UIImage {
