@@ -1,10 +1,3 @@
-//
-//  OnboardingViewController.swift
-//  TrackerApp
-//
-//  Created by Andrei Chenchik on 22/1/23.
-//
-
 import UIKit
 
 class OnboardingViewController: UIPageViewController {
