@@ -30,7 +30,7 @@ class HomeViewController: UITabBarController {
 
 private extension HomeViewController {
     private func setupTabs() {
-        let trackerVC = UINavigationController(rootViewController: TrackerViewController())
+        let trackerVC = UINavigationController(rootViewController: TrackersViewController())
         let statisticsVC = UINavigationController(rootViewController: StatisticsViewController())
 
         let controllers = [trackerVC, statisticsVC]

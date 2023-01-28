@@ -4,7 +4,8 @@ enum ImageAsset: String, CaseIterable {
     case practicumLogo
     case onboarding1, onboarding2
     case statisticsTabIcon, trackerTabIcon
-    case statsPlaceholder
+    case statsPlaceholder, trackerPlaceholder
+    case addButton
 }
 
 extension UIImage {

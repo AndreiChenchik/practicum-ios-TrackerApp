@@ -65,17 +65,7 @@ final class OnboardingViewController: UIPageViewController {
         return control
     }()
 
-    private let button: UIButton = {
-        let button = UIButton()
-
-        button.setTitle("Вот это технологии!", for: .normal)
-        button.titleLabel?.font = .asset(.ysDisplayMedium, size: 16)
-        button.backgroundColor = .asset(.black)
-        button.layer.cornerRadius = 16
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        return button
-    }()
+    private let button: UIButton = .yButton(label: "Вот это технологии!")
 
     private let pageBackground: UIImageView = {
         let imageView = UIImageView()

@@ -10,27 +10,10 @@ final class StatisticsViewController: UIViewController {
 
     // MARK: - Components
 
-    private lazy var placeholderView: UIView = {
-        let label = UILabel()
-        label.font = .asset(.ysDisplayMedium, size: 12)
-        label.text = "Анализировать пока нечего"
-
-        let icon = UIImageView()
-        icon.image = .asset(.statsPlaceholder)
-
-        let vStack = UIStackView()
-
-        vStack.axis = .vertical
-        vStack.spacing = 8
-        vStack.alignment = .center
-
-        vStack.addArrangedSubview(icon)
-        vStack.addArrangedSubview(label)
-
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-
-        return vStack
-    }()
+    private lazy var placeholderView: UIView = .placeholderView(
+        message: "Анализировать пока нечего",
+        icon: .statsPlaceholder
+    )
 }
 
 // MARK: - Appearance
