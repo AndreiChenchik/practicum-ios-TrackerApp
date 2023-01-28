@@ -1,6 +1,7 @@
 import UIKit
 
 final class OnboardingPageViewController: UIViewController {
+
     private let text: String
 
     private let textLabel: UILabel = {

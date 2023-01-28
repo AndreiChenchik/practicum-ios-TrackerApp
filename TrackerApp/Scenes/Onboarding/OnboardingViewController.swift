@@ -1,9 +1,22 @@
 import UIKit
 
-class OnboardingViewController: UIPageViewController {
-    var pages = [UIViewController]()
-    let pageControl = UIPageControl() // external - not part of underlying pages
-    let initialPage = 0
+final class OnboardingViewController: UIPageViewController {
+
+    private var pages: [UIViewController] = []
+
+    private let messages = [
+        (text: "Отслеживайте только то, что хотите", image: ImageAsset.onboarding1),
+        (text: "Даже если это\nне литры воды и йога", image: ImageAsset.onboarding2)
+    ]
+
+    private var isSwitchingPages = false
+    private var selectedPage: Int? {
+        didSet {
+            if selectedPage != oldValue {
+                updateState()
+            }
+        }
+    }
 
     override init(
         transitionStyle style: UIPageViewController.TransitionStyle,
@@ -23,101 +36,185 @@ class OnboardingViewController: UIPageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .asset(.white)
 
-        setup()
-        style()
-        layout()
+        configureViews()
+        setupPageView()
+        setupActions()
     }
-}
 
-extension OnboardingViewController {
-
-    func setup() {
+    private func setupPageView() {
         dataSource = self
         delegate = self
 
-        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
-
-        // create an array of viewController
-        let page1 = OnboardingPageViewController(text: "Отслеживайте только то, что хотите")
-        let page2 = OnboardingPageViewController(text: "Даже если это \nне литры воды и йога")
-
-        pages.append(page1)
-        pages.append(page2)
-
-        // set initial viewController to be displayed
-        // Note: We are not passing in all the viewControllers here. Only the one to be displayed.
-        setViewControllers([pages[initialPage]], direction: .forward, animated: true, completion: nil)
-    }
-
-    func style() {
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.currentPageIndicatorTintColor = .black
-        pageControl.pageIndicatorTintColor = .systemGray2
+        pages = messages.map { OnboardingPageViewController(text: $0.text) }
         pageControl.numberOfPages = pages.count
-        pageControl.currentPage = initialPage
+
+        selectedPage = 0
     }
 
-    func layout() {
+    // MARK: Components
+
+    private let pageControl: UIPageControl = {
+        let control = UIPageControl()
+
+        control.currentPageIndicatorTintColor = .asset(.black)
+        control.pageIndicatorTintColor = .asset(.black).withAlphaComponent(0.3)
+
+        control.translatesAutoresizingMaskIntoConstraints = false
+
+        return control
+    }()
+
+    private let button: UIButton = {
+        let button = UIButton()
+
+        button.setTitle("Вот это технологии!", for: .normal)
+        button.titleLabel?.font = .asset(.ysDisplayMedium, size: 16)
+        button.backgroundColor = .asset(.black)
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        return button
+    }()
+
+    private let pageBackground: UIImageView = {
+        let imageView = UIImageView()
+
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        return imageView
+    }()
+}
+
+// MARK: - Page Switching
+
+private extension OnboardingViewController {
+
+    var displayedPageIndex: Int? {
+        guard let viewController = viewControllers?.first else { return nil }
+        return pages.firstIndex(of: viewController)
+    }
+
+    func updateState() {
+        guard
+            let selectedPage,
+            selectedPage >= 0,
+            selectedPage < pages.count
+        else { return }
+
+        syncPage(selectedPage)
+        syncBackground(selectedPage)
+        syncPageControl(selectedPage)
+    }
+
+    func syncPage(_ index: Int) {
+        guard !isSwitchingPages, index != displayedPageIndex else { return }
+
+        isSwitchingPages = true
+
+        setViewControllers([pages[index]], direction: .forward, animated: true) { [weak self] _ in
+            guard let self else { return }
+            self.isSwitchingPages = false
+            self.syncPage(self.selectedPage ?? index)
+        }
+    }
+
+    func syncBackground(_ index: Int) {
+        let asset = messages[index].image
+
+        UIView.transition(
+            with: pageBackground,
+            duration: 0.25,
+            options: .transitionCrossDissolve
+        ) { [weak self] in
+            self?.pageBackground.image = .asset(asset)
+        }
+    }
+
+    func syncPageControl(_ index: Int) {
+        pageControl.currentPage = index
+    }
+}
+
+// MARK: - Components Configuration
+
+private extension OnboardingViewController {
+
+    func configureViews() {
+        view.backgroundColor = .asset(.white)
+        pageControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+
         view.addSubview(pageControl)
+        view.addSubview(button)
+        view.insertSubview(pageBackground, at: 0)
+
+        let safeArea = view.safeAreaLayoutGuide
 
         NSLayoutConstraint.activate([
-            pageControl.widthAnchor.constraint(equalTo: view.widthAnchor),
-            pageControl.heightAnchor.constraint(equalToConstant: 20),
-            view.bottomAnchor.constraint(equalToSystemSpacingBelow: pageControl.bottomAnchor, multiplier: 1),
+            pageControl.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            pageControl.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -124),
+            button.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            button.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            button.heightAnchor.constraint(equalToConstant: 60),
+            button.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -50),
+            pageBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pageBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pageBackground.topAnchor.constraint(equalTo: view.topAnchor),
+            pageBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
 
-// MARK: - Actions
+// MARK: - User Action
 
-extension OnboardingViewController {
+private extension OnboardingViewController {
+    func setupActions() {
+        pageControl.addTarget(self, action: #selector(pageControlChanged(_:)), for: .valueChanged)
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
 
-    // How we change page when pageControl tapped.
-    // Note - Can only skip ahead on page at a time.
-    @objc func pageControlTapped(_ sender: UIPageControl) {
-        setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true, completion: nil)
+    @objc func pageControlChanged(_ sender: UIPageControl) {
+        selectedPage = sender.currentPage
+    }
+
+    @objc func buttonTapped() {
+        dismiss(animated: true)
     }
 }
 
-// MARK: - DataSources
+// MARK: - UIPageViewControllerDataSource
 
 extension OnboardingViewController: UIPageViewControllerDataSource {
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-
-        guard let currentIndex = pages.firstIndex(of: viewController) else { return nil }
-
-        if currentIndex == 0 {
-            return pages.last               // wrap to last
-        } else {
-            return pages[currentIndex - 1]  // go previous
-        }
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
+        guard let index = pages.firstIndex(of: viewController) else { return nil }
+        let previousIndex = (index - 1 + pages.count) % pages.count
+        return pages[previousIndex]
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-
-        guard let currentIndex = pages.firstIndex(of: viewController) else { return nil }
-
-        if currentIndex < pages.count - 1 {
-            return pages[currentIndex + 1]  // go next
-        } else {
-            return pages.first              // wrap to first
-        }
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
+        guard let index = pages.firstIndex(of: viewController) else { return nil }
+        let nextIndex = (index + 1) % pages.count
+        return pages[nextIndex]
     }
 }
 
-// MARK: - Delegates
+// MARK: - UIPageViewControllerDelegate
 
 extension OnboardingViewController: UIPageViewControllerDelegate {
 
-    // How we keep our pageControl in sync with viewControllers
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-
-        guard let viewControllers = pageViewController.viewControllers else { return }
-        guard let currentIndex = pages.firstIndex(of: viewControllers[0]) else { return }
-
-        pageControl.currentPage = currentIndex
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool
+    ) {
+        selectedPage = displayedPageIndex
     }
 }
