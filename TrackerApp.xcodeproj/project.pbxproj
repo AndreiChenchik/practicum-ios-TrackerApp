@@ -9,23 +9,37 @@
 /* Begin PBXBuildFile section */
 		38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF506297D7E8000CD2DB2 /* AppDelegate.swift */; };
 		38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF508297D7E8000CD2DB2 /* SceneDelegate.swift */; };
-		38ACF50B297D7E8000CD2DB2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF50A297D7E8000CD2DB2 /* ViewController.swift */; };
+		38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF50A297D7E8000CD2DB2 /* OnboardingViewController.swift */; };
 		38ACF510297D7E8200CD2DB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF50F297D7E8200CD2DB2 /* Assets.xcassets */; };
 		38ACF513297D7E8200CD2DB2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF511297D7E8200CD2DB2 /* LaunchScreen.storyboard */; };
-		38ACF520297D806B00CD2DB2 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF51E297D806B00CD2DB2 /* README.md */; };
-		38ACF521297D806B00CD2DB2 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF51F297D806B00CD2DB2 /* .gitignore */; };
+		38C1AB4E298528FC00AB7B0E /* TrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB4D298528FC00AB7B0E /* TrackerViewController.swift */; };
+		38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB4F2985291900AB7B0E /* OnboardingPageViewController.swift */; };
+		38C1AB5529852A8400AB7B0E /* YSDisplay-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38C1AB5229852A8400AB7B0E /* YSDisplay-Medium.ttf */; };
+		38C1AB5629852A8400AB7B0E /* YSDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38C1AB5329852A8400AB7B0E /* YSDisplay-Regular.ttf */; };
+		38C1AB5729852A8400AB7B0E /* YSDisplay-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38C1AB5429852A8400AB7B0E /* YSDisplay-Bold.ttf */; };
+		38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5829852AC800AB7B0E /* FontAsset+UIFont.swift */; };
+		38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5A29852ADC00AB7B0E /* ImageAsset+UIKit.swift */; };
+		38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		38ACF503297D7E8000CD2DB2 /* TrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		38ACF506297D7E8000CD2DB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		38ACF508297D7E8000CD2DB2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		38ACF50A297D7E8000CD2DB2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		38ACF50A297D7E8000CD2DB2 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		38ACF50F297D7E8200CD2DB2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		38ACF512297D7E8200CD2DB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		38ACF514297D7E8200CD2DB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		38ACF51E297D806B00CD2DB2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		38ACF51F297D806B00CD2DB2 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		38C1AB4D298528FC00AB7B0E /* TrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerViewController.swift; sourceTree = "<group>"; };
+		38C1AB4F2985291900AB7B0E /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
+		38C1AB5229852A8400AB7B0E /* YSDisplay-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YSDisplay-Medium.ttf"; sourceTree = "<group>"; };
+		38C1AB5329852A8400AB7B0E /* YSDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YSDisplay-Regular.ttf"; sourceTree = "<group>"; };
+		38C1AB5429852A8400AB7B0E /* YSDisplay-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YSDisplay-Bold.ttf"; sourceTree = "<group>"; };
+		38C1AB5829852AC800AB7B0E /* FontAsset+UIFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontAsset+UIFont.swift"; sourceTree = "<group>"; };
+		38C1AB5A29852ADC00AB7B0E /* ImageAsset+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageAsset+UIKit.swift"; sourceTree = "<group>"; };
+		38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorAsset+UIColor.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,10 +74,10 @@
 		38ACF505297D7E8000CD2DB2 /* TrackerApp */ = {
 			isa = PBXGroup;
 			children = (
+				38C1AB4A298519C800AB7B0E /* Scenes */,
 				38AFEBD729850DAE00358D7B /* Resources */,
 				38ACF506297D7E8000CD2DB2 /* AppDelegate.swift */,
 				38ACF508297D7E8000CD2DB2 /* SceneDelegate.swift */,
-				38ACF50A297D7E8000CD2DB2 /* ViewController.swift */,
 			);
 			path = TrackerApp;
 			sourceTree = "<group>";
@@ -71,11 +85,51 @@
 		38AFEBD729850DAE00358D7B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				38C1AB5129852A8400AB7B0E /* Fonts */,
 				38ACF50F297D7E8200CD2DB2 /* Assets.xcassets */,
 				38ACF511297D7E8200CD2DB2 /* LaunchScreen.storyboard */,
 				38ACF514297D7E8200CD2DB2 /* Info.plist */,
+				38C1AB5829852AC800AB7B0E /* FontAsset+UIFont.swift */,
+				38C1AB5A29852ADC00AB7B0E /* ImageAsset+UIKit.swift */,
+				38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		38C1AB4A298519C800AB7B0E /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				38C1AB4C298528E500AB7B0E /* Tracker */,
+				38C1AB4B298528CE00AB7B0E /* Onboarding */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		38C1AB4B298528CE00AB7B0E /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				38ACF50A297D7E8000CD2DB2 /* OnboardingViewController.swift */,
+				38C1AB4F2985291900AB7B0E /* OnboardingPageViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		38C1AB4C298528E500AB7B0E /* Tracker */ = {
+			isa = PBXGroup;
+			children = (
+				38C1AB4D298528FC00AB7B0E /* TrackerViewController.swift */,
+			);
+			path = Tracker;
+			sourceTree = "<group>";
+		};
+		38C1AB5129852A8400AB7B0E /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				38C1AB5229852A8400AB7B0E /* YSDisplay-Medium.ttf */,
+				38C1AB5329852A8400AB7B0E /* YSDisplay-Regular.ttf */,
+				38C1AB5429852A8400AB7B0E /* YSDisplay-Bold.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,10 +191,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38ACF521297D806B00CD2DB2 /* .gitignore in Resources */,
 				38ACF513297D7E8200CD2DB2 /* LaunchScreen.storyboard in Resources */,
 				38ACF510297D7E8200CD2DB2 /* Assets.xcassets in Resources */,
-				38ACF520297D806B00CD2DB2 /* README.md in Resources */,
+				38C1AB5629852A8400AB7B0E /* YSDisplay-Regular.ttf in Resources */,
+				38C1AB5529852A8400AB7B0E /* YSDisplay-Medium.ttf in Resources */,
+				38C1AB5729852A8400AB7B0E /* YSDisplay-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,7 +228,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38ACF50B297D7E8000CD2DB2 /* ViewController.swift in Sources */,
+				38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */,
+				38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */,
+				38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */,
+				38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */,
+				38C1AB4E298528FC00AB7B0E /* TrackerViewController.swift in Sources */,
+				38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */,
 				38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */,
 				38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */,
 			);
