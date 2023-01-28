@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 private extension SceneDelegate {
     func showOnboarding(over viewController: UIViewController) {
         let onboarding = OnboardingViewController()
-        onboarding.modalPresentationStyle = .fullScreen
+        onboarding.modalPresentationStyle = .overFullScreen
         viewController.present(onboarding, animated: false)
     }
 }
