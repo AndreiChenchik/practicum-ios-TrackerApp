@@ -1,6 +1,6 @@
 import UIKit
 
-struct TrackerColor {
+struct TrackerColor: Hashable {
     let hex: String
 }
 

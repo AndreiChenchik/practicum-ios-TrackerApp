@@ -1,6 +1,6 @@
 import Foundation
 
-struct Tracker: Identifiable {
+struct Tracker: Identifiable, Hashable {
     let id = UUID()
     let label: String
     let emoji: String

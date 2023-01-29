@@ -1,4 +1,4 @@
-struct TrackerCategory {
+struct TrackerCategory: Hashable {
     let label: String
     let trackers: [Tracker]
 }
@@ -25,7 +25,7 @@ extension TrackerCategory {
                       emoji: "❤️",
                       color: .init(hex: "#7994F5"),
                       schedule: [])
-            ]),
+            ])
         ]
     }
 }
