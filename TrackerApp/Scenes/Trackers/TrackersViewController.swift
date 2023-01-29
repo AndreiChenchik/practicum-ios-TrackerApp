@@ -17,9 +17,7 @@ final class TrackersViewController: UIViewController {
         setupAppearance()
         configureNavigationBar()
 
-        updatePlaceholderVisibility()
         collectionView.dataSource = dataSource
-
         applySnapshot(animatingDifferences: false)
     }
 
@@ -88,10 +86,21 @@ final class TrackersViewController: UIViewController {
         return collection
     }()
 
-    private lazy var placeholderView: UIView = {
+    private lazy var startPlaceholderView: UIView = {
         let view = UIView.placeholderView(
             message: "Что будем отслеживать?",
-            icon: .trackerPlaceholder
+            icon: .trackerStartPlaceholder
+        )
+
+        view.alpha = 0
+
+        return view
+    }()
+
+    private lazy var emptyPlaceholderView: UIView = {
+        let view = UIView.placeholderView(
+            message: "Ничего не найдено",
+            icon: .trackerEmptyPlaceholder
         )
 
         view.alpha = 0
@@ -117,7 +126,8 @@ private extension TrackersViewController {
         view.backgroundColor = .asset(.white)
 
         view.addSubview(collectionView)
-        view.insertSubview(placeholderView, at: 0)
+        view.addSubview(startPlaceholderView)
+        view.addSubview(emptyPlaceholderView)
 
         let safeArea = view.safeAreaLayoutGuide
 
@@ -127,16 +137,25 @@ private extension TrackersViewController {
             collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            placeholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            startPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            startPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
 
         changeDatePickerStyle()
     }
 
     func updatePlaceholderVisibility() {
-        let trackers = categories.flatMap { $0.trackers }
-        placeholderView.alpha = trackers.isEmpty ? 1 : 0
+        let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
+        let haveNoTrackers = categories.filter({ $0.trackers.count > 0 }).count == 0
+
+        UIView.animate(withDuration: 0.25) { [weak self] in
+            guard let self else { return }
+
+            self.startPlaceholderView.alpha = viewIsEmpty && haveNoTrackers ? 1 : 0
+            self.emptyPlaceholderView.alpha = viewIsEmpty && !haveNoTrackers ? 1 : 0
+        }
     }
 
     func changeDatePickerStyle() {
@@ -338,6 +357,8 @@ private extension TrackersViewController {
         }
 
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
+
+        updatePlaceholderVisibility()
     }
 
     var filteredData: FilteredData {
