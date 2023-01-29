@@ -5,5 +5,5 @@ struct Tracker: Identifiable, Hashable {
     let label: String
     let emoji: String
     let color: TrackerColor
-    let schedule: Set<WeekDay>
+    let schedule: Set<WeekDay>?
 }
