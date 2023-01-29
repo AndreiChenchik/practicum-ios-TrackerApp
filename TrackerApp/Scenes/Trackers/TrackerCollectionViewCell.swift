@@ -90,7 +90,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 extension TrackerCollectionViewCell {
     func configure(with model: Tracker?) {
         trackerLabel.text = model?.label
-        dayLabel.text = model != nil ? "1 день" : nil
+        dayLabel.text = model != nil ? "?? день" : nil
         emojiLabel.text = model?.emoji
 
         colorBackground.backgroundColor = model?.color.uiColor
