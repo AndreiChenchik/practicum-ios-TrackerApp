@@ -2,7 +2,7 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
 
-    private var categories: [TrackerCategory] = TrackerCategory.mocks {
+    private var categories: [TrackerCategory] = [.mockHome, .mockSmallThings, .mockSmallThings2] {
         didSet { updatePlaceholderVisibility() }
     }
 

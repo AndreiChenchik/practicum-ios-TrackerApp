@@ -4,15 +4,15 @@ enum WeekDay {
 }
 
 extension Set where Element == WeekDay {
-    static var everyDay: Set<WeekDay> {
+    static var mockEveryDay: Set<WeekDay> {
         [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
     }
 
-    static var onWeekDays: Set<WeekDay> {
+    static var mockOnWeekDays: Set<WeekDay> {
         [.monday, .tuesday, .wednesday, .thursday, .friday]
     }
 
-    static var onWeekends: Set<WeekDay> {
+    static var mockOnWeekends: Set<WeekDay> {
         [.saturday, .sunday]
     }
 }
