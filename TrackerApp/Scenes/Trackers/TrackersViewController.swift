@@ -224,7 +224,37 @@ extension TrackersViewController {
     }
 
     @objc private func addTapped() {
-        present(NewTracker.startVC, animated: true)
+        let newTrackerVC = NewTracker.start(
+            categories: categories,
+            onNewCategory: addCategory,
+            onNewTracker: addTracker
+        )
+
+        present(newTrackerVC, animated: true)
+    }
+
+    func addCategory(_ category: TrackerCategory) {
+        var newCategories = categories
+        newCategories.append(category)
+        categories = newCategories
+    }
+
+    func addTracker(_ tracker: Tracker, to category: TrackerCategory) {
+        var newCategories = categories
+
+        guard let index = newCategories.firstIndex(where: { $0.id == category.id }) else {
+            assertionFailure("Data not in sync")
+            return
+        }
+
+        let existingCategory = newCategories[index]
+        var trackers = existingCategory.trackers
+        trackers.append(tracker)
+
+        let newCategory = TrackerCategory(label: existingCategory.label, trackers: trackers)
+        newCategories[index] = newCategory
+
+        categories = newCategories
     }
 }
 

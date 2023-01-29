@@ -1,12 +1,16 @@
 import UIKit
 
+enum TrackerType {
+    case habit, event
+}
+
 enum NewTracker {
-    static var startVC: UIViewController {
-        let habitVC = OnboardingViewController()
-        let eventVC = OnboardingViewController()
-
-        let typeVC = TrackerTypeViewController(habitVC: habitVC, eventVC: eventVC)
-
+    static func start(
+        categories: [TrackerCategory],
+        onNewCategory: @escaping (TrackerCategory) -> Void,
+        onNewTracker: @escaping (Tracker, TrackerCategory) -> Void
+    ) -> UIViewController {
+        let typeVC = TrackerTypeViewController { _ in OnboardingViewController() }
         let viewController = UINavigationController(rootViewController: typeVC)
 
         viewController.navigationBar.prefersLargeTitles = false

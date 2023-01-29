@@ -1,15 +1,12 @@
 import UIKit
 
 final class TrackerTypeViewController: UIViewController {
-    private let habitVC: UIViewController
-    private let eventVC: UIViewController
+    private let nextStepVC: (TrackerType) -> UIViewController
 
     init(
-        habitVC: UIViewController,
-        eventVC: UIViewController
+        nextStepVC: @escaping (TrackerType) -> UIViewController
     ) {
-        self.habitVC = habitVC
-        self.eventVC = eventVC
+        self.nextStepVC = nextStepVC
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -68,10 +65,18 @@ private extension TrackerTypeViewController {
 
 private extension TrackerTypeViewController {
     @objc func addHabit() {
-        navigationController?.pushViewController(habitVC, animated: true)
+        navigateTo(nextStepVC(.habit))
     }
 
     @objc func addEvent() {
-        navigationController?.pushViewController(eventVC, animated: true)
+        navigateTo(nextStepVC(.event))
+    }
+
+    func navigateTo(_ vc: UIViewController) {
+        if let navigationController {
+            navigationController.pushViewController(vc, animated: true)
+        } else {
+            present(vc, animated: true)
+        }
     }
 }
