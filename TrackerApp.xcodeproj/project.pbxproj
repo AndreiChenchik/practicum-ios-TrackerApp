@@ -34,6 +34,7 @@
 		38C1AB7B2985D37300AB7B0E /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7A2985D37300AB7B0E /* TrackerCollectionViewCell.swift */; };
 		38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */; };
 		38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */; };
+		38C1AB822987116700AB7B0E /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB812987116700AB7B0E /* UIKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		38C1AB7A2985D37300AB7B0E /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryHeaderView.swift; sourceTree = "<group>"; };
 		38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		38C1AB812987116700AB7B0E /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */,
+				38C1AB812987116700AB7B0E /* UIKit.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -330,6 +333,7 @@
 				38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */,
 				38C1AB7B2985D37300AB7B0E /* TrackerCollectionViewCell.swift in Sources */,
 				38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */,
+				38C1AB822987116700AB7B0E /* UIKit.swift in Sources */,
 				38C1AB652985A10700AB7B0E /* PlaceholderView.swift in Sources */,
 				38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */,
 			);

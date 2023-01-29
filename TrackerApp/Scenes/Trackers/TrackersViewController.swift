@@ -9,6 +9,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private lazy var dataSource = makeDataSource()
+    private var kvObservers: Set<NSKeyValueObservation> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,22 +131,79 @@ private extension TrackersViewController {
             placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
 
+        changeDatePickerStyle()
     }
 
     func updatePlaceholderVisibility() {
         let trackers = categories.flatMap { $0.trackers }
         placeholderView.alpha = trackers.isEmpty ? 1 : 0
     }
+
+    func changeDatePickerStyle() {
+        datePicker
+            .subViewsWhere { view in
+                guard let backgroundColor = view.backgroundColor else { return false }
+                return backgroundColor.cgColor.alpha != 1
+            }
+            .forEach { view in
+                view.backgroundColor = .asset(.blue)
+
+                kvObservers.insert(
+                    view.observe(\.backgroundColor) { [weak view] _, _ in
+                        guard let view, let backgroundColor = view.backgroundColor else { return }
+
+                        if backgroundColor != .asset(.blue) {
+                            view.backgroundColor = .asset(.blue)
+                        }
+                    }
+                )
+            }
+
+        datePicker
+            .subViewsWhere { view in
+                view is UILabel
+            }
+            .forEach { view in
+                guard let label = view as? UILabel else { return }
+                label.tintColor = .asset(.white)
+                label.textColor = .asset(.white)
+
+                kvObservers.insert(
+                    label.observe(\.textColor) { [weak label] _, _ in
+                        guard let label, let textColor = label.textColor else { return }
+
+                        if textColor != .asset(.white) {
+                            label.textColor = .asset(.white)
+                        }
+                    }
+                )
+            }
+    }
 }
 
 // MARK: - Actions
 
-private extension TrackersViewController {
-    @objc func dateSelected(_ sender: UIDatePicker) {
+extension TrackersViewController {
+    func trackerMarkedCompleted(_ cell: TrackerCollectionViewCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: cell),
+            let tracker = dataSource.itemIdentifier(for: indexPath)
+        else {
+            assertionFailure("Can't find cell")
+            return
+        }
+
+        var completedTrackersForDay = completedTrackers[selectedDate, default: []]
+        completedTrackersForDay.insert(.init(trackerId: tracker.id, date: selectedDate))
+
+        completedTrackers[selectedDate] = completedTrackersForDay
+    }
+
+    @objc private func dateSelected(_ sender: UIDatePicker) {
         selectedDate = sender.date
     }
 
-    @objc func addTapped() {
+    @objc private func addTapped() {
         present(NewTracker.startVC, animated: true)
     }
 }
@@ -234,6 +292,7 @@ private extension TrackersViewController {
                 ) as? TrackerCollectionViewCell
 
                 cell?.configure(with: tracker)
+                cell?.delegate = self
 
                 return cell
             }

@@ -1,6 +1,7 @@
 import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
+    weak var delegate: TrackersViewController?
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -17,13 +18,15 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 
     // MARK: Components
 
-    private var addButton: UIButton = {
+    private lazy var addButton: UIButton = {
         let button = UIButton()
 
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.layer.cornerRadius = 17
         button.clipsToBounds = true
         button.tintColor = .asset(.white)
+
+        button.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -82,6 +85,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }()
 }
 
+// MARK: - Configuration
+
 extension TrackerCollectionViewCell {
     func configure(with model: Tracker?) {
         trackerLabel.text = model?.label
@@ -90,6 +95,14 @@ extension TrackerCollectionViewCell {
 
         colorBackground.backgroundColor = model?.color.uiColor
         addButton.backgroundColor = model?.color.uiColor
+    }
+}
+
+// MARK: - Actions
+
+private extension TrackerCollectionViewCell {
+    @objc func doneTapped() {
+        delegate?.trackerMarkedCompleted(self)
     }
 }
 
