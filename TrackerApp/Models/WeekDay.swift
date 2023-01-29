@@ -1,6 +1,6 @@
-enum WeekDay {
-    case monday, tuesday, wednesday, thursday, friday
-    case saturday, sunday
+enum WeekDay: Int {
+    case sunday = 1
+    case monday, tuesday, wednesday, thursday, friday, saturday
 }
 
 extension Set where Element == WeekDay {

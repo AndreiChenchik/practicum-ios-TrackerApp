@@ -1,15 +1,14 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-
+    private var searchText = "" { didSet { applySnapshot() } }
+    private var selectedDate = Date() { didSet { applySnapshot() } }
+    private var completedTrackers: [Date: Set<TrackerRecord>] = [:] { didSet { applySnapshot() } }
     private var categories: [TrackerCategory] = [.mockHome, .mockSmallThings, .mockSmallThings2] {
-        didSet { updatePlaceholderVisibility() }
+        didSet { applySnapshot() }
     }
 
-    private var completedTrackers: [Date: Set<TrackerRecord>] = [:]
-
     private lazy var dataSource = makeDataSource()
-    private var searchText: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +22,7 @@ final class TrackersViewController: UIViewController {
         applySnapshot(animatingDifferences: false)
     }
 
-    // MARK: Components
+    // MARK: UI Components
 
     private lazy var addButton: UIBarButtonItem = {
         let addIcon = UIImage(
@@ -143,7 +142,7 @@ private extension TrackersViewController {
 
 private extension TrackersViewController {
     @objc func dateSelected(_ sender: UIDatePicker) {
-        print(sender.date)
+        selectedDate = sender.date
     }
 
     @objc func addTapped() {
@@ -155,13 +154,11 @@ private extension TrackersViewController {
 
 extension TrackersViewController: UISearchBarDelegate, UISearchControllerDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText = nil
-        applySnapshot()
+        searchText = ""
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText != "" ? searchText.lowercased() : nil
-        applySnapshot()
+        self.searchText = searchText.lowercased()
     }
 }
 
@@ -266,33 +263,50 @@ private extension TrackersViewController {
 
         return dataSource
     }
+}
+
+// MARK: - Data filtering
+
+private extension TrackersViewController {
+    typealias FilteredData = [(category: TrackerCategory, trackers: [Tracker])]
 
     func applySnapshot(animatingDifferences: Bool = true) {
         var snapshot = Snapshot()
 
-        let filteredCategories = categories.filter { category in
-            guard let searchText else { return true }
-
-            return category.label.lowercased().contains(searchText)
-            || category.trackers.contains { $0.label.lowercased().contains(searchText) }
-        }
-
-        snapshot.appendSections(filteredCategories)
-
-        filteredCategories.forEach { category in
-            snapshot.appendItems(
-                category.trackers.filter { tracker in
-                    guard
-                        let searchText,
-                        !category.label.lowercased().contains(searchText)
-                    else { return true }
-
-                    return tracker.label.lowercased().contains(searchText)
-                },
-                toSection: category
-            )
+        filteredData.forEach {
+            snapshot.appendSections([$0.category])
+            snapshot.appendItems($0.trackers, toSection: $0.category)
         }
 
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
+    }
+
+    var filteredData: FilteredData {
+        guard let selectedWeekday = WeekDay(
+            rawValue: Calendar.current.component(.weekday, from: selectedDate)
+        ) else { preconditionFailure("Weekday must be in range of 1...7") }
+
+        let emptySearch = searchText.isEmpty
+        var result = FilteredData()
+
+        categories.forEach { category in
+            let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
+
+            let trackers = category.trackers.filter { tracker in
+                let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
+                let isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
+                let isCompletedForDate = completedTrackers[selectedDate]?.contains(
+                    .init(trackerId: tracker.id, date: selectedDate)
+                ) ?? false
+
+                return (categoryIsInSearch || trackerIsInSearch) && isForDate && !isCompletedForDate
+            }
+
+            if !trackers.isEmpty {
+                result.append((category: category, trackers: trackers))
+            }
+        }
+
+        return result
     }
 }
