@@ -39,7 +39,6 @@
 		38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */; };
 		38C1AB882987B1EE00AB7B0E /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */; };
 		38C1AB8A2987BB4A00AB7B0E /* DisclosureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */; };
-		38C1AB8C2987C4E600AB7B0E /* YPInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8B2987C4E600AB7B0E /* YPInput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,7 +78,6 @@
 		38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewCell.swift; sourceTree = "<group>"; };
 		38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureButton.swift; sourceTree = "<group>"; };
-		38C1AB8B2987C4E600AB7B0E /* YPInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPInput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +192,6 @@
 				38C1AB642985A10700AB7B0E /* PlaceholderView.swift */,
 				38C1AB682985B91100AB7B0E /* YPButton.swift */,
 				38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */,
-				38C1AB8B2987C4E600AB7B0E /* YPInput.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -329,7 +326,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				38C1AB772985CFEB00AB7B0E /* TrackerCategory.swift in Sources */,
-				38C1AB8C2987C4E600AB7B0E /* YPInput.swift in Sources */,
 				38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */,
 				38C1AB692985B91100AB7B0E /* YPButton.swift in Sources */,
 				38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */,
