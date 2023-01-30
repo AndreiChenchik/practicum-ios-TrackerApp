@@ -133,7 +133,7 @@ private extension TrackersViewController {
         let safeArea = view.safeAreaLayoutGuide
 
         NSLayoutConstraint.activate([
-            datePicker.widthAnchor.constraint(equalToConstant: 90),
+            datePicker.widthAnchor.constraint(lessThanOrEqualToConstant: 100),
             collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -187,6 +187,7 @@ private extension TrackersViewController {
                 guard let label = view as? UILabel else { return }
                 label.tintColor = .asset(.white)
                 label.textColor = .asset(.white)
+                label.font = .asset(.ysDisplayRegular, size: 17)
 
                 kvObservers.insert(
                     label.observe(\.textColor) { [weak label] _, _ in
