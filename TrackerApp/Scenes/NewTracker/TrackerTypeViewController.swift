@@ -72,11 +72,11 @@ private extension TrackerTypeViewController {
         navigateTo(nextStepVC(.event))
     }
 
-    func navigateTo(_ vc: UIViewController) {
+    func navigateTo(_ viewController: UIViewController) {
         if let navigationController {
-            navigationController.pushViewController(vc, animated: true)
+            navigationController.pushViewController(viewController, animated: true)
         } else {
-            present(vc, animated: true)
+            present(viewController, animated: true)
         }
     }
 }

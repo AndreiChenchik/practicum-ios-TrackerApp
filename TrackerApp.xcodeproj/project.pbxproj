@@ -35,6 +35,8 @@
 		38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */; };
 		38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */; };
 		38C1AB822987116700AB7B0E /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB812987116700AB7B0E /* UIKit.swift */; };
+		38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */; };
+		38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +72,8 @@
 		38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryHeaderView.swift; sourceTree = "<group>"; };
 		38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		38C1AB812987116700AB7B0E /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
+		38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
+		38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +196,8 @@
 			children = (
 				38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */,
 				38C1AB6D2985BB1100AB7B0E /* NewTracker.swift */,
+				38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */,
+				38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -316,6 +322,7 @@
 				38C1AB772985CFEB00AB7B0E /* TrackerCategory.swift in Sources */,
 				38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */,
 				38C1AB692985B91100AB7B0E /* YButton.swift in Sources */,
+				38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */,
 				38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */,
 				38C1AB6E2985BB1100AB7B0E /* NewTracker.swift in Sources */,
 				38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */,
@@ -332,6 +339,7 @@
 				38C1AB752985CEDA00AB7B0E /* WeekDay.swift in Sources */,
 				38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */,
 				38C1AB7B2985D37300AB7B0E /* TrackerCollectionViewCell.swift in Sources */,
+				38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */,
 				38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */,
 				38C1AB822987116700AB7B0E /* UIKit.swift in Sources */,
 				38C1AB652985A10700AB7B0E /* PlaceholderView.swift in Sources */,

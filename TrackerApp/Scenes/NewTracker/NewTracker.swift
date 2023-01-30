@@ -10,7 +10,7 @@ enum NewTracker {
         onNewCategory: @escaping (TrackerCategory) -> Void,
         onNewTracker: @escaping (Tracker, TrackerCategory) -> Void
     ) -> UIViewController {
-        let typeVC = TrackerTypeViewController { _ in OnboardingViewController() }
+        let typeVC = TrackerTypeViewController { _ in ScheduleViewController(.mockEveryDay) { _ in } }
         let viewController = UINavigationController(rootViewController: typeVC)
 
         viewController.navigationBar.prefersLargeTitles = false
