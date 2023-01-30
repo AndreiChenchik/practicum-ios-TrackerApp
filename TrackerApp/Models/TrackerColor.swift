@@ -1,6 +1,6 @@
 import UIKit
 
-enum TrackerColor: String, Hashable {
+enum TrackerColor: String, Hashable, CaseIterable {
     case red = "#FD4C49"
     case lightOrange = "#FF881E"
     case blue = "#007BFA"

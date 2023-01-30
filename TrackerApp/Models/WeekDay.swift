@@ -26,6 +26,29 @@ extension WeekDay {
 
         return label
     }
+
+    var shortLabel: String {
+        let label: String
+
+        switch self {
+        case .sunday:
+            label = "Вс"
+        case .monday:
+            label = "Пн"
+        case .tuesday:
+            label = "Вт"
+        case .wednesday:
+            label = "Ср"
+        case .thursday:
+            label = "Чт"
+        case .friday:
+            label = "Пт"
+        case .saturday:
+            label = "Сб"
+        }
+
+        return label
+    }
 }
 
 extension Set where Element == WeekDay {

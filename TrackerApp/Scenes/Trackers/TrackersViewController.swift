@@ -4,7 +4,7 @@ final class TrackersViewController: UIViewController {
     private var searchText = "" { didSet { applySnapshot() } }
     private var selectedDate = Date() { didSet { applySnapshot() } }
     private var completedTrackers: [Date: Set<TrackerRecord>] = [:] { didSet { applySnapshot() } }
-    private var categories: [TrackerCategory] = [.mockHome, .mockSmallThings, .mockSmallThings2] {
+    private var categories: [TrackerCategory] = [.init(label: "Основная категория", trackers: [])] {
         didSet { applySnapshot() }
     }
 
@@ -136,7 +136,7 @@ private extension TrackersViewController {
             datePicker.widthAnchor.constraint(equalToConstant: 90),
             collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             startPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             startPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),

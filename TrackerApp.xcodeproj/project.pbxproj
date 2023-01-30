@@ -23,7 +23,7 @@
 		38C1AB5F2985710C00AB7B0E /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB5E2985710C00AB7B0E /* HomeViewController.swift */; };
 		38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB61298574D200AB7B0E /* StatisticsViewController.swift */; };
 		38C1AB652985A10700AB7B0E /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB642985A10700AB7B0E /* PlaceholderView.swift */; };
-		38C1AB692985B91100AB7B0E /* YButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB682985B91100AB7B0E /* YButton.swift */; };
+		38C1AB692985B91100AB7B0E /* YPButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB682985B91100AB7B0E /* YPButton.swift */; };
 		38C1AB6C2985BA3C00AB7B0E /* TrackerTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */; };
 		38C1AB6E2985BB1100AB7B0E /* NewTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB6D2985BB1100AB7B0E /* NewTracker.swift */; };
 		38C1AB702985CE0600AB7B0E /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB6F2985CE0600AB7B0E /* Tracker.swift */; };
@@ -34,9 +34,12 @@
 		38C1AB7B2985D37300AB7B0E /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7A2985D37300AB7B0E /* TrackerCollectionViewCell.swift */; };
 		38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */; };
 		38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */; };
-		38C1AB822987116700AB7B0E /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB812987116700AB7B0E /* UIKit.swift */; };
+		38C1AB822987116700AB7B0E /* UIView+subViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB812987116700AB7B0E /* UIView+subViews.swift */; };
 		38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */; };
 		38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */; };
+		38C1AB882987B1EE00AB7B0E /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */; };
+		38C1AB8A2987BB4A00AB7B0E /* DisclosureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */; };
+		38C1AB8C2987C4E600AB7B0E /* YPInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8B2987C4E600AB7B0E /* YPInput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,7 +63,7 @@
 		38C1AB5E2985710C00AB7B0E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		38C1AB61298574D200AB7B0E /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		38C1AB642985A10700AB7B0E /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
-		38C1AB682985B91100AB7B0E /* YButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YButton.swift; sourceTree = "<group>"; };
+		38C1AB682985B91100AB7B0E /* YPButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPButton.swift; sourceTree = "<group>"; };
 		38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTypeViewController.swift; sourceTree = "<group>"; };
 		38C1AB6D2985BB1100AB7B0E /* NewTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracker.swift; sourceTree = "<group>"; };
 		38C1AB6F2985CE0600AB7B0E /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
@@ -71,9 +74,12 @@
 		38C1AB7A2985D37300AB7B0E /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		38C1AB7C2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryHeaderView.swift; sourceTree = "<group>"; };
 		38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
-		38C1AB812987116700AB7B0E /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
+		38C1AB812987116700AB7B0E /* UIView+subViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+subViews.swift"; sourceTree = "<group>"; };
 		38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewCell.swift; sourceTree = "<group>"; };
+		38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
+		38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureButton.swift; sourceTree = "<group>"; };
+		38C1AB8B2987C4E600AB7B0E /* YPInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPInput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,7 +192,9 @@
 			isa = PBXGroup;
 			children = (
 				38C1AB642985A10700AB7B0E /* PlaceholderView.swift */,
-				38C1AB682985B91100AB7B0E /* YButton.swift */,
+				38C1AB682985B91100AB7B0E /* YPButton.swift */,
+				38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */,
+				38C1AB8B2987C4E600AB7B0E /* YPInput.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -198,6 +206,7 @@
 				38C1AB6D2985BB1100AB7B0E /* NewTracker.swift */,
 				38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */,
 				38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */,
+				38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -218,7 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */,
-				38C1AB812987116700AB7B0E /* UIKit.swift */,
+				38C1AB812987116700AB7B0E /* UIView+subViews.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -320,8 +329,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				38C1AB772985CFEB00AB7B0E /* TrackerCategory.swift in Sources */,
+				38C1AB8C2987C4E600AB7B0E /* YPInput.swift in Sources */,
 				38C1AB5B29852ADC00AB7B0E /* ImageAsset+UIKit.swift in Sources */,
-				38C1AB692985B91100AB7B0E /* YButton.swift in Sources */,
+				38C1AB692985B91100AB7B0E /* YPButton.swift in Sources */,
 				38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */,
 				38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */,
 				38C1AB6E2985BB1100AB7B0E /* NewTracker.swift in Sources */,
@@ -341,9 +351,11 @@
 				38C1AB7B2985D37300AB7B0E /* TrackerCollectionViewCell.swift in Sources */,
 				38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */,
 				38C1AB7D2985DC8D00AB7B0E /* TrackerCategoryHeaderView.swift in Sources */,
-				38C1AB822987116700AB7B0E /* UIKit.swift in Sources */,
+				38C1AB882987B1EE00AB7B0E /* NewTrackerViewController.swift in Sources */,
+				38C1AB822987116700AB7B0E /* UIView+subViews.swift in Sources */,
 				38C1AB652985A10700AB7B0E /* PlaceholderView.swift in Sources */,
 				38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */,
+				38C1AB8A2987BB4A00AB7B0E /* DisclosureButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,16 +1,15 @@
 import UIKit
 
-enum TrackerType {
-    case habit, event
-}
-
 enum NewTracker {
     static func start(
         categories: [TrackerCategory],
         onNewCategory: @escaping (TrackerCategory) -> Void,
         onNewTracker: @escaping (Tracker, TrackerCategory) -> Void
     ) -> UIViewController {
-        let typeVC = TrackerTypeViewController { _ in ScheduleViewController(.mockEveryDay) { _ in } }
+        let typeVC = TrackerTypeViewController { type in
+            NewTrackerViewController(type, categories: categories, onCreate: onNewTracker)
+        }
+
         let viewController = UINavigationController(rootViewController: typeVC)
 
         viewController.navigationBar.prefersLargeTitles = false

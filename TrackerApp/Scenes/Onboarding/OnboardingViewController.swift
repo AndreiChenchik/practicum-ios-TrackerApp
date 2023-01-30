@@ -65,7 +65,7 @@ final class OnboardingViewController: UIPageViewController {
         return control
     }()
 
-    private let button: UIButton = .yButton(label: "Вот это технологии!")
+    private let button = YPButton(label: "Вот это технологии!")
 
     private let pageBackground: UIImageView = {
         let imageView = UIImageView()

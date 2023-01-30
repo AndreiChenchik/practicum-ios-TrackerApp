@@ -23,14 +23,14 @@ final class TrackerTypeViewController: UIViewController {
     // MARK: Components
 
     private lazy var habitButton: UIButton = {
-        let button: UIButton = .yButton(label: "Привычка")
+        let button = YPButton(label: "Привычка")
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
 
         return button
     }()
 
     private lazy var eventButton: UIButton = {
-        let button: UIButton = .yButton(label: "Нерегулярные событие")
+        let button = YPButton(label: "Нерегулярные событие")
         button.addTarget(self, action: #selector(addEvent), for: .touchUpInside)
 
         return button

@@ -43,7 +43,7 @@ final class ScheduleViewController: UIViewController {
     }()
 
     private lazy var doneButton: UIButton = {
-        let button: UIButton = .yButton(label: "Готово")
+        let button = YPButton(label: "Готово")
         button.addTarget(self, action: #selector(done), for: .touchUpInside)
 
         return button
