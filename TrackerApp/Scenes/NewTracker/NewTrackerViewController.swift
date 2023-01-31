@@ -91,7 +91,7 @@ private extension NewTrackerViewController {
 
             self.schedule = newSchedule
 
-            let selectedDays = WeekDay.allCases
+            let selectedDays = WeekDay.allCasesSortedForUserCalendar
                 .filter { newSchedule.contains($0) }
                 .map { $0.shortLabel }
                 .joined(separator: ", ")

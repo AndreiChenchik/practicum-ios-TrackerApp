@@ -4,7 +4,7 @@ final class ScheduleViewController: UIViewController {
     private let completion: (Set<WeekDay>) -> Void
     private var schedule: Set<WeekDay>
 
-    private var items: [WeekDay] { WeekDay.allCases }
+    private var items: [WeekDay] { WeekDay.allCasesSortedForUserCalendar }
 
     init(
         _ schedule: Set<WeekDay>,

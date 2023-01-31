@@ -39,6 +39,7 @@
 		38C1AB8629872ED400AB7B0E /* ScheduleViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */; };
 		38C1AB882987B1EE00AB7B0E /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */; };
 		38C1AB8A2987BB4A00AB7B0E /* DisclosureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */; };
+		38C1AB8E2989101600AB7B0E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8D2989101600AB7B0E /* Array.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 		38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewCell.swift; sourceTree = "<group>"; };
 		38C1AB872987B1EE00AB7B0E /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		38C1AB892987BB4A00AB7B0E /* DisclosureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureButton.swift; sourceTree = "<group>"; };
+		38C1AB8D2989101600AB7B0E /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +227,7 @@
 			children = (
 				38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */,
 				38C1AB812987116700AB7B0E /* UIView+subViews.swift */,
+				38C1AB8D2989101600AB7B0E /* Array.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */,
 				38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */,
 				38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */,
+				38C1AB8E2989101600AB7B0E /* Array.swift in Sources */,
 				38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */,
 				38C1AB4E298528FC00AB7B0E /* TrackersViewController.swift in Sources */,
 				38C1AB732985CE6300AB7B0E /* TrackerColor.swift in Sources */,

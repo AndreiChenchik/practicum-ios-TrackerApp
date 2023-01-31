@@ -1,3 +1,5 @@
+import Foundation
+
 enum WeekDay: Int, CaseIterable {
     case sunday = 1
     case monday, tuesday, wednesday, thursday, friday, saturday
@@ -48,6 +50,17 @@ extension WeekDay {
         }
 
         return label
+    }
+}
+
+extension WeekDay {
+    static var allCasesSortedForUserCalendar: [WeekDay] {
+        guard
+            let usersFirstDay = WeekDay(rawValue: Calendar.current.firstWeekday),
+            let sortedDays = WeekDay.allCases.startingFrom(usersFirstDay)
+        else { return WeekDay.allCases }
+
+        return sortedDays
     }
 }
 
