@@ -1,17 +1,21 @@
 import UIKit
 
 final class TrackerConfigViewController: UIViewController {
-    private let categories: [TrackerCategory]
+    private var categories: [TrackerCategory]
     private let type: TrackerType
     private let onCreate: (Tracker, TrackerCategory) -> Void
 
     private var schedule: Set<WeekDay> = .mockEveryDay { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
-    private var selectedCategory: TrackerCategory? = .mockHome { didSet { updateButtonStatus() } }
+    private var selectedCategory: TrackerCategory? { didSet { updateButtonStatus() } }
     private var selectedEmoji: String? { didSet { updateButtonStatus() } }
     private var selectedColor: TrackerColor? { didSet { updateButtonStatus() } }
 
-    private let collectionInsets = UIEdgeInsets(top: 24, left: 15, bottom: 16, right: 15)
+    private let collectionInsets = UIEdgeInsets(top: 24, left: 16, bottom: 16, right: 16)
+
+    private var relevantProperties: [Property] {
+        Property.allCases { $0 != .schedule || type == .habit }
+    }
 
     init(
         _ type: TrackerType,
@@ -32,7 +36,7 @@ final class TrackerConfigViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .asset(.white)
 
-        title = "Новая привычка"
+        title = type == .habit ? "Новая привычка" : "Новое нерегулярное событие"
         navigationItem.hidesBackButton = true
 
         view.addSubview(collectionView)
@@ -179,8 +183,27 @@ private extension TrackerConfigViewController {
         case .schedule:
             selectSchedule()
         case .category:
-            print("category tap")
+            selectCategory()
         }
+    }
+
+    func selectCategory() {
+        let scheduleVC = TrackerCategoryViewController(
+            categories, selectedCategory: selectedCategory
+        ) { [weak self] category, categories in
+            guard let self else { return }
+
+            self.selectedCategory = category
+            self.categories = categories
+
+            let cell = self.collectionView.cellForItem(
+                at: .init(row: Property.category.rawValue, section: Section.properties.rawValue)
+            ) as? YPLinkCollectionCell
+
+            cell?.setDescription(category.label)
+        }
+
+        navigateTo(scheduleVC)
     }
 
     func selectSchedule() {
@@ -264,6 +287,10 @@ private extension TrackerConfigViewController {
             case .schedule:
                 return "Расписание"
             }
+        }
+
+        static func allCases(isIncluded: (Property) -> Bool) -> [Self] {
+            Self.allCases.filter(isIncluded)
         }
     }
 
@@ -408,7 +435,7 @@ extension TrackerConfigViewController: UICollectionViewDataSource {
         case .name:
             return 1
         case .properties:
-            return Property.allCases.count
+            return relevantProperties.count
         case .emojis:
             return Emoji.list.count
         case .colors:
@@ -498,12 +525,12 @@ private extension TrackerConfigViewController {
         }
 
         let isFirstCell = path.row == 0
-        let isLastCell = path.row == Property.allCases.count - 1
+        let isLastCell = path.row == relevantProperties.count - 1
 
         cell.configure(
             label: property.label,
             description: description,
-            outCorner: isFirstCell ? [.top] : isLastCell ? [.bottom] : [],
+            outCorner: (isFirstCell ? [.top] : []) + (isLastCell ? [.bottom] : []),
             hasDivider: !isLastCell
         )
 
