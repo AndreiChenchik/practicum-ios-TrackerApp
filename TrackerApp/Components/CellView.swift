@@ -86,13 +86,13 @@ final class CellView: UIView {
 
 // MARK: - Updates
 
-private extension CellView {
-    func update(label: String?, description: String?, outCorner: [CellCorner]) {
+extension CellView {
+    func update(label: String? = nil, description: String? = nil, outCorner: [CellCorner] = []) {
         updateText(label: label, description: description)
         updateCorners(outCorner)
     }
 
-    func updateText(label: String?, description: String?) {
+    private func updateText(label: String?, description: String?) {
         labelView.text = label
 
         if label != nil || description != nil, hStackView.arrangedSubviews.count == 1 {
@@ -108,7 +108,7 @@ private extension CellView {
         updateDescription(description)
     }
 
-    func updateDescription(_ description: String? = nil) {
+    private func updateDescription(_ description: String? = nil) {
         descriptionView.text = description
 
         if description != nil, vStackView.arrangedSubviews.count == 1 {
@@ -118,7 +118,7 @@ private extension CellView {
         }
     }
 
-    func updateCorners(_ corner: [CellCorner]) {
+    private func updateCorners(_ corner: [CellCorner]) {
         layer.maskedCorners = corner.cornerMask
     }
 }
