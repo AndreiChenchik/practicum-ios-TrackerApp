@@ -28,6 +28,16 @@ final class TrackerCategoryViewController: UIViewController {
         setupAppearance()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updatePlaceholderVisibility()
+        tableView.reloadData()
+
+        if categories.count > 0 {
+            tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
+        }
+    }
+
     // MARK: Components
 
     private lazy var tableView: UITableView = {
@@ -49,17 +59,21 @@ final class TrackerCategoryViewController: UIViewController {
 
     private lazy var addButton: UIButton = {
         let button = YPButton(label: "Добавить категорию")
-        button.addTarget(self, action: #selector(done), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
 
         return button
     }()
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if categories.count > 0 {
-            tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
-        }
-    }
+    private lazy var startPlaceholderView: UIView = {
+        let view = UIView.placeholderView(
+            message: "Привычки и события можно\nобъединить по смыслу",
+            icon: .trackerStartPlaceholder
+        )
+
+        view.alpha = 0
+
+        return view
+    }()
 }
 
 // MARK: - UITableViewDelegate
@@ -115,6 +129,10 @@ extension TrackerCategoryViewController: UITableViewDataSource {
 // MARK: - Appearance
 
 private extension TrackerCategoryViewController {
+    func updatePlaceholderVisibility() {
+        self.startPlaceholderView.alpha = categories.count == 0 ? 1 : 0
+    }
+
     func setupAppearance() {
         navigationItem.hidesBackButton = true
 
@@ -122,6 +140,7 @@ private extension TrackerCategoryViewController {
 
         view.addSubview(tableView)
         view.addSubview(addButton)
+        view.addSubview(startPlaceholderView)
 
         let safeArea = view.safeAreaLayoutGuide
 
@@ -130,6 +149,8 @@ private extension TrackerCategoryViewController {
             addButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
             addButton.heightAnchor.constraint(equalToConstant: 60),
             addButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
+            startPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            startPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -141,13 +162,20 @@ private extension TrackerCategoryViewController {
 // MARK: - Actions
 
 private extension TrackerCategoryViewController {
-    @objc func done() {
-        completion(selectedCategory!, categories)
+    @objc func addCategory() {
+        let newCategoryVC = NewCategoryViewController { [weak self] newCategory in
+            guard let self else { return }
+            self.categories.append(newCategory)
+        }
 
+        navigateTo(newCategoryVC)
+    }
+
+    func navigateTo(_ viewController: UIViewController) {
         if let navigationController {
-            navigationController.popViewController(animated: true)
+            navigationController.pushViewController(viewController, animated: true)
         } else {
-            dismiss(animated: true)
+            present(viewController, animated: true)
         }
     }
 }

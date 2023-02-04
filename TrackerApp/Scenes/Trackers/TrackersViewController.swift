@@ -4,9 +4,7 @@ final class TrackersViewController: UIViewController {
     private var searchText = "" { didSet { applySnapshot() } }
     private var selectedDate = Date() { didSet { applySnapshot() } }
     private var completedTrackers: [Date: Set<TrackerRecord>] = [:] { didSet { applySnapshot() } }
-    private var categories: [TrackerCategory] = [.init(label: "Основная категория", trackers: [])] {
-        didSet { applySnapshot() }
-    }
+    private var categories: [TrackerCategory] = [] { didSet { applySnapshot() } }
 
     private lazy var dataSource = makeDataSource()
     private var kvObservers: Set<NSKeyValueObservation> = []

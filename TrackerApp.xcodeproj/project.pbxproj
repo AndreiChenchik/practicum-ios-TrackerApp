@@ -17,6 +17,7 @@
 		38083DA5298ED7AA00D47E8A /* UIView+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38083DA4298ED7AA00D47E8A /* UIView+Animations.swift */; };
 		38083DA8298EE2F500D47E8A /* TrackerCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */; };
 		38083DAA298EF10C00D47E8A /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38083DA9298EF10C00D47E8A /* CategoryTableViewCell.swift */; };
+		38083DAC298EFA7E00D47E8A /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */; };
 		38ACF507297D7E8000CD2DB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF506297D7E8000CD2DB2 /* AppDelegate.swift */; };
 		38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF508297D7E8000CD2DB2 /* SceneDelegate.swift */; };
 		38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF50A297D7E8000CD2DB2 /* OnboardingViewController.swift */; };
@@ -66,6 +67,7 @@
 		38083DA4298ED7AA00D47E8A /* UIView+Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Animations.swift"; sourceTree = "<group>"; };
 		38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryViewController.swift; sourceTree = "<group>"; };
 		38083DA9298EF10C00D47E8A /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		38ACF503297D7E8000CD2DB2 /* TrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		38ACF506297D7E8000CD2DB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		38ACF508297D7E8000CD2DB2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			children = (
 				38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */,
 				38083DA9298EF10C00D47E8A /* CategoryTableViewCell.swift */,
+				38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -460,6 +463,7 @@
 				38C1AB7D2985DC8D00AB7B0E /* YPSectionHeaderCollectionView.swift in Sources */,
 				38C1AB882987B1EE00AB7B0E /* TrackerConfigViewController.swift in Sources */,
 				38083D99298EA7BF00D47E8A /* YPInputCollectionCell.swift in Sources */,
+				38083DAC298EFA7E00D47E8A /* NewCategoryViewController.swift in Sources */,
 				38C1AB822987116700AB7B0E /* UIView+subViews.swift in Sources */,
 				38C1AB652985A10700AB7B0E /* PlaceholderView.swift in Sources */,
 				38ACF509297D7E8000CD2DB2 /* SceneDelegate.swift in Sources */,

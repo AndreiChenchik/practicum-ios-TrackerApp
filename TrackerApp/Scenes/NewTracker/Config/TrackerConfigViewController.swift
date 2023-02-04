@@ -5,7 +5,7 @@ final class TrackerConfigViewController: UIViewController {
     private let type: TrackerType
     private let onCreate: (Tracker, TrackerCategory) -> Void
 
-    private var schedule: Set<WeekDay> = .mockEveryDay { didSet { updateButtonStatus() } }
+    private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
     private var selectedCategory: TrackerCategory? { didSet { updateButtonStatus() } }
     private var selectedEmoji: String? { didSet { updateButtonStatus() } }
