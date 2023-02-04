@@ -24,15 +24,15 @@ final class YPInputCollectionCell: UICollectionViewCell {
     private lazy var cell = CellView(content: textInput)
 
     private lazy var textInput: UITextField = {
-            let input = UITextField()
+        let input = UITextField()
 
-            input.font = .asset(.ysDisplayRegular, size: 17)
-            input.clearButtonMode = .always
+        input.font = .asset(.ysDisplayRegular, size: 17)
+        input.clearButtonMode = .always
 
-            input.addTarget(self, action: #selector(textChanged), for: .allEditingEvents)
+        input.addTarget(self, action: #selector(textChanged), for: .allEditingEvents)
 
-            input.translatesAutoresizingMaskIntoConstraints = false
-            return input
+        input.translatesAutoresizingMaskIntoConstraints = false
+        return input
     }()
 
     @objc func textChanged(_ sender: UITextInput) {
@@ -47,6 +47,7 @@ final class YPInputCollectionCell: UICollectionViewCell {
     ) {
         textInput.text = text
         textInput.placeholder = placeholder
+        self.onChange = onChange
         cell.update(outCorner: outCorner)
     }
 

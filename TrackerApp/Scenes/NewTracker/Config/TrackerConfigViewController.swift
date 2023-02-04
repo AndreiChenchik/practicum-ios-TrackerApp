@@ -5,9 +5,11 @@ final class TrackerConfigViewController: UIViewController {
     private let type: TrackerType
     private let onCreate: (Tracker, TrackerCategory) -> Void
 
-    private var schedule: Set<WeekDay> = .mockEveryDay
-    private var trackerName: String?
-    private var selectedCategory: TrackerCategory?
+    private var schedule: Set<WeekDay> = .mockEveryDay { didSet { updateButtonStatus() } }
+    private var trackerName: String? { didSet { updateButtonStatus() } }
+    private var selectedCategory: TrackerCategory? = .mockHome { didSet { updateButtonStatus() } }
+    private var selectedEmoji: String? { didSet { updateButtonStatus() } }
+    private var selectedColor: TrackerColor? { didSet { updateButtonStatus() } }
 
     private let collectionInsets = UIEdgeInsets(top: 24, left: 15, bottom: 16, right: 15)
 
@@ -54,18 +56,28 @@ final class TrackerConfigViewController: UIViewController {
 
         collection.register(
             YPInputCollectionCell.self,
-            forCellWithReuseIdentifier: "\(YPInputCollectionCell.self)"
-        )
+            forCellWithReuseIdentifier: "\(YPInputCollectionCell.self)")
 
         collection.register(
             YPLinkCollectionCell.self,
             forCellWithReuseIdentifier: "\(YPLinkCollectionCell.self)")
 
         collection.register(
-            TrackerCategoryHeaderView.self,
+            TrackerEmojiCollectionCell.self,
+            forCellWithReuseIdentifier: "\(TrackerEmojiCollectionCell.self)")
+
+        collection.register(
+            TrackerColorCollectionCell.self,
+            forCellWithReuseIdentifier: "\(TrackerColorCollectionCell.self)")
+
+        collection.register(
+            WrapperCollectionCell.self,
+            forCellWithReuseIdentifier: "\(WrapperCollectionCell.self)")
+
+        collection.register(
+            YPSectionHeaderCollectionView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "\(TrackerCategoryHeaderView.self)"
-        )
+            withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)")
 
         collection.delegate = self
         collection.dataSource = self
@@ -74,6 +86,115 @@ final class TrackerConfigViewController: UIViewController {
 
         return collection
     }()
+
+    private lazy var createButton: UIButton = {
+        let button = YPButton(label: "Готово")
+        button.addTarget(self, action: #selector(create), for: .touchUpInside)
+        button.isEnabled = false
+        return button
+    }()
+
+    private lazy var cancelButton: UIButton = {
+        let button = YPButton(label: "Отменить", destructive: true)
+        button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+
+        return button
+    }()
+}
+
+// MARK: - Actions
+
+private extension TrackerConfigViewController {
+    @objc func create() {
+        guard let trackerName, let selectedColor, let selectedEmoji else {
+            assertionFailure("Button should be disabled")
+            return
+        }
+
+        let newTracker = Tracker(
+            label: trackerName,
+            emoji: selectedEmoji,
+            color: selectedColor,
+            schedule: type == .habit ? schedule : nil
+        )
+
+        onCreate(newTracker, categories[0])
+
+        dismiss(animated: true)
+    }
+
+    @objc func cancel() {
+        dismiss(animated: true)
+    }
+
+    func tapEmoji(at path: IndexPath) {
+        let newEmoji = Emoji.list[path.row]
+        guard selectedEmoji != newEmoji else { return }
+
+        if
+            let selectedEmoji,
+            let index = Emoji.list.firstIndex(of: selectedEmoji),
+            let oldCell = collectionView.cellForItem(
+                at: .init(row: index, section: path.section)
+            ) as? TrackerEmojiCollectionCell {
+
+            oldCell.configure(selectedEmoji, isSelected: false)
+        }
+
+        if let newCell = collectionView.cellForItem(at: path) as? TrackerEmojiCollectionCell {
+            newCell.configure(newEmoji, isSelected: true)
+        }
+
+        selectedEmoji = newEmoji
+    }
+
+    func tapColor(at path: IndexPath) {
+        let newColor = TrackerColor.allCases[path.row]
+        guard selectedColor != newColor else { return }
+
+        if
+            let selectedColor,
+            let index = TrackerColor.allCases.firstIndex(of: selectedColor),
+            let oldCell = collectionView.cellForItem(
+                at: .init(row: index, section: path.section)
+            ) as? TrackerColorCollectionCell {
+
+            oldCell.configure(selectedColor.uiColor, isSelected: false)
+        }
+
+        if let newCell = collectionView.cellForItem(at: path) as? TrackerColorCollectionCell {
+            newCell.configure(newColor.uiColor, isSelected: true)
+        }
+
+        selectedColor = newColor
+    }
+
+    func updateButtonStatus() {
+        let isScheduleOK = type == .event || !schedule.isEmpty
+        let isNameOK = trackerName != nil && trackerName != ""
+        let isColorOK = selectedColor != nil
+        let isEmojiOK = selectedEmoji != nil
+        let isCategoryOk = selectedCategory != nil
+
+        createButton.isEnabled = isScheduleOK && isNameOK && isColorOK && isEmojiOK && isCategoryOk
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackerConfigViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let section = Section(rawValue: indexPath.section) else { return }
+
+        switch section {
+        case .emojis:
+            tapEmoji(at: indexPath)
+        case .colors:
+            tapColor(at: indexPath)
+        default:
+            return
+        }
+    }
 }
 
 // MARK: - Configuration
@@ -81,6 +202,17 @@ final class TrackerConfigViewController: UIViewController {
 private extension TrackerConfigViewController {
     enum Section: Int, CaseIterable {
         case name, properties, emojis, colors, controls
+
+        var label: String? {
+            switch self {
+            case .emojis:
+                return "Emoji"
+            case .colors:
+                return "Цвет"
+            default:
+                return nil
+            }
+        }
     }
 
     enum Property: Int, CaseIterable {
@@ -96,9 +228,17 @@ private extension TrackerConfigViewController {
         }
     }
 
-    enum Control: String, CaseIterable {
-        case cancel = "Отменить"
-        case submit = "Создать"
+    enum Control: Int, CaseIterable {
+        case cancel, submit
+
+        var label: String {
+            switch self {
+            case .cancel:
+                return "Отменить"
+            case .submit:
+                return "Создать"
+            }
+        }
     }
 
     enum Emoji {
@@ -108,10 +248,6 @@ private extension TrackerConfigViewController {
         ]
     }
 }
-
-// MARK: - UICollectionViewDelegate
-
-extension TrackerConfigViewController: UICollectionViewDelegate {}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
@@ -184,10 +320,35 @@ extension TrackerConfigViewController: UICollectionViewDelegateFlowLayout {
 
         switch section {
         case .properties:
-            return .init(top: 24, left: 0, bottom: 0, right: 0)
+            return .init(top: 24, left: 0, bottom: 32, right: 0)
+        case .emojis, .colors:
+            return .init(top: 24, left: 0, bottom: 40, right: 0)
+        case .controls:
+            return .init(top: 6, left: 0, bottom: 0, right: 0)
         default:
             return .zero
         }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let footerView = self.collectionView(
+            collectionView,
+            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+            at: indexPath
+        )
+
+        return footerView.systemLayoutSizeFitting(
+            CGSize(
+                width: collectionView.frame.width,
+                height: UIView.layoutFittingExpandedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
     }
 }
 
@@ -238,6 +399,25 @@ extension TrackerConfigViewController: UICollectionViewDataSource {
         case .controls:
             return getControlCell(collectionView, path: indexPath)
         }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard
+            let section = Section(rawValue: indexPath.section),
+            let view = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)",
+                for: indexPath
+            ) as? YPSectionHeaderCollectionView
+        else { fatalError("Something went terribly wrong") }
+
+        view.titleLabel.text = section.label
+
+        return view
     }
 }
 
@@ -297,27 +477,44 @@ private extension TrackerConfigViewController {
 
     func getEmojiCell(_ collection: UICollectionView, path: IndexPath) -> UICollectionViewCell {
         guard let cell = collection.dequeueReusableCell(
-            withReuseIdentifier: "\(YPInputCollectionCell.self)",
+            withReuseIdentifier: "\(TrackerEmojiCollectionCell.self)",
             for: path
-        ) as? YPInputCollectionCell else { fatalError("Something went terribly wrong") }
+        ) as? TrackerEmojiCollectionCell else { preconditionFailure("Something went terribly wrong") }
+
+        let emoji = Emoji.list[path.row]
+
+        cell.configure(emoji, isSelected: selectedEmoji == emoji)
 
         return cell
     }
 
     func getColorCell(_ collection: UICollectionView, path: IndexPath) -> UICollectionViewCell {
-        guard let cell = collection.dequeueReusableCell(
-            withReuseIdentifier: "\(YPInputCollectionCell.self)",
+        guard
+            let cell = collection.dequeueReusableCell(
+            withReuseIdentifier: "\(TrackerColorCollectionCell.self)",
             for: path
-        ) as? YPInputCollectionCell else { fatalError("Something went terribly wrong") }
+        ) as? TrackerColorCollectionCell else { preconditionFailure("Something went terribly wrong") }
+
+        let color = TrackerColor.allCases[path.row]
+        cell.configure(color.uiColor, isSelected: selectedColor == color)
 
         return cell
     }
 
     func getControlCell(_ collection: UICollectionView, path: IndexPath) -> UICollectionViewCell {
-        guard let cell = collection.dequeueReusableCell(
-            withReuseIdentifier: "\(YPInputCollectionCell.self)",
+        guard
+            let control = Control(rawValue: path.row),
+            let cell = collection.dequeueReusableCell(
+            withReuseIdentifier: "\(WrapperCollectionCell.self)",
             for: path
-        ) as? YPInputCollectionCell else { fatalError("Something went terribly wrong") }
+        ) as? WrapperCollectionCell else { preconditionFailure("Something went terribly wrong") }
+
+        switch control {
+        case .cancel:
+            cell.configure(view: cancelButton)
+        case .submit:
+            cell.configure(view: createButton)
+        }
 
         return cell
     }
@@ -333,7 +530,7 @@ struct TrackerConfigViewController_Previews: PreviewProvider {
             .foregroundColor(.black)
             .edgesIgnoringSafeArea(.all)
             .sheet(isPresented: .constant(true)) {
-                
+
             UIViewControllerPreview {
                 let rootVC = TrackerConfigViewController(.habit, categories: [.mockHome]) { _, _ in }
                 let viewController = UINavigationController(rootViewController: rootVC)

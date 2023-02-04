@@ -75,9 +75,9 @@ final class TrackersViewController: UIViewController {
         collection.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
 
         collection.register(
-            TrackerCategoryHeaderView.self,
+            YPSectionHeaderCollectionView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "header"
+            withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)"
         )
 
         collection.delegate = self
@@ -354,7 +354,7 @@ private extension TrackersViewController {
 
             switch kind {
             case UICollectionView.elementKindSectionHeader:
-                id = "header"
+                id = "\(YPSectionHeaderCollectionView.self)"
             default:
                 id = ""
             }
@@ -363,7 +363,7 @@ private extension TrackersViewController {
                 ofKind: kind,
                 withReuseIdentifier: id,
                 for: indexPath
-            ) as? TrackerCategoryHeaderView else { return .init() }
+            ) as? YPSectionHeaderCollectionView else { return .init() }
 
             let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
             view.configure(label: section.label)

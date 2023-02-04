@@ -1,6 +1,6 @@
 import UIKit
 
-final class TrackerCategoryHeaderView: UICollectionReusableView {
+final class YPSectionHeaderCollectionView: UICollectionReusableView {
     let titleLabel: UILabel = {
         let label = UILabel()
 
@@ -17,7 +17,7 @@ final class TrackerCategoryHeaderView: UICollectionReusableView {
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
