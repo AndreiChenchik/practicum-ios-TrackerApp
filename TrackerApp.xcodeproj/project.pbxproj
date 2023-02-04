@@ -42,6 +42,8 @@
 		38C1AB8E2989101600AB7B0E /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB8D2989101600AB7B0E /* Array.swift */; };
 		38C1AB93298DBD9C00AB7B0E /* TrackerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */; };
 		38C1AB95298DBDE000AB7B0E /* TrackerProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB94298DBDE000AB7B0E /* TrackerProperties.swift */; };
+		38C1AB98298E47DA00AB7B0E /* UIViewControllerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB97298E47DA00AB7B0E /* UIViewControllerPreview.swift */; };
+		38C1AB9A298E47ED00AB7B0E /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB99298E47ED00AB7B0E /* UIViewPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +86,8 @@
 		38C1AB8D2989101600AB7B0E /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerType.swift; sourceTree = "<group>"; };
 		38C1AB94298DBDE000AB7B0E /* TrackerProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerProperties.swift; sourceTree = "<group>"; };
+		38C1AB97298E47DA00AB7B0E /* UIViewControllerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerPreview.swift; sourceTree = "<group>"; };
+		38C1AB99298E47ED00AB7B0E /* UIViewPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +232,7 @@
 		38C1AB7E2985E95700AB7B0E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				38C1AB96298E47C000AB7B0E /* Previews */,
 				38C1AB7F2985E96500AB7B0E /* UIColor+Hex.swift */,
 				38C1AB812987116700AB7B0E /* UIView+subViews.swift */,
 				38C1AB8D2989101600AB7B0E /* Array.swift */,
@@ -260,6 +265,15 @@
 				38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */,
 			);
 			path = Type;
+			sourceTree = "<group>";
+		};
+		38C1AB96298E47C000AB7B0E /* Previews */ = {
+			isa = PBXGroup;
+			children = (
+				38C1AB97298E47DA00AB7B0E /* UIViewControllerPreview.swift */,
+				38C1AB99298E47ED00AB7B0E /* UIViewPreview.swift */,
+			);
+			path = Previews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,6 +381,7 @@
 				38C1AB802985E96600AB7B0E /* UIColor+Hex.swift in Sources */,
 				38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */,
 				38C1AB93298DBD9C00AB7B0E /* TrackerType.swift in Sources */,
+				38C1AB9A298E47ED00AB7B0E /* UIViewPreview.swift in Sources */,
 				38C1AB5D29852B0400AB7B0E /* ColorAsset+UIColor.swift in Sources */,
 				38C1AB8E2989101600AB7B0E /* Array.swift in Sources */,
 				38C1AB5929852AC800AB7B0E /* FontAsset+UIFont.swift in Sources */,
@@ -376,6 +391,7 @@
 				38C1AB702985CE0600AB7B0E /* Tracker.swift in Sources */,
 				38C1AB5F2985710C00AB7B0E /* HomeViewController.swift in Sources */,
 				38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */,
+				38C1AB98298E47DA00AB7B0E /* UIViewControllerPreview.swift in Sources */,
 				38C1AB792985D01000AB7B0E /* TrackerRecord.swift in Sources */,
 				38C1AB6C2985BA3C00AB7B0E /* TrackerTypeViewController.swift in Sources */,
 				38C1AB752985CEDA00AB7B0E /* WeekDay.swift in Sources */,

@@ -97,3 +97,19 @@ private extension ScheduleViewCell {
         ])
     }
 }
+
+// MARK: - Preview
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+struct View_Previews: PreviewProvider {
+    static var previews: some View {
+        UIViewPreview {
+            let view = ScheduleViewCell()
+            view.configure(label: "Test", isOn: true, type: .last)
+            return view
+        }
+        .frame(height: 75)
+    }
+}
+#endif
