@@ -1,10 +1,6 @@
 import UIKit
 
-enum TrackerType {
-    case habit, event
-}
-
-final class NewTrackerViewController: UIViewController {
+final class TrackerConfigViewController: UIViewController {
     private let emojis = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶",
         "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
@@ -84,7 +80,7 @@ final class NewTrackerViewController: UIViewController {
 
 // MARK: - Actions
 
-private extension NewTrackerViewController {
+private extension TrackerConfigViewController {
     @objc func changeSchedule() {
         let scheduleVC = ScheduleViewController(schedule) { [weak self] newSchedule in
             guard let self else { return }
@@ -148,7 +144,7 @@ private extension NewTrackerViewController {
 
 // MARK: - Appearance
 
-private extension NewTrackerViewController {
+private extension TrackerConfigViewController {
     func setupAppearance() {
         navigationItem.hidesBackButton = true
 

@@ -7,7 +7,7 @@ enum NewTracker {
         onNewTracker: @escaping (Tracker, TrackerCategory) -> Void
     ) -> UIViewController {
         let typeVC = TrackerTypeViewController { type in
-            NewTrackerViewController(type, categories: categories, onCreate: onNewTracker)
+            TrackerConfigViewController(type, categories: categories, onCreate: onNewTracker)
         }
 
         let viewController = UINavigationController(rootViewController: typeVC)
