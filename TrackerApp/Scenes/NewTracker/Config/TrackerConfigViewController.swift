@@ -497,14 +497,14 @@ private extension TrackerConfigViewController {
             description = schedule.shortDescription
         }
 
+        let isFirstCell = path.row == 0
+        let isLastCell = path.row == Property.allCases.count - 1
+
         cell.configure(
             label: property.label,
             description: description,
-            outCorner: path.row == 0
-                ? [.top]
-                : path.row == Property.allCases.count - 1
-                    ? [.bottom]
-                    : []
+            outCorner: isFirstCell ? [.top] : isLastCell ? [.bottom] : [],
+            hasDivider: !isLastCell
         )
 
         return cell

@@ -7,7 +7,8 @@ final class CellView: UIView {
         content contentView: UIView = .init(),
         label: String? = nil,
         description: String? = nil,
-        outCorner: [CellCorner] = []
+        outCorner: [CellCorner] = [],
+        hasDivider: Bool = false
     ) {
         self.contentView = contentView
 
@@ -20,16 +21,21 @@ final class CellView: UIView {
         layer.maskedCorners = []
 
         addSubview(hStackView)
+        addSubview(divider)
         hStackView.addArrangedSubview(contentView)
 
         NSLayoutConstraint.activate([
             hStackView.topAnchor.constraint(equalTo: topAnchor),
             hStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             hStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            hStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
+            hStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            divider.heightAnchor.constraint(equalToConstant: 0.5),
+            divider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            divider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            divider.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
 
-        update(label: label, description: description, outCorner: outCorner)
+        update(label: label, description: description, outCorner: outCorner, hasDivider: hasDivider)
     }
 
     required init?(coder: NSCoder) {
@@ -82,12 +88,28 @@ final class CellView: UIView {
     }()
 
     private var spacer = UIView()
+
+    private lazy var divider: UIView = {
+        let view = UIView()
+
+        view.backgroundColor = .asset(.gray)
+        view.isHidden = true
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 }
 
 // MARK: - Updates
 
 extension CellView {
-    func update(label: String? = nil, description: String? = nil, outCorner: [CellCorner] = []) {
+    func update(
+        label: String? = nil,
+        description: String? = nil,
+        outCorner: [CellCorner] = [],
+        hasDivider: Bool = false
+    ) {
+        divider.isHidden = !hasDivider
         updateText(label: label, description: description)
         updateCorners(outCorner)
     }
@@ -147,7 +169,8 @@ struct CellView_Previews: PreviewProvider {
                     content: UISwitch(),
                     label: "Label",
                     description: "Description",
-                    outCorner: [.top]
+                    outCorner: [.top],
+                    hasDivider: true
                 )
 
                 return view
@@ -159,7 +182,8 @@ struct CellView_Previews: PreviewProvider {
                     content: UISwitch(),
                     label: "Label",
                     description: "Description",
-                    outCorner: []
+                    outCorner: [],
+                    hasDivider: true
                 )
 
                 return view

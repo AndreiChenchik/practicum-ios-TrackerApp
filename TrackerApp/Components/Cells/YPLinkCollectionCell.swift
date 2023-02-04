@@ -30,8 +30,18 @@ final class YPLinkCollectionCell: UICollectionViewCell {
         return view
     }()
 
-    func configure(label: String?, description: String?, outCorner: [CellCorner]) {
-        cell.update(label: label, description: description, outCorner: outCorner)
+    func configure(
+        label: String?,
+        description: String?,
+        outCorner: [CellCorner],
+        hasDivider: Bool
+    ) {
+        cell.update(
+            label: label,
+            description: description,
+            outCorner: outCorner,
+            hasDivider: hasDivider
+        )
     }
 
     func setDescription(_ description: String?) {
@@ -39,6 +49,6 @@ final class YPLinkCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
-        configure(label: nil, description: nil, outCorner: [])
+        configure(label: nil, description: nil, outCorner: [], hasDivider: false)
     }
 }
