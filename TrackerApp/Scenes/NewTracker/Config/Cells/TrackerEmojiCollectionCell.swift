@@ -39,7 +39,12 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
 
     func configure(_ emoji: String?, isSelected: Bool = false) {
         labelView.text = emoji
-        background.isHidden = !isSelected
+
+        if isSelected {
+            background.fadeIn()
+        } else {
+            background.fadeOut()
+        }
     }
 
     override func prepareForReuse() {

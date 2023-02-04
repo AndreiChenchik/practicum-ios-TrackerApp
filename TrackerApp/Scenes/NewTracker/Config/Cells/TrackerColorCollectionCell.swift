@@ -44,7 +44,12 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
 
     func configure(_ color: UIColor?, isSelected: Bool = false) {
         colorView.backgroundColor = color
-        background.isHidden = !isSelected
+
+        if isSelected {
+            background.fadeIn()
+        } else {
+            background.fadeOut()
+        }
     }
 
     override func prepareForReuse() {
