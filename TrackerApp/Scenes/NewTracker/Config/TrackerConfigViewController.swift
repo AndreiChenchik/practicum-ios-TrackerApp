@@ -113,7 +113,7 @@ final class TrackerConfigViewController: UIViewController {
 
 private extension TrackerConfigViewController {
     @objc func create() {
-        guard let trackerName, let selectedColor, let selectedEmoji else {
+        guard let trackerName, let selectedColor, let selectedEmoji, let selectedCategory else {
             assertionFailure("Button should be disabled")
             return
         }
@@ -125,7 +125,7 @@ private extension TrackerConfigViewController {
             schedule: type == .habit ? schedule : nil
         )
 
-        onCreate(newTracker, categories[0])
+        onCreate(newTracker, selectedCategory)
 
         dismiss(animated: true)
     }
