@@ -34,6 +34,10 @@ final class YPLinkCollectionCell: UICollectionViewCell {
         cell.update(label: label, description: description, outCorner: outCorner)
     }
 
+    func setDescription(_ description: String?) {
+        cell.updateDescription(description)
+    }
+
     override func prepareForReuse() {
         configure(label: nil, description: nil, outCorner: [])
     }

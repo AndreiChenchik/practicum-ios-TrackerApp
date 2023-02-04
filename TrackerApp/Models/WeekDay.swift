@@ -76,4 +76,12 @@ extension Set where Element == WeekDay {
     static var mockOnWeekends: Set<WeekDay> {
         [.saturday, .sunday]
     }
+
+    var shortDescription: String? {
+        let scheduleDescription = WeekDay.allCasesSortedForUserCalendar
+            .filter { self.contains($0) }
+            .map { $0.shortLabel }
+            .joined(separator: ", ")
+        return scheduleDescription.isEmpty ? nil : scheduleDescription
+    }
 }

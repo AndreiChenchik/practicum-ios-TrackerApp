@@ -92,6 +92,16 @@ extension CellView {
         updateCorners(outCorner)
     }
 
+    func updateDescription(_ description: String? = nil) {
+        descriptionView.text = description
+
+        if description != nil, vStackView.arrangedSubviews.count == 1 {
+            vStackView.addArrangedSubview(descriptionView)
+        } else if description == nil {
+            vStackView.removeArrangedSubview(descriptionView)
+        }
+    }
+
     private func updateText(label: String?, description: String?) {
         labelView.text = label
 
@@ -106,16 +116,6 @@ extension CellView {
         }
 
         updateDescription(description)
-    }
-
-    private func updateDescription(_ description: String? = nil) {
-        descriptionView.text = description
-
-        if description != nil, vStackView.arrangedSubviews.count == 1 {
-            vStackView.addArrangedSubview(descriptionView)
-        } else if description == nil {
-            vStackView.removeArrangedSubview(descriptionView)
-        }
     }
 
     private func updateCorners(_ corner: [CellCorner]) {

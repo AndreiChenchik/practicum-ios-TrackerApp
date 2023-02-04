@@ -169,6 +169,43 @@ private extension TrackerConfigViewController {
         selectedColor = newColor
     }
 
+    func tapLink(at path: IndexPath) {
+        guard let property = Property(rawValue: path.row) else {
+            assertionFailure("Can't happened")
+            return
+        }
+
+        switch property {
+        case .schedule:
+            selectSchedule()
+        case .category:
+            print("category tap")
+        }
+    }
+
+    func selectSchedule() {
+        let scheduleVC = ScheduleViewController(schedule) { [weak self] newSchedule in
+            guard let self else { return }
+
+            self.schedule = newSchedule
+            let cell = self.collectionView.cellForItem(
+                at: .init(row: Property.schedule.rawValue, section: Section.properties.rawValue)
+            ) as? YPLinkCollectionCell
+
+            cell?.setDescription(newSchedule.shortDescription)
+        }
+
+        navigateTo(scheduleVC)
+    }
+
+    func navigateTo(_ viewController: UIViewController) {
+        if let navigationController {
+            navigationController.pushViewController(viewController, animated: true)
+        } else {
+            present(viewController, animated: true)
+        }
+    }
+
     func updateButtonStatus() {
         let isScheduleOK = type == .event || !schedule.isEmpty
         let isNameOK = trackerName != nil && trackerName != ""
@@ -191,6 +228,8 @@ extension TrackerConfigViewController: UICollectionViewDelegate {
             tapEmoji(at: indexPath)
         case .colors:
             tapColor(at: indexPath)
+        case .properties:
+            tapLink(at: indexPath)
         default:
             return
         }
@@ -455,11 +494,7 @@ private extension TrackerConfigViewController {
         case .category:
             description = selectedCategory?.label
         case .schedule:
-            let scheduleDescription = WeekDay.allCasesSortedForUserCalendar
-                .filter { schedule.contains($0) }
-                .map { $0.shortLabel }
-                .joined(separator: ", ")
-            description = scheduleDescription.isEmpty ? nil : scheduleDescription
+            description = schedule.shortDescription
         }
 
         cell.configure(
