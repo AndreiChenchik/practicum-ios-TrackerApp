@@ -1,7 +1,8 @@
 import UIKit
 
 final class TrackerCategoryViewController: UIViewController {
-    private let completion: (TrackerCategory, [TrackerCategory]) -> Void
+    private let onSelect: (TrackerCategory) -> Void
+    private let onNewCategory: (TrackerCategory) -> Void
 
     private var categories: [TrackerCategory]
     private var selectedCategory: TrackerCategory?
@@ -9,12 +10,13 @@ final class TrackerCategoryViewController: UIViewController {
     init(
         _ categories: [TrackerCategory],
         selectedCategory: TrackerCategory?,
-        completion: @escaping (TrackerCategory, [TrackerCategory]) -> Void
+        onSelect: @escaping (TrackerCategory) -> Void,
+        onNewCategory: @escaping (TrackerCategory) -> Void
     ) {
         self.categories = categories
         self.selectedCategory = selectedCategory
-
-        self.completion = completion
+        self.onSelect = onSelect
+        self.onNewCategory = onNewCategory
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,7 +83,7 @@ extension TrackerCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let category = categories[indexPath.row]
         selectedCategory = category
-        completion(category, categories)
+        onSelect(category)
 
         if let navigationController {
             navigationController.popViewController(animated: true)
@@ -166,6 +168,7 @@ private extension TrackerCategoryViewController {
         let newCategoryVC = NewCategoryViewController { [weak self] newCategory in
             guard let self else { return }
             self.categories.append(newCategory)
+            self.onNewCategory(newCategory)
         }
 
         navigateTo(newCategoryVC)
@@ -190,7 +193,9 @@ struct TrackerCategoryViewController_Previews: PreviewProvider {
             .sheet(isPresented: .constant(true)) {
                 UIViewControllerPreview {
                     let array = [TrackerCategory](repeating: .mockHome, count: 20)
-                    let rootVC = TrackerCategoryViewController(array, selectedCategory: array[3]) { _, _ in }
+                    let rootVC = TrackerCategoryViewController(
+                        array, selectedCategory: array[3]
+                    ) { _ in } onNewCategory: { _ in }
                     let viewController = UINavigationController(rootViewController: rootVC)
                     viewController.configureForModal()
                     return viewController

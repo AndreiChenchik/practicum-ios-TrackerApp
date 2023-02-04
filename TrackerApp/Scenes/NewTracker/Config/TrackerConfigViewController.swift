@@ -4,6 +4,7 @@ final class TrackerConfigViewController: UIViewController {
     private var categories: [TrackerCategory]
     private let type: TrackerType
     private let onCreate: (Tracker, TrackerCategory) -> Void
+    private let onNewCategory: (TrackerCategory) -> Void
 
     private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
@@ -20,11 +21,13 @@ final class TrackerConfigViewController: UIViewController {
     init(
         _ type: TrackerType,
         categories: [TrackerCategory],
-        onCreate: @escaping (Tracker, TrackerCategory) -> Void
+        onCreate: @escaping (Tracker, TrackerCategory) -> Void,
+        onNewCategory: @escaping (TrackerCategory) -> Void
     ) {
         self.type = type
         self.categories = categories
         self.onCreate = onCreate
+        self.onNewCategory = onNewCategory
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -190,17 +193,19 @@ private extension TrackerConfigViewController {
     func selectCategory() {
         let scheduleVC = TrackerCategoryViewController(
             categories, selectedCategory: selectedCategory
-        ) { [weak self] category, categories in
+        ) { [weak self] category in
             guard let self else { return }
 
             self.selectedCategory = category
-            self.categories = categories
 
             let cell = self.collectionView.cellForItem(
                 at: .init(row: Property.category.rawValue, section: Section.properties.rawValue)
             ) as? YPLinkCollectionCell
 
             cell?.setDescription(category.label)
+        } onNewCategory: { [weak self] category in
+            self?.categories.append(category)
+            self?.onNewCategory(category)
         }
 
         navigateTo(scheduleVC)
@@ -594,7 +599,9 @@ struct TrackerConfigViewController_Previews: PreviewProvider {
             .sheet(isPresented: .constant(true)) {
 
             UIViewControllerPreview {
-                let rootVC = TrackerConfigViewController(.habit, categories: [.mockHome]) { _, _ in }
+                let rootVC = TrackerConfigViewController(.habit, categories: [.mockHome]) { _, _ in
+                } onNewCategory: { _ in }
+
                 let viewController = UINavigationController(rootViewController: rootVC)
                 viewController.configureForModal()
                 return viewController
