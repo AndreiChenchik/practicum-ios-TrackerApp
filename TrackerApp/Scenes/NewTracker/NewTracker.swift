@@ -12,13 +12,19 @@ enum NewTracker {
 
         let viewController = UINavigationController(rootViewController: typeVC)
 
-        viewController.navigationBar.prefersLargeTitles = false
+        viewController.configureForModal()
 
-        viewController.navigationBar.standardAppearance.titleTextAttributes = [
+        return viewController
+    }
+}
+
+extension UINavigationController {
+    func configureForModal() {
+        navigationBar.prefersLargeTitles = false
+
+        navigationBar.standardAppearance.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.asset(.black),
             NSAttributedString.Key.font: UIFont.asset(.ysDisplayMedium, size: 16)
         ]
-
-        return viewController
     }
 }

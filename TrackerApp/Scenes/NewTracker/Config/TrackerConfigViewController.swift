@@ -1,14 +1,30 @@
 import UIKit
 
-final class TrackerConfigViewController: UIViewController {
-    private let emojis = [
-        "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶",
-        "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
-    ]
+final class TrackerConfigCell: UICollectionViewCell {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        let cell = CellView(outCorner: [.all])
+        cell.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(cell)
+        NSLayoutConstraint.activate([
+            cell.topAnchor.constraint(equalTo: topAnchor),
+            cell.leadingAnchor.constraint(equalTo: leadingAnchor),
+            cell.trailingAnchor.constraint(equalTo: trailingAnchor),
+            cell.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
 
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+final class TrackerConfigViewController: UIViewController {
     private let type: TrackerType
     private let categories: [TrackerCategory]
     private var schedule: Set<WeekDay> = []
+
+    private let collectionInsets = UIEdgeInsets(top: 10, left: 15, bottom: 0, right: 15)
 
     private let onCreate: (Tracker, TrackerCategory) -> Void
 
@@ -29,167 +45,137 @@ final class TrackerConfigViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        title = "Новая привычка"
-        setupAppearance()
-    }
-
-    // MARK: Components
-
-    private lazy var createButton: UIButton = {
-        let button = YPButton(label: "Готово")
-        button.addTarget(self, action: #selector(create), for: .touchUpInside)
-        button.isEnabled = false
-        return button
-    }()
-
-    private lazy var cancelButton: UIButton = {
-        let button = YPButton(label: "Отменить", destructive: true)
-        button.addTarget(self, action: #selector(create), for: .touchUpInside)
-
-        return button
-    }()
-
-    private lazy var scheduleButton: DisclosureButton = {
-        let button = DisclosureButton(label: "Расписание")
-        button.addTarget(self, action: #selector(changeSchedule), for: .touchUpInside)
-
-        return button
-    }()
-
-    private lazy var textInput: UITextField = {
-        let input = UITextField()
-
-        input.backgroundColor = .asset(.background).withAlphaComponent(0.3)
-        input.font = .asset(.ysDisplayRegular, size: 17)
-        input.placeholder = "Введите название трекера"
-        input.clearButtonMode = .always
-
-        let spacerView = UIView(frame: .init(origin: .zero, size: .init(width: 16, height: 1)))
-        input.leftViewMode = .always
-        input.leftView = spacerView
-
-        input.layer.cornerRadius = 10
-        input.layer.masksToBounds = true
-
-        input.addTarget(self, action: #selector(textChanged), for: .allEditingEvents)
-
-        input.translatesAutoresizingMaskIntoConstraints = false
-        return input
-    }()
-}
-
-// MARK: - Actions
-
-private extension TrackerConfigViewController {
-    @objc func changeSchedule() {
-        let scheduleVC = ScheduleViewController(schedule) { [weak self] newSchedule in
-            guard let self else { return }
-
-            self.schedule = newSchedule
-
-            let selectedDays = WeekDay.allCasesSortedForUserCalendar
-                .filter { newSchedule.contains($0) }
-                .map { $0.shortLabel }
-                .joined(separator: ", ")
-
-            self.scheduleButton.setDescription(selectedDays.isEmpty ? nil : selectedDays)
-        }
-
-        updateButtonStatus()
-
-        navigateTo(scheduleVC)
-    }
-
-    @objc func textChanged(_ sender: UITextInput) {
-        updateButtonStatus()
-    }
-
-    func updateButtonStatus() {
-        let isScheduleOK = type == .event || !schedule.isEmpty
-        let isInputOK = textInput.text != nil && textInput.text != ""
-
-        createButton.isEnabled = isScheduleOK && isInputOK
-    }
-
-    func navigateTo(_ viewController: UIViewController) {
-        if let navigationController {
-            navigationController.pushViewController(viewController, animated: true)
-        } else {
-            present(viewController, animated: true)
-        }
-    }
-
-    @objc func create() {
-        guard let text = textInput.text else {
-            assertionFailure("Button should be disabled")
-            return
-        }
-
-        let newTracker = Tracker(
-            label: text,
-            emoji: emojis.randomElement()!,
-            color: TrackerColor.allCases.randomElement()!,
-            schedule: type == .habit ? schedule : nil
-        )
-
-        onCreate(newTracker, categories[0])
-
-        dismiss(animated: true)
-    }
-
-    @objc func cancel() {
-        dismiss(animated: true)
-    }
-}
-
-// MARK: - Appearance
-
-private extension TrackerConfigViewController {
-    func setupAppearance() {
-        navigationItem.hidesBackButton = true
-
         view.backgroundColor = .asset(.white)
 
-        let hStack = UIStackView()
-        hStack.axis = .horizontal
-        hStack.distribution = .fillEqually
-        hStack.spacing = 8
-        hStack.alignment = .center
-        hStack.translatesAutoresizingMaskIntoConstraints = false
+        title = "Новая привычка"
+        navigationItem.hidesBackButton = true
 
-        hStack.addArrangedSubview(cancelButton)
-        hStack.addArrangedSubview(createButton)
-
-        view.addSubview(hStack)
-        view.addSubview(textInput)
-
-        let safeArea = view.safeAreaLayoutGuide
-
-        if type == .habit { addScheduleButton() }
+        view.addSubview(collectionView)
 
         NSLayoutConstraint.activate([
-            textInput.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 24),
-            textInput.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-            textInput.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
-            textInput.heightAnchor.constraint(equalToConstant: 75),
-            hStack.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            hStack.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            hStack.heightAnchor.constraint(equalToConstant: 60),
-            hStack.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
-            cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            createButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
-    func addScheduleButton() {
-        view.addSubview(scheduleButton)
+    private lazy var collectionView: UICollectionView = {
+        let collection = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout()
+        )
 
-        let safeArea = view.safeAreaLayoutGuide
+        collection.keyboardDismissMode = .onDrag
+        collection.contentInset = collectionInsets
 
-        NSLayoutConstraint.activate([
-            scheduleButton.topAnchor.constraint(equalTo: textInput.bottomAnchor, constant: 24),
-            scheduleButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-            scheduleButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
-        ])
+        collection.register(TrackerConfigCell.self, forCellWithReuseIdentifier: "cell")
+
+        collection.register(
+            TrackerCategoryHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "\(TrackerCategoryHeaderView.self)"
+        )
+
+        collection.delegate = self
+        collection.dataSource = self
+
+        collection.translatesAutoresizingMaskIntoConstraints = false
+
+        return collection
+    }()
+}
+
+// MARK: - Configuration
+
+private extension TrackerConfigViewController {
+    enum Section: Int, CaseIterable {
+        case name, properties, emojis, colors, controls
+    }
+
+    enum Property: String, CaseIterable {
+        case category = "Категория"
+        case schedule = "Расписание"
+    }
+
+    enum Control: String, CaseIterable {
+        case cancel = "Отменить"
+        case submit = "Создать"
+    }
+
+    enum Emoji {
+        static let list = [
+            "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶",
+            "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+        ]
     }
 }
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackerConfigViewController: UICollectionViewDelegate {}
+
+extension TrackerConfigViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(
+            width: collectionView.frame.width - collectionInsets.left - collectionInsets.right,
+            height: 50
+        )
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension TrackerConfigViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        Section.allCases.count
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        guard let section = Section(rawValue: section) else { return 0 }
+
+        switch section {
+        case .name:
+            return 1
+        case .properties:
+            return Property.allCases.count
+        case .emojis:
+            return Emoji.list.count
+        case .colors:
+            return TrackerColor.allCases.count
+        case .controls:
+            return Control.allCases.count
+        }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        return cell
+    }
+}
+
+// MARK: - Preview
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+struct TrackerConfigViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        UIViewControllerPreview {
+            let rootVC = TrackerConfigViewController(.habit, categories: [.mockHome]) { _, _ in }
+            let viewController = UINavigationController(rootViewController: rootVC)
+            viewController.configureForModal()
+            return viewController
+        }
+    }
+}
+#endif
