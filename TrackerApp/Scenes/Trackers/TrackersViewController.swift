@@ -1,10 +1,29 @@
 import UIKit
+import Combine
 
 final class TrackersViewController: UIViewController {
     private var searchText = "" { didSet { applySnapshot() } }
     private var selectedDate = Date() { didSet { applySnapshot() } }
-    private var completedTrackers: [Date: Set<TrackerRecord>] = [:] { didSet { applySnapshot() } }
-    private var categories: [TrackerCategory] = [] { didSet { applySnapshot() } }
+
+    private var repo: TrackerStoring
+    private var cancellable: Set<AnyCancellable> = []
+
+    init(repo: TrackerStoring) {
+        self.repo = repo
+        super.init(nibName: nil, bundle: nil)
+
+        repo.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                self.applySnapshot()
+            }
+            .store(in: &cancellable)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     private lazy var dataSource = makeDataSource()
     private var kvObservers: Set<NSKeyValueObservation> = []
@@ -147,7 +166,7 @@ private extension TrackersViewController {
 
     func updatePlaceholderVisibility() {
         let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
-        let haveNoTrackers = categories.filter({ $0.trackers.count > 0 }).count == 0
+        let haveNoTrackers = repo.categories.filter({ $0.trackers.count > 0 }).count == 0
 
         UIView.animate(withDuration: 0.25) { [weak self] in
             guard let self else { return }
@@ -212,10 +231,10 @@ extension TrackersViewController {
             return
         }
 
-        var completedTrackersForDay = completedTrackers[selectedDate, default: []]
+        var completedTrackersForDay = repo.completedTrackers[selectedDate, default: []]
         completedTrackersForDay.insert(.init(trackerId: tracker.id, date: selectedDate))
 
-        completedTrackers[selectedDate] = completedTrackersForDay
+        repo.completedTrackers[selectedDate] = completedTrackersForDay
     }
 
     @objc private func dateSelected(_ sender: UIDatePicker) {
@@ -224,7 +243,7 @@ extension TrackersViewController {
 
     @objc private func addTapped() {
         let newTrackerVC = NewTracker.start(
-            categories: categories,
+            categories: repo.categories,
             onNewCategory: addCategory,
             onNewTracker: addTracker
         )
@@ -233,13 +252,13 @@ extension TrackersViewController {
     }
 
     func addCategory(_ category: TrackerCategory) {
-        var newCategories = categories
+        var newCategories = repo.categories
         newCategories.append(category)
-        categories = newCategories
+        repo.categories = newCategories
     }
 
     func addTracker(_ tracker: Tracker, to category: TrackerCategory) {
-        var newCategories = categories
+        var newCategories = repo.categories
 
         guard let index = newCategories.firstIndex(where: { $0.id == category.id }) else {
             assertionFailure("Data not in sync")
@@ -253,7 +272,7 @@ extension TrackersViewController {
         let newCategory = TrackerCategory(label: existingCategory.label, trackers: trackers)
         newCategories[index] = newCategory
 
-        categories = newCategories
+        repo.categories = newCategories
     }
 }
 
@@ -399,13 +418,13 @@ private extension TrackersViewController {
         let emptySearch = searchText.isEmpty
         var result = FilteredData()
 
-        categories.forEach { category in
+        repo.categories.forEach { category in
             let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
 
             let trackers = category.trackers.filter { tracker in
                 let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
                 let isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
-                let isCompletedForDate = completedTrackers[selectedDate]?.contains(
+                let isCompletedForDate = repo.completedTrackers[selectedDate]?.contains(
                     .init(trackerId: tracker.id, date: selectedDate)
                 ) ?? false
 
