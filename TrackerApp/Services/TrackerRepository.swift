@@ -86,8 +86,6 @@ extension TrackerRepository: TrackerStoring {
                 result.append((category: category, trackers: trackers))
             }
         }
-        print(completedTrackers)
-        print(result)
 
         return result
     }

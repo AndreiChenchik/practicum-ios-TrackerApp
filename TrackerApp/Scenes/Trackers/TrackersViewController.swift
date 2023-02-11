@@ -339,7 +339,6 @@ private extension TrackersViewController {
         let searchText = searchText ?? self.searchText
         let selectedDate = selectedDate ?? self.selectedDate
 
-        print("filter", searchText, selectedDate)
         repo.filtered(at: selectedDate, with: searchText).forEach {
             snapshot.appendSections([$0.category])
             snapshot.appendItems($0.trackers, toSection: $0.category)
