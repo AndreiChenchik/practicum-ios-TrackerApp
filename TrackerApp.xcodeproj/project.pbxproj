@@ -127,13 +127,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		38083D96298E91FE00D47E8A /* Cells */ = {
+		38083D96298E91FE00D47E8A /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				38083DA9298EF10C00D47E8A /* CategoryTableViewCell.swift */,
 				38083D9E298EB5CD00D47E8A /* TrackerEmojiCollectionCell.swift */,
 				38083DA0298EBA7500D47E8A /* TrackerColorCollectionCell.swift */,
+				38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */,
 			);
-			path = Cells;
+			path = Components;
 			sourceTree = "<group>";
 		};
 		38083D97298EA7B000D47E8A /* Cells */ = {
@@ -147,22 +149,24 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		38083DA6298EE2D600D47E8A /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */,
-				38083DA9298EF10C00D47E8A /* CategoryTableViewCell.swift */,
-				38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */,
-			);
-			path = Category;
-			sourceTree = "<group>";
-		};
 		38083DF92997AC9000D47E8A /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				38083DFA2997ACAE00D47E8A /* TrackerRepository.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		38083E0029981F9800D47E8A /* Steps */ = {
+			isa = PBXGroup;
+			children = (
+				38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */,
+				38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */,
+				38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */,
+				38C1AB872987B1EE00AB7B0E /* TrackerConfigViewController.swift */,
+				38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */,
+			);
+			path = Steps;
 			sourceTree = "<group>";
 		};
 		38ACF4FA297D7E8000CD2DB2 = {
@@ -276,11 +280,10 @@
 		38C1AB6A2985BA1400AB7B0E /* NewTracker */ = {
 			isa = PBXGroup;
 			children = (
-				38083DA6298EE2D600D47E8A /* Category */,
-				38C1AB91298DBD8C00AB7B0E /* Type */,
-				38C1AB90298DBD6200AB7B0E /* Config */,
-				38C1AB8F298DBCF300AB7B0E /* Schedule */,
+				38083D96298E91FE00D47E8A /* Components */,
+				38083E0029981F9800D47E8A /* Steps */,
 				38C1AB6D2985BB1100AB7B0E /* TrackerCreationCoordinator.swift */,
+				38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -309,33 +312,6 @@
 				38083DFE2998027400D47E8A /* UINavigationController+Appearance.swift */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		38C1AB8F298DBCF300AB7B0E /* Schedule */ = {
-			isa = PBXGroup;
-			children = (
-				38C1AB8329872B1100AB7B0E /* ScheduleViewController.swift */,
-				38C1AB8529872ED400AB7B0E /* ScheduleViewCell.swift */,
-			);
-			path = Schedule;
-			sourceTree = "<group>";
-		};
-		38C1AB90298DBD6200AB7B0E /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				38083D96298E91FE00D47E8A /* Cells */,
-				38C1AB872987B1EE00AB7B0E /* TrackerConfigViewController.swift */,
-			);
-			path = Config;
-			sourceTree = "<group>";
-		};
-		38C1AB91298DBD8C00AB7B0E /* Type */ = {
-			isa = PBXGroup;
-			children = (
-				38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */,
-				38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */,
-			);
-			path = Type;
 			sourceTree = "<group>";
 		};
 		38C1AB96298E47C000AB7B0E /* Previews */ = {
