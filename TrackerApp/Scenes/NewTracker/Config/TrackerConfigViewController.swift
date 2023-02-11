@@ -1,10 +1,12 @@
 import UIKit
+import Combine
 
 final class TrackerConfigViewController: UIViewController {
-    private var categories: [TrackerCategory]
     private let type: TrackerType
+
     private let onCreate: (Tracker, UUID) -> Void
-    private let onNewCategory: (TrackerCategory) -> Void
+    private let onCategory: () -> Void
+    private let onSchedule: () -> Void
 
     private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
@@ -18,18 +20,40 @@ final class TrackerConfigViewController: UIViewController {
         Property.allCases { $0 != .schedule || type == .habit }
     }
 
+    private var cancellable: Set<AnyCancellable> = []
+
     init(
         _ type: TrackerType,
-        categories: [TrackerCategory],
+        selectedSchedule: Published<Set<WeekDay>>.Publisher,
+        selectedCategory: Published<TrackerCategory?>.Publisher,
         onCreate: @escaping (Tracker, UUID) -> Void,
-        onNewCategory: @escaping (TrackerCategory) -> Void
+        onCategory: @escaping () -> Void,
+        onSchedule: @escaping () -> Void
     ) {
         self.type = type
-        self.categories = categories
         self.onCreate = onCreate
-        self.onNewCategory = onNewCategory
+        self.onCategory = onCategory
+        self.onSchedule = onSchedule
 
         super.init(nibName: nil, bundle: nil)
+
+        selectedSchedule
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.schedule = $0
+                self?.collectionView.reloadData()
+            }
+            .store(in: &cancellable)
+
+        selectedCategory
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.selectedCategory = $0
+                self?.collectionView.reloadData()
+            }
+            .store(in: &cancellable)
     }
 
     required init?(coder: NSCoder) {
@@ -184,53 +208,9 @@ private extension TrackerConfigViewController {
 
         switch property {
         case .schedule:
-            selectSchedule()
+            onSchedule()
         case .category:
-            selectCategory()
-        }
-    }
-
-    func selectCategory() {
-        let scheduleVC = TrackerCategoryViewController(
-            categories, selectedCategory: selectedCategory
-        ) { [weak self] category in
-            guard let self else { return }
-
-            self.selectedCategory = category
-
-            let cell = self.collectionView.cellForItem(
-                at: .init(row: Property.category.rawValue, section: Section.properties.rawValue)
-            ) as? YPLinkCollectionCell
-
-            cell?.setDescription(category.label)
-        } onNewCategory: { [weak self] category in
-            self?.categories.append(category)
-            self?.onNewCategory(category)
-        }
-
-        navigateTo(scheduleVC)
-    }
-
-    func selectSchedule() {
-        let scheduleVC = ScheduleViewController(schedule) { [weak self] newSchedule in
-            guard let self else { return }
-
-            self.schedule = newSchedule
-            let cell = self.collectionView.cellForItem(
-                at: .init(row: Property.schedule.rawValue, section: Section.properties.rawValue)
-            ) as? YPLinkCollectionCell
-
-            cell?.setDescription(newSchedule.shortDescription)
-        }
-
-        navigateTo(scheduleVC)
-    }
-
-    func navigateTo(_ viewController: UIViewController) {
-        if let navigationController {
-            navigationController.pushViewController(viewController, animated: true)
-        } else {
-            present(viewController, animated: true)
+            onCategory()
         }
     }
 
@@ -586,28 +566,3 @@ private extension TrackerConfigViewController {
         return cell
     }
 }
-
-// MARK: - Preview
-
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
-struct TrackerConfigViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        Rectangle()
-            .foregroundColor(.black)
-            .edgesIgnoringSafeArea(.all)
-            .sheet(isPresented: .constant(true)) {
-
-            UIViewControllerPreview {
-                let rootVC = TrackerConfigViewController(.habit, categories: [.mockHome]) { _, _ in
-                } onNewCategory: { _ in }
-
-                let viewController = UINavigationController(rootViewController: rootVC)
-                viewController.configureForYPModal()
-                return viewController
-            }
-            .edgesIgnoringSafeArea(.all)
-        }
-    }
-}
-#endif

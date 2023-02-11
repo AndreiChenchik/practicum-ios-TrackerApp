@@ -6,6 +6,8 @@ typealias FilteredTrackers = [(category: TrackerCategory, trackers: [Tracker])]
 protocol TrackerStoring {
     var completedTrackers: [Date: Set<TrackerRecord>] { get set }
     var categories: [TrackerCategory] { get set }
+    var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
+
     var objectWillChange: ObservableObjectPublisher { get }
 
     func addCategory(_ category: TrackerCategory)
@@ -22,6 +24,7 @@ final class TrackerRepository: ObservableObject {
 }
 
 extension TrackerRepository: TrackerStoring {
+    var categoriesPublisher: Published<[TrackerCategory]>.Publisher { $categories }
 
     // MARK: - Creation
 

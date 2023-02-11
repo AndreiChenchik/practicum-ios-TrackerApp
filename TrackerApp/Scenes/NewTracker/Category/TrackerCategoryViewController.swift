@@ -1,24 +1,35 @@
 import UIKit
+import Combine
 
 final class TrackerCategoryViewController: UIViewController {
+    private let onNewCategory: () -> Void
     private let onSelect: (TrackerCategory) -> Void
-    private let onNewCategory: (TrackerCategory) -> Void
 
-    private var categories: [TrackerCategory]
+    private var categories: [TrackerCategory] = []
     private var selectedCategory: TrackerCategory?
 
+    private var cancellable: Set<AnyCancellable> = []
+
     init(
-        _ categories: [TrackerCategory],
+        _ categories: some Publisher<[TrackerCategory], Never>,
         selectedCategory: TrackerCategory?,
-        onSelect: @escaping (TrackerCategory) -> Void,
-        onNewCategory: @escaping (TrackerCategory) -> Void
+        onNewCategory: @escaping () -> Void,
+        onSelect: @escaping (TrackerCategory) -> Void
     ) {
-        self.categories = categories
         self.selectedCategory = selectedCategory
         self.onSelect = onSelect
         self.onNewCategory = onNewCategory
 
         super.init(nibName: nil, bundle: nil)
+
+        categories
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.categories = $0
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellable)
     }
 
     required init?(coder: NSCoder) {
@@ -165,44 +176,6 @@ private extension TrackerCategoryViewController {
 
 private extension TrackerCategoryViewController {
     @objc func addCategory() {
-        let newCategoryVC = NewCategoryViewController { [weak self] newCategory in
-            guard let self else { return }
-            self.categories.append(newCategory)
-            self.onNewCategory(newCategory)
-        }
-
-        navigateTo(newCategoryVC)
-    }
-
-    func navigateTo(_ viewController: UIViewController) {
-        if let navigationController {
-            navigationController.pushViewController(viewController, animated: true)
-        } else {
-            present(viewController, animated: true)
-        }
+        onNewCategory()
     }
 }
-
-// MARK: - Preview
-
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
-struct TrackerCategoryViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        Text("hello")
-            .sheet(isPresented: .constant(true)) {
-                UIViewControllerPreview {
-                    let array = [TrackerCategory](repeating: .mockHome, count: 20)
-                    let rootVC = TrackerCategoryViewController(
-                        array, selectedCategory: array[3]
-                    ) { _ in } onNewCategory: { _ in }
-                    let viewController = UINavigationController(rootViewController: rootVC)
-                    viewController.configureForYPModal()
-                    return viewController
-                }
-                .edgesIgnoringSafeArea(.all)
-            }
-            .edgesIgnoringSafeArea(.all)
-    }
-}
-#endif
