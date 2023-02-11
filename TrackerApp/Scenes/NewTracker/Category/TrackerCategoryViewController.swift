@@ -197,7 +197,7 @@ struct TrackerCategoryViewController_Previews: PreviewProvider {
                         array, selectedCategory: array[3]
                     ) { _ in } onNewCategory: { _ in }
                     let viewController = UINavigationController(rootViewController: rootVC)
-                    viewController.configureForModal()
+                    viewController.configureForYPModal()
                     return viewController
                 }
                 .edgesIgnoringSafeArea(.all)

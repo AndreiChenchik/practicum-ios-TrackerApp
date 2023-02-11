@@ -30,10 +30,15 @@ class HomeViewController: UITabBarController {
 
 private extension HomeViewController {
     private func setupTabs() {
-        let trackerVC = UINavigationController(rootViewController: TrackersViewController(repo: TrackerRepository()))
-        let statisticsVC = UINavigationController(rootViewController: StatisticsViewController())
+        let repository = TrackerRepository()
+        let newTrackerCoordinator = TrackerCreationCoordinator(repo: repository)
 
-        let controllers = [trackerVC, statisticsVC]
+        let trackersVC = TrackersViewController(repo: repository,
+                                                creationCoordinator: newTrackerCoordinator)
+        let statisticsVC = StatisticsViewController()
+
+        let controllers = [UINavigationController(rootViewController: trackersVC),
+                           UINavigationController(rootViewController: statisticsVC)]
         controllers.forEach(prepare)
 
         viewControllers = controllers

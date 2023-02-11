@@ -3,6 +3,7 @@ import Combine
 
 final class TrackersViewController: UIViewController {
     private var repo: TrackerStoring
+    private var creationCoordinator: Coordinator
     private lazy var dataSource = makeDataSource()
 
     @Published private var searchText = ""
@@ -10,8 +11,9 @@ final class TrackersViewController: UIViewController {
 
     private var cancellable: Set<AnyCancellable> = []
 
-    init(repo: TrackerStoring) {
+    init(repo: TrackerStoring, creationCoordinator: Coordinator) {
         self.repo = repo
+        self.creationCoordinator = creationCoordinator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -208,13 +210,7 @@ extension TrackersViewController {
     }
 
     @objc private func addTapped() {
-        let newTrackerVC = NewTracker.start(
-            categories: repo.categories,
-            onNewCategory: repo.addCategory,
-            onNewTracker: repo.addTracker
-        )
-
-        present(newTrackerVC, animated: true)
+        creationCoordinator.start(over: self)
     }
 }
 

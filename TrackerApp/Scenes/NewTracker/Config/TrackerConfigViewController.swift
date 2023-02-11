@@ -603,7 +603,7 @@ struct TrackerConfigViewController_Previews: PreviewProvider {
                 } onNewCategory: { _ in }
 
                 let viewController = UINavigationController(rootViewController: rootVC)
-                viewController.configureForModal()
+                viewController.configureForYPModal()
                 return viewController
             }
             .edgesIgnoringSafeArea(.all)
