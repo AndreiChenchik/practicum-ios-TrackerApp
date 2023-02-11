@@ -46,9 +46,9 @@ final class TrackersViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .combineLatest($selectedDate)
             .dropFirst()
-            .sink { [weak self] _ in
+            .sink { [weak self] text, date in
                 guard let self else { return }
-                self.applySnapshot()
+                self.applySnapshot(selectedDate: date, searchText: text)
             }
             .store(in: &cancellable)
     }
@@ -329,9 +329,17 @@ private extension TrackersViewController {
         return dataSource
     }
 
-    private func applySnapshot(animatingDifferences: Bool = true) {
+    private func applySnapshot(
+        selectedDate: Date? = nil,
+        searchText: String? = nil,
+        animatingDifferences: Bool = true
+    ) {
         var snapshot = Snapshot()
 
+        let searchText = searchText ?? self.searchText
+        let selectedDate = selectedDate ?? self.selectedDate
+
+        print("filter", searchText, selectedDate)
         repo.filtered(at: selectedDate, with: searchText).forEach {
             snapshot.appendSections([$0.category])
             snapshot.appendItems($0.trackers, toSection: $0.category)

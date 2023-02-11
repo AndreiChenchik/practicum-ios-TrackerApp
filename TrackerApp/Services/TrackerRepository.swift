@@ -4,7 +4,7 @@ import Combine
 typealias FilteredTrackers = [(category: TrackerCategory, trackers: [Tracker])]
 
 protocol TrackerStoring {
-    var completedTrackers: [Date: Set<TrackerRecord>] { get set }
+    var completedTrackers: [String: Set<TrackerRecord>] { get set }
     var categories: [TrackerCategory] { get set }
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
 
@@ -19,8 +19,14 @@ protocol TrackerStoring {
 }
 
 final class TrackerRepository: ObservableObject {
-    @Published var completedTrackers: [Date: Set<TrackerRecord>] = [:]
+    @Published var completedTrackers: [String: Set<TrackerRecord>] = [:]
     @Published var categories: [TrackerCategory] = []
+
+    private lazy var formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 }
 
 extension TrackerRepository: TrackerStoring {
@@ -68,9 +74,10 @@ extension TrackerRepository: TrackerStoring {
             let trackers = category.trackers.filter { tracker in
                 let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
                 let isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
-                let isCompletedForDate = completedTrackers[date]?.contains(
-                    .init(trackerId: tracker.id, date: date)
-                ) ?? false
+                let dateString = formatter.string(from: date)
+                let isCompletedForDate = completedTrackers[dateString]?.contains { record in
+                    record.trackerId == tracker.id
+                } ?? false
 
                 return (categoryIsInSearch || trackerIsInSearch) && isForDate && !isCompletedForDate
             }
@@ -79,6 +86,8 @@ extension TrackerRepository: TrackerStoring {
                 result.append((category: category, trackers: trackers))
             }
         }
+        print(completedTrackers)
+        print(result)
 
         return result
     }
@@ -86,9 +95,10 @@ extension TrackerRepository: TrackerStoring {
     // MARK: - Actions
 
     func markTrackerComplete(id: UUID, on date: Date) {
-        var completedTrackersForDay = completedTrackers[date, default: []]
+        let dateString = formatter.string(from: date)
+        var completedTrackersForDay = completedTrackers[dateString, default: []]
         completedTrackersForDay.insert(.init(trackerId: id, date: date))
 
-        completedTrackers[date] = completedTrackersForDay
+        completedTrackers[dateString] = completedTrackersForDay
     }
 }

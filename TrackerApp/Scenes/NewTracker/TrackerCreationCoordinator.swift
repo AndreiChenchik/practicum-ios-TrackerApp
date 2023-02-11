@@ -16,6 +16,9 @@ final class TrackerCreationCoordinator: Coordinator {
     }
 
     func start(over viewController: UIViewController) {
+        selectedSchedule = []
+        selectedCategory = nil
+
         let trackerTypeVC = TrackerTypeViewController(completion: onTypeSelect)
         navigationController.configureForYPModal()
 
