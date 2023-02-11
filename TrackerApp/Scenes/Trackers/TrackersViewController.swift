@@ -2,31 +2,22 @@ import UIKit
 import Combine
 
 final class TrackersViewController: UIViewController {
-    private var searchText = "" { didSet { applySnapshot() } }
-    private var selectedDate = Date() { didSet { applySnapshot() } }
-
     private var repo: TrackerStoring
+    private lazy var dataSource = makeDataSource()
+
+    @Published private var searchText = ""
+    @Published private var selectedDate = Date()
+
     private var cancellable: Set<AnyCancellable> = []
 
     init(repo: TrackerStoring) {
         self.repo = repo
         super.init(nibName: nil, bundle: nil)
-
-        repo.objectWillChange
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                guard let self else { return }
-                self.applySnapshot()
-            }
-            .store(in: &cancellable)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    private lazy var dataSource = makeDataSource()
-    private var kvObservers: Set<NSKeyValueObservation> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,8 +25,30 @@ final class TrackersViewController: UIViewController {
         setupAppearance()
         configureNavigationBar()
 
+        bindToUpdates()
+
         collectionView.dataSource = dataSource
         applySnapshot(animatingDifferences: false)
+    }
+
+    private func bindToUpdates() {
+        repo.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                self.applySnapshot()
+            }
+            .store(in: &cancellable)
+
+        $searchText
+            .receive(on: DispatchQueue.main)
+            .combineLatest($selectedDate)
+            .dropFirst()
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.applySnapshot()
+            }
+            .store(in: &cancellable)
     }
 
     // MARK: UI Components
@@ -58,8 +71,8 @@ final class TrackersViewController: UIViewController {
         return addButton
     }()
 
-    private lazy var datePicker: UIDatePicker = {
-        let picker = UIDatePicker()
+    private lazy var datePicker: YPDatePicker = {
+        let picker = YPDatePicker()
 
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
@@ -160,8 +173,6 @@ private extension TrackersViewController {
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-
-        changeDatePickerStyle()
     }
 
     func updatePlaceholderVisibility() {
@@ -174,48 +185,6 @@ private extension TrackersViewController {
             self.startPlaceholderView.alpha = viewIsEmpty && haveNoTrackers ? 1 : 0
             self.emptyPlaceholderView.alpha = viewIsEmpty && !haveNoTrackers ? 1 : 0
         }
-    }
-
-    func changeDatePickerStyle() {
-        datePicker
-            .subViewsWhere { view in
-                guard let backgroundColor = view.backgroundColor else { return false }
-                return backgroundColor.cgColor.alpha != 1
-            }
-            .forEach { view in
-                view.backgroundColor = .asset(.blue)
-
-                kvObservers.insert(
-                    view.observe(\.backgroundColor) { [weak view] _, _ in
-                        guard let view, let backgroundColor = view.backgroundColor else { return }
-
-                        if backgroundColor != .asset(.blue) {
-                            view.backgroundColor = .asset(.blue)
-                        }
-                    }
-                )
-            }
-
-        datePicker
-            .subViewsWhere { view in
-                view is UILabel
-            }
-            .forEach { view in
-                guard let label = view as? UILabel else { return }
-                label.tintColor = .asset(.white)
-                label.textColor = .asset(.white)
-                label.font = .asset(.ysDisplayRegular, size: 17)
-
-                kvObservers.insert(
-                    label.observe(\.textColor) { [weak label] _, _ in
-                        guard let label, let textColor = label.textColor else { return }
-
-                        if textColor != .asset(.white) {
-                            label.textColor = .asset(.white)
-                        }
-                    }
-                )
-            }
     }
 }
 
@@ -231,10 +200,7 @@ extension TrackersViewController {
             return
         }
 
-        var completedTrackersForDay = repo.completedTrackers[selectedDate, default: []]
-        completedTrackersForDay.insert(.init(trackerId: tracker.id, date: selectedDate))
-
-        repo.completedTrackers[selectedDate] = completedTrackersForDay
+        repo.markTrackerComplete(id: tracker.id, on: selectedDate)
     }
 
     @objc private func dateSelected(_ sender: UIDatePicker) {
@@ -244,35 +210,11 @@ extension TrackersViewController {
     @objc private func addTapped() {
         let newTrackerVC = NewTracker.start(
             categories: repo.categories,
-            onNewCategory: addCategory,
-            onNewTracker: addTracker
+            onNewCategory: repo.addCategory,
+            onNewTracker: repo.addTracker
         )
 
         present(newTrackerVC, animated: true)
-    }
-
-    func addCategory(_ category: TrackerCategory) {
-        var newCategories = repo.categories
-        newCategories.append(category)
-        repo.categories = newCategories
-    }
-
-    func addTracker(_ tracker: Tracker, to category: TrackerCategory) {
-        var newCategories = repo.categories
-
-        guard let index = newCategories.firstIndex(where: { $0.id == category.id }) else {
-            assertionFailure("Data not in sync")
-            return
-        }
-
-        let existingCategory = newCategories[index]
-        var trackers = existingCategory.trackers
-        trackers.append(tracker)
-
-        let newCategory = TrackerCategory(label: existingCategory.label, trackers: trackers)
-        newCategories[index] = newCategory
-
-        repo.categories = newCategories
     }
 }
 
@@ -390,17 +332,11 @@ private extension TrackersViewController {
 
         return dataSource
     }
-}
 
-// MARK: - Data filtering
-
-private extension TrackersViewController {
-    typealias FilteredData = [(category: TrackerCategory, trackers: [Tracker])]
-
-    func applySnapshot(animatingDifferences: Bool = true) {
+    private func applySnapshot(animatingDifferences: Bool = true) {
         var snapshot = Snapshot()
 
-        filteredData.forEach {
+        repo.filtered(at: selectedDate, with: searchText).forEach {
             snapshot.appendSections([$0.category])
             snapshot.appendItems($0.trackers, toSection: $0.category)
         }
@@ -408,34 +344,5 @@ private extension TrackersViewController {
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
 
         updatePlaceholderVisibility()
-    }
-
-    var filteredData: FilteredData {
-        guard let selectedWeekday = WeekDay(
-            rawValue: Calendar.current.component(.weekday, from: selectedDate)
-        ) else { preconditionFailure("Weekday must be in range of 1...7") }
-
-        let emptySearch = searchText.isEmpty
-        var result = FilteredData()
-
-        repo.categories.forEach { category in
-            let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
-
-            let trackers = category.trackers.filter { tracker in
-                let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
-                let isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
-                let isCompletedForDate = repo.completedTrackers[selectedDate]?.contains(
-                    .init(trackerId: tracker.id, date: selectedDate)
-                ) ?? false
-
-                return (categoryIsInSearch || trackerIsInSearch) && isForDate && !isCompletedForDate
-            }
-
-            if !trackers.isEmpty {
-                result.append((category: category, trackers: trackers))
-            }
-        }
-
-        return result
     }
 }

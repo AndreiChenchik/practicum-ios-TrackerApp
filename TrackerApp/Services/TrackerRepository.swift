@@ -1,10 +1,19 @@
 import Foundation
 import Combine
 
+typealias FilteredTrackers = [(category: TrackerCategory, trackers: [Tracker])]
+
 protocol TrackerStoring {
     var completedTrackers: [Date: Set<TrackerRecord>] { get set }
     var categories: [TrackerCategory] { get set }
     var objectWillChange: ObservableObjectPublisher { get }
+
+    func addCategory(_ category: TrackerCategory)
+    func addTracker(_ tracker: Tracker, toCategory id: UUID)
+
+    func filtered(at date: Date, with searchText: String) -> FilteredTrackers
+
+    func markTrackerComplete(id: UUID, on date: Date)
 }
 
 final class TrackerRepository: ObservableObject {
@@ -12,4 +21,71 @@ final class TrackerRepository: ObservableObject {
     @Published var categories: [TrackerCategory] = []
 }
 
-extension TrackerRepository: TrackerStoring {}
+extension TrackerRepository: TrackerStoring {
+
+    // MARK: - Creation
+
+    func addCategory(_ category: TrackerCategory) {
+        var newCategories = categories
+        newCategories.append(category)
+        categories = newCategories
+    }
+
+    func addTracker(_ tracker: Tracker, toCategory id: UUID) {
+        var newCategories = categories
+
+        guard let index = newCategories.firstIndex(where: { $0.id == id }) else {
+            assertionFailure("Can't find category")
+            return
+        }
+
+        let existingCategory = newCategories[index]
+        var trackers = existingCategory.trackers
+        trackers.append(tracker)
+
+        let newCategory = TrackerCategory(label: existingCategory.label, trackers: trackers)
+        newCategories[index] = newCategory
+
+        categories = newCategories
+    }
+
+    // MARK: - Data
+
+    func filtered(at date: Date, with searchText: String) -> FilteredTrackers {
+        guard let selectedWeekday = WeekDay(
+            rawValue: Calendar.current.component(.weekday, from: date)
+        ) else { preconditionFailure("Weekday must be in range of 1...7") }
+
+        let emptySearch = searchText.isEmpty
+        var result = FilteredTrackers()
+
+        categories.forEach { category in
+            let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
+
+            let trackers = category.trackers.filter { tracker in
+                let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
+                let isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
+                let isCompletedForDate = completedTrackers[date]?.contains(
+                    .init(trackerId: tracker.id, date: date)
+                ) ?? false
+
+                return (categoryIsInSearch || trackerIsInSearch) && isForDate && !isCompletedForDate
+            }
+
+            if !trackers.isEmpty {
+                result.append((category: category, trackers: trackers))
+            }
+        }
+
+        return result
+    }
+
+    // MARK: - Actions
+
+    func markTrackerComplete(id: UUID, on date: Date) {
+        var completedTrackersForDay = completedTrackers[date, default: []]
+        completedTrackersForDay.insert(.init(trackerId: id, date: date))
+
+        completedTrackers[date] = completedTrackersForDay
+    }
+}

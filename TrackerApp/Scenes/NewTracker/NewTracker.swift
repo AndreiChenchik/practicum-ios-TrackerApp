@@ -4,7 +4,7 @@ enum NewTracker {
     static func start(
         categories: [TrackerCategory],
         onNewCategory: @escaping (TrackerCategory) -> Void,
-        onNewTracker: @escaping (Tracker, TrackerCategory) -> Void
+        onNewTracker: @escaping (Tracker, UUID) -> Void
     ) -> UIViewController {
         let typeVC = TrackerTypeViewController { type in
             TrackerConfigViewController(

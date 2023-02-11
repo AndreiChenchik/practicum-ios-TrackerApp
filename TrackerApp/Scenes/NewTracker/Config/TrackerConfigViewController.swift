@@ -3,7 +3,7 @@ import UIKit
 final class TrackerConfigViewController: UIViewController {
     private var categories: [TrackerCategory]
     private let type: TrackerType
-    private let onCreate: (Tracker, TrackerCategory) -> Void
+    private let onCreate: (Tracker, UUID) -> Void
     private let onNewCategory: (TrackerCategory) -> Void
 
     private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
@@ -21,7 +21,7 @@ final class TrackerConfigViewController: UIViewController {
     init(
         _ type: TrackerType,
         categories: [TrackerCategory],
-        onCreate: @escaping (Tracker, TrackerCategory) -> Void,
+        onCreate: @escaping (Tracker, UUID) -> Void,
         onNewCategory: @escaping (TrackerCategory) -> Void
     ) {
         self.type = type
@@ -125,7 +125,7 @@ private extension TrackerConfigViewController {
             schedule: type == .habit ? schedule : nil
         )
 
-        onCreate(newTracker, selectedCategory)
+        onCreate(newTracker, selectedCategory.id)
 
         dismiss(animated: true)
     }
