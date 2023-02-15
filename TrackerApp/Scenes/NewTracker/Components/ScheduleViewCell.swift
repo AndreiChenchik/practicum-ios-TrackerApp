@@ -7,7 +7,27 @@ enum CornerCellType {
 final class ScheduleViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupAppearance()
+
+        backgroundColor = .clear
+        selectionStyle = .none
+
+        addSubview(labelView)
+        addSubview(toggleView)
+        insertSubview(backView, at: 0)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        backView.frame = bounds.insetBy(dx: 16, dy: 0)
+        labelView.frame = bounds.insetBy(dx: 32, dy: 0)
+        toggleView.frame = .init(
+            origin: .init(x: bounds.width - toggleView.frame.width - 32,
+                          y: (bounds.height - toggleView.frame.height) / 2),
+            size: toggleView.frame.size)
+    }
+
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        .init(width: size.width, height: 75)
     }
 
     required init?(coder: NSCoder) {
@@ -43,7 +63,6 @@ final class ScheduleViewCell: UITableViewCell {
 
         toggle.onTintColor = .asset(.blue)
 
-        toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
     }()
 
@@ -53,7 +72,6 @@ final class ScheduleViewCell: UITableViewCell {
         label.font = .asset(.ysDisplayRegular, size: 17)
         label.textColor = .asset(.black)
 
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -66,36 +84,8 @@ final class ScheduleViewCell: UITableViewCell {
         view.layer.masksToBounds = true
         view.layer.maskedCorners = []
 
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-}
-
-// MARK: - Appearance
-
-private extension ScheduleViewCell {
-
-    func setupAppearance() {
-        backgroundColor = .clear
-        selectionStyle = .none
-
-        addSubview(labelView)
-        addSubview(toggleView)
-        insertSubview(backView, at: 0)
-
-        NSLayoutConstraint.activate([
-            backView.topAnchor.constraint(equalTo: topAnchor),
-            backView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            backView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            backView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            labelView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelView.leadingAnchor.constraint(equalTo: backView.leadingAnchor, constant: 16),
-            labelView.topAnchor.constraint(equalTo: topAnchor, constant: 26.5),
-            labelView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -26.5),
-            toggleView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            toggleView.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -16)
-        ])
-    }
 }
 
 // MARK: - Preview
