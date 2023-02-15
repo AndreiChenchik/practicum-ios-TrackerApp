@@ -3,16 +3,12 @@ import UIKit
 final class CategoryTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        cell.translatesAutoresizingMaskIntoConstraints = false
         addSubview(cell)
+    }
 
-        NSLayoutConstraint.activate([
-            cell.topAnchor.constraint(equalTo: topAnchor),
-            cell.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            cell.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            cell.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        cell.frame = bounds.insetBy(dx: 16, dy: 0)
     }
 
     required init?(coder: NSCoder) {
@@ -27,7 +23,6 @@ final class CategoryTableViewCell: UITableViewCell {
         view.tintColor = .asset(.blue)
         view.isHidden = true
 
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
