@@ -58,12 +58,28 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
 import SwiftUI
 struct TrackerEmojiCollectionCell_Previews: PreviewProvider {
     static var previews: some View {
-        UIViewPreview {
-            let view = TrackerEmojiCollectionCell()
-            view.configure("❤️", isSelected: true)
-            return view
+        VStack {
+            UIViewPreview {
+                let view = TrackerEmojiCollectionCell()
+                view.configure("❤️", isSelected: true)
+                return view
+            }
+            .frame(width: 52, height: 52)
+
+            UIViewPreview {
+                let view = TrackerEmojiCollectionCell()
+                view.configure("❤️", isSelected: true)
+                return view
+            }
+            .frame(width: 200, height: 52)
+
+            UIViewPreview {
+                let view = TrackerEmojiCollectionCell()
+                view.configure("❤️", isSelected: true)
+                return view
+            }
+            .frame(width: 200, height: 150)
         }
-        .frame(width: 52, height: 52)
     }
 }
 #endif

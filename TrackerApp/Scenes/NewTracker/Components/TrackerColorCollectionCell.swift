@@ -10,7 +10,6 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
         view.layer.cornerRadius = 12
         view.clipsToBounds = true
 
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -20,7 +19,6 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
         view.layer.cornerRadius = 8
         view.clipsToBounds = true
 
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -29,17 +27,13 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
 
         addSubview(background)
         addSubview(colorView)
+    }
 
-        NSLayoutConstraint.activate([
-            colorView.topAnchor.constraint(equalTo: topAnchor, constant: 6),
-            colorView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6),
-            colorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
-            colorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
-            background.topAnchor.constraint(equalTo: topAnchor),
-            background.bottomAnchor.constraint(equalTo: bottomAnchor),
-            background.leadingAnchor.constraint(equalTo: leadingAnchor),
-            background.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        background.frame = bounds
+        colorView.frame = bounds.insetBy(dx: 6, dy: 6)
     }
 
     func configure(_ color: UIColor?, isSelected: Bool = false) {
@@ -67,12 +61,28 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
 import SwiftUI
 struct TrackerColorCollectionCell_Previews: PreviewProvider {
     static var previews: some View {
-        UIViewPreview {
-            let view = TrackerColorCollectionCell()
-            view.configure(.red, isSelected: true)
-            return view
+        VStack {
+            UIViewPreview {
+                let view = TrackerColorCollectionCell()
+                view.configure(.red, isSelected: true)
+                return view
+            }
+            .frame(width: 52, height: 52)
+
+            UIViewPreview {
+                let view = TrackerColorCollectionCell()
+                view.configure(.red, isSelected: true)
+                return view
+            }
+            .frame(width: 100, height: 52)
+
+            UIViewPreview {
+                let view = TrackerColorCollectionCell()
+                view.configure(.red, isSelected: true)
+                return view
+            }
+            .frame(width: 200, height: 100)
         }
-        .frame(width: 52, height: 52)
     }
 }
 #endif
