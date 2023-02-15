@@ -8,7 +8,6 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
         view.clipsToBounds = true
         view.backgroundColor = .asset(.lightGray)
 
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -16,8 +15,8 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
         let label = UILabel()
 
         label.font = .asset(.ysDisplayBold, size: 32)
+        label.textAlignment = .center
 
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -26,15 +25,12 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
 
         addSubview(background)
         addSubview(labelView)
+    }
 
-        NSLayoutConstraint.activate([
-            labelView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            background.topAnchor.constraint(equalTo: topAnchor),
-            background.bottomAnchor.constraint(equalTo: bottomAnchor),
-            background.leadingAnchor.constraint(equalTo: leadingAnchor),
-            background.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        background.frame = bounds
+        labelView.frame = bounds
     }
 
     func configure(_ emoji: String?, isSelected: Bool = false) {
