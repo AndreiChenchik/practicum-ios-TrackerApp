@@ -2,6 +2,11 @@ import UIKit
 import Combine
 
 final class TrackerConfigViewController: UIViewController {
+    typealias Property = TrackerConfig.Property
+    typealias Emoji = TrackerConfig.Emoji
+    typealias Control = TrackerConfig.Control
+    typealias Section = TrackerConfig.Section
+
     private let type: TrackerType
 
     private let onCreate: (Tracker, UUID) -> Void
@@ -13,8 +18,6 @@ final class TrackerConfigViewController: UIViewController {
     private var selectedCategory: TrackerCategory? { didSet { updateButtonStatus() } }
     private var selectedEmoji: String? { didSet { updateButtonStatus() } }
     private var selectedColor: TrackerColor? { didSet { updateButtonStatus() } }
-
-    private let collectionInsets = UIEdgeInsets(top: 24, left: 16, bottom: 16, right: 16)
 
     private var relevantProperties: [Property] {
         Property.allCases { $0 != .schedule || type == .habit }
@@ -79,11 +82,10 @@ final class TrackerConfigViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(
             frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout()
+            collectionViewLayout: UICollectionViewCompositionalLayout.trackerConfig
         )
 
         collection.keyboardDismissMode = .onDrag
-        collection.contentInset = collectionInsets
 
         collection.register(
             YPInputCollectionCell.self,
@@ -244,165 +246,6 @@ extension TrackerConfigViewController: UICollectionViewDelegate {
     }
 }
 
-// MARK: - Configuration
-
-private extension TrackerConfigViewController {
-    enum Section: Int, CaseIterable {
-        case name, properties, emojis, colors, controls
-
-        var label: String? {
-            switch self {
-            case .emojis:
-                return "Emoji"
-            case .colors:
-                return "Цвет"
-            default:
-                return nil
-            }
-        }
-    }
-
-    enum Property: Int, CaseIterable {
-        case category, schedule
-
-        var label: String {
-            switch self {
-            case .category:
-                return "Категория"
-            case .schedule:
-                return "Расписание"
-            }
-        }
-
-        static func allCases(isIncluded: (Property) -> Bool) -> [Self] {
-            Self.allCases.filter(isIncluded)
-        }
-    }
-
-    enum Control: Int, CaseIterable {
-        case cancel, submit
-
-        var label: String {
-            switch self {
-            case .cancel:
-                return "Отменить"
-            case .submit:
-                return "Создать"
-            }
-        }
-    }
-
-    enum Emoji {
-        static let list = [
-            "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶",
-            "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
-        ]
-    }
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-extension TrackerConfigViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        guard let section = Section(rawValue: indexPath.section) else { return .zero }
-
-        switch section {
-
-        case .name, .properties:
-            return CGSize(
-                width: collectionView.frame.width - collectionInsets.left - collectionInsets.right,
-                height: 75
-            )
-
-        case .emojis, .colors:
-            return CGSize(width: 52, height: 52)
-
-        case .controls:
-            let margin = collectionInsets.left + collectionInsets.right
-            let availableWidth = collectionView.frame.width - margin - 8
-
-            return CGSize(
-                width: availableWidth / 2,
-                height: 60
-            )
-        }
-
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int
-    ) -> CGFloat {
-        guard let section = Section(rawValue: section) else { return .zero }
-
-        switch section {
-
-        case .controls:
-            return 8
-
-        case .emojis, .colors:
-            return 5
-
-        default:
-            return .zero
-
-        }
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int
-    ) -> CGFloat {
-        .zero
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int
-    ) -> UIEdgeInsets {
-        guard let section = Section(rawValue: section) else { return .zero }
-
-        switch section {
-        case .properties:
-            return .init(top: 24, left: 0, bottom: 32, right: 0)
-        case .emojis, .colors:
-            return .init(top: 24, left: 0, bottom: 40, right: 0)
-        case .controls:
-            return .init(top: 6, left: 0, bottom: 0, right: 0)
-        default:
-            return .zero
-        }
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        let indexPath = IndexPath(row: 0, section: section)
-        let footerView = self.collectionView(
-            collectionView,
-            viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-            at: indexPath
-        )
-
-        return footerView.systemLayoutSizeFitting(
-            CGSize(
-                width: collectionView.frame.width,
-                height: UIView.layoutFittingExpandedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
-    }
-}
-
 // MARK: - UICollectionViewDataSource
 
 extension TrackerConfigViewController: UICollectionViewDataSource {
@@ -417,16 +260,11 @@ extension TrackerConfigViewController: UICollectionViewDataSource {
         guard let section = Section(rawValue: section) else { return 0 }
 
         switch section {
-        case .name:
-            return 1
-        case .properties:
-            return relevantProperties.count
-        case .emojis:
-            return Emoji.list.count
-        case .colors:
-            return TrackerColor.allCases.count
-        case .controls:
-            return Control.allCases.count
+        case .name: return 1
+        case .properties: return relevantProperties.count
+        case .emojis: return Emoji.list.count
+        case .colors: return TrackerColor.allCases.count
+        case .controls: return Control.allCases.count
         }
     }
 
@@ -439,16 +277,11 @@ extension TrackerConfigViewController: UICollectionViewDataSource {
         }
 
         switch section {
-        case .name:
-            return getInputCell(collectionView, path: indexPath)
-        case .properties:
-            return getLinkCell(collectionView, path: indexPath)
-        case .emojis:
-            return getEmojiCell(collectionView, path: indexPath)
-        case .colors:
-            return getColorCell(collectionView, path: indexPath)
-        case .controls:
-            return getControlCell(collectionView, path: indexPath)
+        case .name: return getInputCell(collectionView, path: indexPath)
+        case .properties: return getLinkCell(collectionView, path: indexPath)
+        case .emojis: return getEmojiCell(collectionView, path: indexPath)
+        case .colors: return getColorCell(collectionView, path: indexPath)
+        case .controls: return getControlCell(collectionView, path: indexPath)
         }
     }
 
@@ -557,10 +390,8 @@ private extension TrackerConfigViewController {
         ) as? WrapperCollectionCell else { preconditionFailure("Something went terribly wrong") }
 
         switch control {
-        case .cancel:
-            cell.configure(view: cancelButton)
-        case .submit:
-            cell.configure(view: createButton)
+        case .cancel: cell.configure(view: cancelButton)
+        case .submit: cell.configure(view: createButton)
         }
 
         return cell
