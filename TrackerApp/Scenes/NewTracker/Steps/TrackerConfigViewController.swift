@@ -87,36 +87,24 @@ final class TrackerConfigViewController: UIViewController {
 
         collection.keyboardDismissMode = .onDrag
 
-        collection.register(
-            YPInputCollectionCell.self,
-            forCellWithReuseIdentifier: "\(YPInputCollectionCell.self)")
-
-        collection.register(
-            YPLinkCollectionCell.self,
-            forCellWithReuseIdentifier: "\(YPLinkCollectionCell.self)")
-
-        collection.register(
-            TrackerEmojiCollectionCell.self,
-            forCellWithReuseIdentifier: "\(TrackerEmojiCollectionCell.self)")
-
-        collection.register(
-            TrackerColorCollectionCell.self,
-            forCellWithReuseIdentifier: "\(TrackerColorCollectionCell.self)")
-
-        collection.register(
-            WrapperCollectionCell.self,
-            forCellWithReuseIdentifier: "\(WrapperCollectionCell.self)")
-
-        collection.register(
-            YPSectionHeaderCollectionView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)")
+        collection.register(YPInputCollectionCell.self,
+                            forCellWithReuseIdentifier: "\(YPInputCollectionCell.self)")
+        collection.register(YPLinkCollectionCell.self,
+                            forCellWithReuseIdentifier: "\(YPLinkCollectionCell.self)")
+        collection.register(TrackerEmojiCollectionCell.self,
+                            forCellWithReuseIdentifier: "\(TrackerEmojiCollectionCell.self)")
+        collection.register(TrackerColorCollectionCell.self,
+                            forCellWithReuseIdentifier: "\(TrackerColorCollectionCell.self)")
+        collection.register(WrapperCollectionCell.self,
+                            forCellWithReuseIdentifier: "\(WrapperCollectionCell.self)")
+        collection.register(YPSectionHeaderCollectionView.self,
+                            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)")
 
         collection.delegate = self
         collection.dataSource = self
 
         collection.translatesAutoresizingMaskIntoConstraints = false
-
         return collection
     }()
 
@@ -130,7 +118,6 @@ final class TrackerConfigViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = YPButton(label: "Отменить", destructive: true)
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-
         return button
     }()
 }
@@ -152,7 +139,6 @@ private extension TrackerConfigViewController {
         )
 
         onCreate(newTracker, selectedCategory.id)
-
         dismiss(animated: true)
     }
 
