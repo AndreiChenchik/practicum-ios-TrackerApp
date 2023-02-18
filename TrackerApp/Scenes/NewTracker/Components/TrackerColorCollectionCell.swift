@@ -71,6 +71,13 @@ struct TrackerColorCollectionCell_Previews: PreviewProvider {
 
             UIViewPreview {
                 let view = TrackerColorCollectionCell()
+                view.configure(.red, isSelected: false)
+                return view
+            }
+            .frame(width: 52, height: 52)
+
+            UIViewPreview {
+                let view = TrackerColorCollectionCell()
                 view.configure(.red, isSelected: true)
                 return view
             }

@@ -194,13 +194,32 @@ struct CellView_Previews: PreviewProvider {
                 let view = CellView(
                     content: UISwitch(),
                     label: "Label",
-                    description: "Description",
+                    description: nil,
+                    outCorner: [],
+                    hasDivider: true
+                )
+
+                return view
+            }
+            .frame(height: 75)
+
+            UIViewPreview {
+                let innerView = UIImageView()
+
+                innerView.image = .asset(.checkmarkIcon)
+                innerView.tintColor = .asset(.blue)
+                
+                let view = CellView(
+                    content: innerView,
+                    label: "Label",
+                    description: "Has checkmark",
                     outCorner: [.bottom]
                 )
 
                 return view
             }
             .frame(height: 75)
+
         }
         .padding(20)
     }

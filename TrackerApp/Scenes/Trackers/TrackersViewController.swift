@@ -117,6 +117,8 @@ final class TrackersViewController: UIViewController {
             withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)"
         )
 
+        collection.alwaysBounceVertical = true
+
         return collection
     }()
 
