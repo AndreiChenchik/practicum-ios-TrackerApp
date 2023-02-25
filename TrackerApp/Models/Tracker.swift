@@ -33,9 +33,13 @@ extension Tracker {
             let label = data.label,
             let emoji = data.emoji,
             let hex = data.colorHex,
-            let color = TrackerColor(rawValue: hex),
-            let schedule = data.schedule as? Set<WeekDay>?
+            let color = TrackerColor(rawValue: hex)
         else { return nil }
+
+        var schedule: Set<WeekDay>?
+        if let scheduleData = data.schedule {
+            schedule = try? JSONDecoder().decode(Set<WeekDay>.self, from: scheduleData)
+        }
 
         return .init(id: id, label: label, emoji: emoji, color: color, schedule: schedule)
     }

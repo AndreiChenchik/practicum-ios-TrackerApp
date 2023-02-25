@@ -177,7 +177,7 @@ private extension TrackersViewController {
     func updatePlaceholderVisibility() {
         let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
         let haveNoTrackers = repo
-            .filtered(at: selectedDate, with: searchText)
+            .filtered(at: nil, with: "")
             .filter({ $0.trackers.count > 0 })
             .count == 0
 
@@ -284,8 +284,8 @@ private extension TrackersViewController {
         let selectedDate = selectedDate ?? self.selectedDate
 
         repo.filtered(at: selectedDate, with: searchText).forEach {
-            snapshot.appendSections([$0.category])
-            snapshot.appendItems($0.trackers, toSection: $0.category)
+            snapshot.appendSections([$0])
+            snapshot.appendItems($0.trackers, toSection: $0)
         }
 
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
