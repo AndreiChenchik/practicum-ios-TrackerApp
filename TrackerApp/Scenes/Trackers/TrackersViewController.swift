@@ -176,7 +176,10 @@ private extension TrackersViewController {
 
     func updatePlaceholderVisibility() {
         let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
-        let haveNoTrackers = repo.categories.filter({ $0.trackers.count > 0 }).count == 0
+        let haveNoTrackers = repo
+            .filtered(at: selectedDate, with: searchText)
+            .filter({ $0.trackers.count > 0 })
+            .count == 0
 
         UIView.animate(withDuration: 0.25) { [weak self] in
             guard let self else { return }

@@ -25,3 +25,14 @@ extension TrackerCategory {
         .init(label: "Радостные мелочи 2", trackers: [.mockCatCamera, .mockGrandma, .mockDating])
     }
 }
+
+extension TrackerCategory {
+    static func fromCoreData(_ data: TrackerCategoryCD) -> TrackerCategory? {
+        guard let id = data.id, let label = data.label else { return nil }
+
+        let trackersCD = data.trackers as? Set<TrackerCD> ?? []
+        let trackers = trackersCD.compactMap { Tracker.fromCoreData($0) }
+
+        return .init(id: id, label: label, trackers: trackers)
+    }
+}

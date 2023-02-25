@@ -4,18 +4,14 @@ import Combine
 typealias FilteredTrackers = [(category: TrackerCategory, trackers: [Tracker])]
 
 protocol TrackerStoring {
-    var completedTrackers: [String: Set<TrackerRecord>] { get set }
-    var categories: [TrackerCategory] { get set }
-    var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
-
-    var objectWillChange: ObservableObjectPublisher { get }
-
     func addCategory(_ category: TrackerCategory)
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
+    func markTrackerComplete(id: UUID, on date: Date)
 
     func filtered(at date: Date, with searchText: String) -> FilteredTrackers
 
-    func markTrackerComplete(id: UUID, on date: Date)
+    var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
+    var objectWillChange: ObservableObjectPublisher { get }
 }
 
 final class TrackerRepository: ObservableObject {
@@ -27,6 +23,8 @@ final class TrackerRepository: ObservableObject {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
+
+    
 }
 
 extension TrackerRepository: TrackerStoring {
