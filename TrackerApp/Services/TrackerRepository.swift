@@ -20,7 +20,7 @@ protocol TrackerStoring {
 
 final class TrackerRepository: ObservableObject {
     @Published var completedTrackers: [String: Set<TrackerRecord>] = [:]
-    @Published var categories: [TrackerCategory] = []
+    @Published var categories: [TrackerCategory] = [.mockHome, .mockSmallThings, .mockSmallThings2]
 
     private lazy var formatter: DateFormatter = {
         let formatter = DateFormatter()

@@ -208,7 +208,7 @@ struct CellView_Previews: PreviewProvider {
 
                 innerView.image = .asset(.checkmarkIcon)
                 innerView.tintColor = .asset(.blue)
-                
+
                 let view = CellView(
                     content: innerView,
                     label: "Label",
