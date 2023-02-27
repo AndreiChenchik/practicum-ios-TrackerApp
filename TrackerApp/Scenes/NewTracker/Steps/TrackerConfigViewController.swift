@@ -226,7 +226,7 @@ extension TrackerConfigViewController: UICollectionViewDelegate {
             tapColor(at: indexPath)
         case .properties:
             tapLink(at: indexPath)
-        default:
+        case .controls, .name:
             return
         }
     }
