@@ -15,11 +15,10 @@ protocol CoreDataDated {
 
 final class Store<Entity>: NSObject, NSFetchedResultsControllerDelegate
 where Entity: NSManagedObject & CoreDataIdentifiable & CoreDataDated {
-    let context: NSManagedObjectContext
-    weak var delegate: StoreDelegate?
-
     var data: [Entity] { resultController.fetchedObjects ?? [] }
 
+    private weak var delegate: StoreDelegate?
+    private let context: NSManagedObjectContext
     private lazy var resultController: NSFetchedResultsController<Entity> = {
         guard let fetchRequest = Entity.fetchRequest() as? NSFetchRequest<Entity> else {
             preconditionFailure("Can't create fetch request")

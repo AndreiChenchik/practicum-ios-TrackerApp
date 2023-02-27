@@ -27,7 +27,7 @@ extension Tracker {
 }
 
 extension Tracker {
-    static func fromCoreData(_ data: TrackerCD) -> Tracker? {
+    static func fromCoreData(_ data: TrackerCD, decoder: JSONDecoder) -> Tracker? {
         guard
             let id = data.id,
             let label = data.label,
@@ -38,7 +38,7 @@ extension Tracker {
 
         var schedule: Set<WeekDay>?
         if let scheduleData = data.schedule {
-            schedule = try? JSONDecoder().decode(Set<WeekDay>.self, from: scheduleData)
+            schedule = try? decoder.decode(Set<WeekDay>.self, from: scheduleData)
         }
 
         return .init(id: id, label: label, emoji: emoji, color: color, schedule: schedule)

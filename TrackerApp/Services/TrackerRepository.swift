@@ -23,6 +23,9 @@ final class TrackerRepository: NSObject, ObservableObject {
         return formatter
     }()
 
+    private lazy var jsonEncoder = JSONEncoder()
+    private lazy var jsonDecoder = JSONDecoder()
+
     private lazy var trackerStore: TrackerStore = { .init(delegate: self) }()
     private lazy var categoryStore: TrackerCategoryStore = { .init(delegate: self) }()
     private lazy var recordStore: TrackerRecordStore = { .init(delegate: self) }()
@@ -34,7 +37,8 @@ final class TrackerRepository: NSObject, ObservableObject {
 
     func fetchData() {
         let categoriesCD = categoryStore.data
-        categories = categoriesCD.compactMap { TrackerCategory.fromCoreData($0) }
+        categories = categoriesCD.compactMap { TrackerCategory.fromCoreData($0,
+                                                                            decoder: jsonDecoder) }
         let recordsCD = recordStore.data
         let records = recordsCD.compactMap { TrackerRecord.fromCoreData($0) }
         completedTrackers = records.reduce(into: [:]) { result, record in
@@ -72,7 +76,7 @@ extension TrackerRepository: TrackerStoring {
             trackerCD.category = categoryCD
 
             if let schedule = tracker.schedule {
-                trackerCD.schedule = try? JSONEncoder().encode(schedule)
+                trackerCD.schedule = try? jsonEncoder.encode(schedule)
             }
         }
     }
