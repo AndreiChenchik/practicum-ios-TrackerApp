@@ -8,7 +8,7 @@ enum TrackerConfig {
                 return "Emoji"
             case .colors:
                 return "Цвет"
-            default:
+            case .name, .properties, .controls:
                 return nil
             }
         }
