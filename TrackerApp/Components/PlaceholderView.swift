@@ -5,6 +5,8 @@ extension UIView {
         let label = UILabel()
         label.font = .asset(.ysDisplayMedium, size: 12)
         label.text = message
+        label.numberOfLines = 0
+        label.textAlignment = .center
 
         let imageView = UIImageView()
         imageView.image = .asset(icon)

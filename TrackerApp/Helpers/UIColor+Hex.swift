@@ -7,7 +7,11 @@ extension UIColor {
 
         if hex.hasPrefix("#") {
             let start = hex.index(hex.startIndex, offsetBy: 1)
-            let hexColor = String(hex[start...])
+            var hexColor = String(hex[start...])
+
+            if hexColor.count == 6 {
+                hexColor.append("FF")
+            }
 
             if hexColor.count == 8 {
                 let scanner = Scanner(string: hexColor)
@@ -26,6 +30,29 @@ extension UIColor {
         }
 
         return nil
+    }
+
+    var hexString: String {
+        let cgColorInRGB = cgColor.converted(to: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                             intent: .defaultIntent, options: nil)!
+        let colorRef = cgColorInRGB.components
+        let r = colorRef?[0] ?? 0
+        let g = colorRef?[1] ?? 0
+        let b = ((colorRef?.count ?? 0) > 2 ? colorRef?[2] : g) ?? 0
+        let a = cgColor.alpha
+
+        var color = String(
+            format: "#%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
+
+        if a < 1 {
+            color += String(format: "%02lX", lroundf(Float(a * 255)))
+        }
+
+        return color
     }
 }
 // swiftlint:enable identifier_name

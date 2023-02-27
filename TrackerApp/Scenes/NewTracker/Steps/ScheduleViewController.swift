@@ -141,3 +141,20 @@ private extension ScheduleViewController {
         }
     }
 }
+
+// MARK: - Preview
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+struct ScheduleViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        UIViewControllerPreview {
+            // Return whatever controller you want to preview
+            let viewController = ScheduleViewController(.mockOnWeekDays) { _ in }
+            return UINavigationController(
+                rootViewController: viewController
+            )
+        }
+    }
+}
+#endif

@@ -1,7 +1,7 @@
 import Foundation
 
 struct Tracker: Identifiable, Hashable {
-    let id = UUID()
+    var id = UUID()
     let label: String
     let emoji: String
     let color: TrackerColor
@@ -23,5 +23,24 @@ extension Tracker {
 
     static var mockPlants: Self {
         .init(label: "Поливая растения", emoji: "❤️", color: .green, schedule: .mockEveryDay)
+    }
+}
+
+extension Tracker {
+    static func fromCoreData(_ data: TrackerCD, decoder: JSONDecoder) -> Tracker? {
+        guard
+            let id = data.id,
+            let label = data.label,
+            let emoji = data.emoji,
+            let hex = data.colorHex,
+            let color = TrackerColor(rawValue: hex)
+        else { return nil }
+
+        var schedule: Set<WeekDay>?
+        if let scheduleData = data.schedule {
+            schedule = try? decoder.decode(Set<WeekDay>.self, from: scheduleData)
+        }
+
+        return .init(id: id, label: label, emoji: emoji, color: color, schedule: schedule)
     }
 }
