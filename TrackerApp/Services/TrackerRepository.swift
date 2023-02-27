@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import CoreData
 import UIKit
 
 protocol TrackerStoring {
@@ -15,8 +14,6 @@ protocol TrackerStoring {
 }
 
 final class TrackerRepository: NSObject, ObservableObject {
-    let context: NSManagedObjectContext
-
     @Published var completedTrackers: [String: Set<TrackerRecord>] = [:]
     @Published var categories: [TrackerCategory] = [.mockHome, .mockSmallThings, .mockSmallThings2]
 
@@ -26,65 +23,19 @@ final class TrackerRepository: NSObject, ObservableObject {
         return formatter
     }()
 
-    private lazy var trackersController: NSFetchedResultsController<TrackerCD> = {
-        let fetchRequest = TrackerCD.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+    private lazy var trackerStore: TrackerStore = { .init(delegate: self) }()
+    private lazy var categoryStore: TrackerCategoryStore = { .init(delegate: self) }()
+    private lazy var recordStore: TrackerRecordStore = { .init(delegate: self) }()
 
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: context,
-                                                                  sectionNameKeyPath: nil,
-                                                                  cacheName: nil)
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
-        return fetchedResultsController
-    }()
-
-    private lazy var categoryController: NSFetchedResultsController<TrackerCategoryCD> = {
-        let fetchRequest = TrackerCategoryCD.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: context,
-                                                                  sectionNameKeyPath: nil,
-                                                                  cacheName: nil)
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
-        return fetchedResultsController
-    }()
-
-    private lazy var recordController: NSFetchedResultsController<TrackerRecordCD> = {
-        let fetchRequest = TrackerRecordCD.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: context,
-                                                                  sectionNameKeyPath: nil,
-                                                                  cacheName: nil)
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
-        return fetchedResultsController
-    }()
-
-    init(context: NSManagedObjectContext? = nil) {
-        if let context {
-            self.context = context
-        } else {
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-                preconditionFailure("Something went terribly wrong")
-            }
-
-            self.context = appDelegate.persistentContainer.viewContext
-        }
-
+    override init() {
         super.init()
-        fetchCoreData()
-        _ = trackersController.fetchedObjects
+        fetchData()
     }
 
-    func fetchCoreData() {
-        let categoriesCD = categoryController.fetchedObjects ?? []
-        categories = categoriesCD.compactMap { .fromCoreData($0) }
-        let recordsCD = recordController.fetchedObjects ?? []
+    func fetchData() {
+        let categoriesCD = categoryStore.data
+        categories = categoriesCD.compactMap { TrackerCategory.fromCoreData($0) }
+        let recordsCD = recordStore.data
         let records = recordsCD.compactMap { TrackerRecord.fromCoreData($0) }
         completedTrackers = records.reduce(into: [:]) { result, record in
             let dateString = formatter.string(from: record.date)
@@ -103,36 +54,26 @@ extension TrackerRepository: TrackerStoring {
     // MARK: - Creation
 
     func addCategory(_ category: TrackerCategory) {
-        let categoryCD = TrackerCategoryCD(context: context)
-        categoryCD.id = category.id
-        categoryCD.label = category.label
-        categoryCD.createdAt = Date()
-
-        try? context.save()
+        categoryStore.create { categoryCD in
+            categoryCD.id = category.id
+            categoryCD.label = category.label
+        }
     }
 
     func addTracker(_ tracker: Tracker, toCategory id: UUID) {
-        let request = TrackerCategoryCD.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", "id", id as CVarArg)
-        request.fetchLimit = 1
-        guard let categoryCD = try? context.fetch(request) else { return }
+        guard let categoryCD = categoryStore.getById(id) else { return }
 
-        let trackerCD = TrackerCD(context: context)
-        trackerCD.createdAt = Date()
-        trackerCD.id = tracker.id
-        trackerCD.emoji = tracker.emoji
-        trackerCD.label = tracker.label
-        trackerCD.colorHex = tracker.color.uiColor.hexString
-        trackerCD.category = categoryCD.first
+        trackerStore.create { trackerCD in
+            trackerCD.createdAt = Date()
+            trackerCD.id = tracker.id
+            trackerCD.emoji = tracker.emoji
+            trackerCD.label = tracker.label
+            trackerCD.colorHex = tracker.color.uiColor.hexString
+            trackerCD.category = categoryCD
 
-        if let schedule = tracker.schedule {
-            trackerCD.schedule = try? JSONEncoder().encode(schedule)
-        }
-
-        do {
-            try context.save()
-        } catch {
-            context.rollback()
+            if let schedule = tracker.schedule {
+                trackerCD.schedule = try? JSONEncoder().encode(schedule)
+            }
         }
     }
 
@@ -185,28 +126,18 @@ extension TrackerRepository: TrackerStoring {
     // MARK: - Actions
 
     func markTrackerComplete(id: UUID, on date: Date) {
-        let request = TrackerCD.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", "id", id as CVarArg)
-        request.fetchLimit = 1
-        guard let trackerCD = try? context.fetch(request) else { return }
+        guard let trackerCD = trackerStore.getById(id) else { return }
 
-        let recordCD = TrackerRecordCD(context: context)
-        recordCD.date = date
-        recordCD.tracker = trackerCD.first
-
-        do {
-            try context.save()
-        } catch {
-            context.rollback()
+        recordStore.create { recordCD in
+            recordCD.date = date
+            recordCD.tracker = trackerCD
         }
     }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
-extension TrackerRepository: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>
-    ) {
-        fetchCoreData()
+extension TrackerRepository: StoreDelegate {
+    func didChangeContent() {
+        fetchData()
     }
 }
