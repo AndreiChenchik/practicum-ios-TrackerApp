@@ -23,6 +23,7 @@ final class WrapperCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(view: nil)
     }
 }

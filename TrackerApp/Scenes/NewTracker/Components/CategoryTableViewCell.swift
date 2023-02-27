@@ -46,6 +46,7 @@ final class CategoryTableViewCell: UITableViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(label: nil, outCorner: [], hasDivider: false)
     }
 }

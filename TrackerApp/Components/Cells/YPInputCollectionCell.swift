@@ -52,6 +52,7 @@ final class YPInputCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(text: nil, placeholder: nil, outCorner: [], onChange: nil)
     }
 }

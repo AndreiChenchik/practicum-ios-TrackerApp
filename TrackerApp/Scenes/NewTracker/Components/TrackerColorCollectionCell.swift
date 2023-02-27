@@ -47,6 +47,7 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(nil)
     }
 

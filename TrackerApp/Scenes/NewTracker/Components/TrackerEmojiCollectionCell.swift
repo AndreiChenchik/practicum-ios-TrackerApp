@@ -44,6 +44,7 @@ final class TrackerEmojiCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(nil)
     }
 

@@ -13,6 +13,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(with: nil)
     }
 

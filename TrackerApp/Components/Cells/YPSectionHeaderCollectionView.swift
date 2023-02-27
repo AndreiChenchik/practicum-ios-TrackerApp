@@ -27,6 +27,7 @@ final class YPSectionHeaderCollectionView: UICollectionReusableView {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(label: nil)
     }
 

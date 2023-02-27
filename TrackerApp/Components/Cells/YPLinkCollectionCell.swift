@@ -49,6 +49,7 @@ final class YPLinkCollectionCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         configure(label: nil, description: nil, outCorner: [], hasDivider: false)
     }
 }
