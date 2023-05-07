@@ -5,7 +5,7 @@ protocol Coordinator {
 }
 
 final class TrackerCreationCoordinator: Coordinator {
-    private var repo: TrackerStoring
+    private var repo: TrackerStoring // ViewModel
     private lazy var navigationController = UINavigationController()
 
     @Published private var selectedSchedule: Set<WeekDay> = []
