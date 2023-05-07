@@ -5,7 +5,7 @@ protocol Coordinator {
 }
 
 final class TrackerCreationCoordinator: Coordinator {
-    private var repo: TrackerStoring // ViewModel
+    private var repo: TrackerStoring
     private lazy var navigationController = UINavigationController()
 
     @Published private var selectedSchedule: Set<WeekDay> = []
@@ -40,13 +40,15 @@ final class TrackerCreationCoordinator: Coordinator {
     }
 
     func selectCategory() {
-        let categoryVC = TrackerCategoryViewController(
+        let viewModel = TrackerCategoryViewModel(
             repo.categoriesPublisher,
             selectedCategory: selectedCategory,
             onNewCategory: createCategory
         ) { [weak self] selectedCategory in
             self?.selectedCategory = selectedCategory
         }
+
+        let categoryVC = TrackerCategoryViewController(viewModel: viewModel)
 
         navigationController.pushViewController(categoryVC, animated: true)
     }

@@ -34,6 +34,7 @@
 		38ACF50B297D7E8000CD2DB2 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ACF50A297D7E8000CD2DB2 /* OnboardingViewController.swift */; };
 		38ACF510297D7E8200CD2DB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF50F297D7E8200CD2DB2 /* Assets.xcassets */; };
 		38ACF513297D7E8200CD2DB2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 38ACF511297D7E8200CD2DB2 /* LaunchScreen.storyboard */; };
+		38BEBF982A0844B8007B1297 /* TrackerCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BEBF972A0844B8007B1297 /* TrackerCategoryViewModel.swift */; };
 		38C1AB4E298528FC00AB7B0E /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB4D298528FC00AB7B0E /* TrackersViewController.swift */; };
 		38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C1AB4F2985291900AB7B0E /* OnboardingPageViewController.swift */; };
 		38C1AB5529852A8400AB7B0E /* YSDisplay-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38C1AB5229852A8400AB7B0E /* YSDisplay-Medium.ttf */; };
@@ -99,6 +100,7 @@
 		38ACF514297D7E8200CD2DB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		38ACF51E297D806B00CD2DB2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		38ACF51F297D806B00CD2DB2 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		38BEBF972A0844B8007B1297 /* TrackerCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryViewModel.swift; sourceTree = "<group>"; };
 		38C1AB4D298528FC00AB7B0E /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		38C1AB4F2985291900AB7B0E /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		38C1AB5229852A8400AB7B0E /* YSDisplay-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YSDisplay-Medium.ttf"; sourceTree = "<group>"; };
@@ -181,7 +183,7 @@
 		38083E0029981F9800D47E8A /* Steps */ = {
 			isa = PBXGroup;
 			children = (
-				38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */,
+				38BEBF962A0844A2007B1297 /* TrackerCategory */,
 				38083DAB298EFA7E00D47E8A /* NewCategoryViewController.swift */,
 				38C1AB6B2985BA3C00AB7B0E /* TrackerTypeViewController.swift */,
 				38C1AB872987B1EE00AB7B0E /* TrackerConfigViewController.swift */,
@@ -236,6 +238,15 @@
 				38C1AB5C29852B0400AB7B0E /* ColorAsset+UIColor.swift */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		38BEBF962A0844A2007B1297 /* TrackerCategory */ = {
+			isa = PBXGroup;
+			children = (
+				38083DA7298EE2F500D47E8A /* TrackerCategoryViewController.swift */,
+				38BEBF972A0844B8007B1297 /* TrackerCategoryViewModel.swift */,
+			);
+			path = TrackerCategory;
 			sourceTree = "<group>";
 		};
 		38C1AB4A298519C800AB7B0E /* Scenes */ = {
@@ -450,6 +461,7 @@
 				38C1AB692985B91100AB7B0E /* YPButton.swift in Sources */,
 				38083DFB2997ACAE00D47E8A /* TrackerRepository.swift in Sources */,
 				389A9BFC29AD18FA00FF6F2F /* Store.swift in Sources */,
+				38BEBF982A0844B8007B1297 /* TrackerCategoryViewModel.swift in Sources */,
 				38C1AB8429872B1100AB7B0E /* ScheduleViewController.swift in Sources */,
 				38C1AB62298574D200AB7B0E /* StatisticsViewController.swift in Sources */,
 				389A9C0029AD1F1D00FF6F2F /* TrackerCategoryStore.swift in Sources */,
