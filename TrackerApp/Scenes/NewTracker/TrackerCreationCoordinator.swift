@@ -6,7 +6,7 @@ protocol Coordinator {
 
 final class TrackerCreationCoordinator: Coordinator {
     private var repo: TrackerStoring
-    private lazy var navigationController = UINavigationController()
+    private var navigationController = UINavigationController()
 
     @Published private var selectedSchedule: Set<WeekDay> = []
     @Published private var selectedCategory: TrackerCategory?
@@ -19,22 +19,27 @@ final class TrackerCreationCoordinator: Coordinator {
         selectedSchedule = []
         selectedCategory = nil
 
-        let trackerTypeVC = TrackerTypeViewController(completion: onTypeSelect)
+        let trackerTypeVC = TrackerTypeViewController { [weak self] type in
+            self?.onTypeSelect(type)
+        }
         navigationController.configureForYPModal()
 
         viewController.present(navigationController, animated: true)
-        navigationController.pushViewController(trackerTypeVC, animated: false)
+        navigationController.viewControllers = [trackerTypeVC]
     }
 
     func onTypeSelect(_ type: TrackerType) {
         let newTrackerVC = TrackerConfigViewController(
             type,
             selectedSchedule: $selectedSchedule,
-            selectedCategory: $selectedCategory,
-            onCreate: repo.addTracker,
-            onCategory: selectCategory,
-            onSchedule: selectSchedule
-        )
+            selectedCategory: $selectedCategory
+        ) { [weak self] tracker, id in
+            self?.repo.addTracker(tracker, toCategory: id)
+        } onCategory: { [weak self] in
+            self?.selectCategory()
+        } onSchedule: { [weak self] in
+            self?.selectSchedule()
+        }
 
         navigationController.pushViewController(newTrackerVC, animated: true)
     }
