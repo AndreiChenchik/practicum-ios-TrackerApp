@@ -40,6 +40,8 @@ final class TrackerTypeViewController: UIViewController {
 
 private extension TrackerTypeViewController {
     func setupAppearance() {
+        navigationItem.hidesBackButton = true
+
         view.backgroundColor = .asset(.white)
 
         view.addSubview(habitButton)
