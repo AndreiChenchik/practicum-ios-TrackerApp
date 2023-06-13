@@ -2,25 +2,27 @@ import Foundation
 import Combine
 
 final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewControllerModel {
+    @Published var isDismissed = false
     @Published var selectedCategory: TrackerCategory?
     @Published var categories: [TrackerCategory] = []
 
-    let addNewCategory: () -> Void
-    let onSelect: (TrackerCategory) -> Void
+    let onNewCategoryRequest: () -> Void
+    let onCategorySelect: (TrackerCategory) -> Void
 
     private var cancellable: AnyCancellable?
 
     init(
-        _ categories: some Publisher<[TrackerCategory], Never>,
+        deps: Dependencies,
         selectedCategory: TrackerCategory?,
-        addNewCategory: @escaping () -> Void,
-        onSelect: @escaping (TrackerCategory) -> Void
+        onNewCategoryRequest: @escaping () -> Void,
+        onCategorySelect: @escaping (TrackerCategory) -> Void
     ) {
         self.selectedCategory = selectedCategory
-        self.onSelect = onSelect
-        self.addNewCategory = addNewCategory
+        self.onNewCategoryRequest = onNewCategoryRequest
+        self.onCategorySelect = onCategorySelect
 
-        cancellable = categories
+        cancellable = deps.repo
+            .categoriesPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -30,11 +32,20 @@ final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewContr
 
     func selectCategory(_ index: Int) {
         let category = categories[index]
+
+        onCategorySelect(category)
+
         selectedCategory = category
-        onSelect(category)
+        isDismissed = true
     }
 
     func onNewCategory() {
-        addNewCategory()
+        onNewCategoryRequest()
+    }
+}
+
+extension TrackerCategoryViewModel {
+    struct Dependencies {
+        var repo: TrackerStoring
     }
 }

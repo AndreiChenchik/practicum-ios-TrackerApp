@@ -2,6 +2,7 @@ import UIKit
 import Combine
 
 protocol TrackerCategoryViewControllerModel: ObservableObject {
+    var isDismissed: Bool { get }
     var selectedCategory: TrackerCategory? { get }
     var categories: [TrackerCategory] { get }
 
@@ -16,7 +17,7 @@ final class TrackerCategoryViewController: UIViewController {
     init(viewModel: some TrackerCategoryViewControllerModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        cancellable = viewModel.bind { [weak self] in self?.tableView.reloadData() }
+        cancellable = viewModel.bind { [weak self] in self?.refreshView() }
     }
 
     required init?(coder: NSCoder) {
@@ -35,6 +36,18 @@ final class TrackerCategoryViewController: UIViewController {
 
         if viewModel.categories.count > 0 {
             tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
+        }
+    }
+
+    private func refreshView() {
+        tableView.reloadData()
+
+        if viewModel.isDismissed {
+            if let navigationController {
+                navigationController.popViewController(animated: true)
+            } else {
+                dismiss(animated: true)
+            }
         }
     }
 
@@ -80,12 +93,6 @@ final class TrackerCategoryViewController: UIViewController {
 extension TrackerCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.selectCategory(indexPath.row)
-
-        if let navigationController {
-            navigationController.popViewController(animated: true)
-        } else {
-            dismiss(animated: true)
-        }
     }
 }
 
