@@ -48,7 +48,7 @@ final class TrackerCreationCoordinator: Coordinator {
         let viewModel = TrackerCategoryViewModel(
             repo.categoriesPublisher,
             selectedCategory: selectedCategory,
-            onNewCategory: createCategory
+            addNewCategory: createCategory
         ) { [weak self] selectedCategory in
             self?.selectedCategory = selectedCategory
         }

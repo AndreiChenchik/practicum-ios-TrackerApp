@@ -1,9 +1,18 @@
 import UIKit
 
-final class TrackerCategoryViewController: UIViewController {
-    private let viewModel: TrackerCategoryViewModel
+protocol TrackerCategoryViewControllerModel {
+    var selectedCategory: TrackerCategory? { get }
+    var categories: [TrackerCategory] { get }
 
-    init(viewModel: TrackerCategoryViewModel) {
+    func bind(_ onUpdate: @escaping () -> Void)
+    func selectCategory(_ index: Int)
+    func onNewCategory()
+}
+
+final class TrackerCategoryViewController: UIViewController {
+    private let viewModel: TrackerCategoryViewControllerModel
+
+    init(viewModel: TrackerCategoryViewControllerModel) {
         self.viewModel = viewModel
 
         super.init(nibName: nil, bundle: nil)
@@ -73,7 +82,7 @@ final class TrackerCategoryViewController: UIViewController {
 // MARK: - UITableViewDelegate
 extension TrackerCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.selectCategory(indexPath)
+        viewModel.selectCategory(indexPath.row)
 
         if let navigationController {
             navigationController.popViewController(animated: true)

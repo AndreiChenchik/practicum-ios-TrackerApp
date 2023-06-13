@@ -1,26 +1,25 @@
 import Foundation
 import Combine
 
-final class TrackerCategoryViewModel {
-    let onNewCategory: () -> Void
+final class TrackerCategoryViewModel: TrackerCategoryViewControllerModel {
+    var selectedCategory: TrackerCategory?
+    var categories: [TrackerCategory] = []
+
+    let addNewCategory: () -> Void
     let onSelect: (TrackerCategory) -> Void
 
-    var categories: [TrackerCategory] = []
-    var selectedCategory: TrackerCategory?
-
     private var cancellable: Set<AnyCancellable> = []
-
     private var onUpdate: () -> Void = {}
 
     init(
         _ categories: some Publisher<[TrackerCategory], Never>,
         selectedCategory: TrackerCategory?,
-        onNewCategory: @escaping () -> Void,
+        addNewCategory: @escaping () -> Void,
         onSelect: @escaping (TrackerCategory) -> Void
     ) {
         self.selectedCategory = selectedCategory
         self.onSelect = onSelect
-        self.onNewCategory = onNewCategory
+        self.addNewCategory = addNewCategory
 
         categories
             .removeDuplicates()
@@ -36,9 +35,13 @@ final class TrackerCategoryViewModel {
         self.onUpdate = onUpdate
     }
 
-    func selectCategory(_ indexPath: IndexPath) {
-        let category = categories[indexPath.row]
+    func selectCategory(_ index: Int) {
+        let category = categories[index]
         selectedCategory = category
         onSelect(category)
+    }
+
+    func onNewCategory() {
+        addNewCategory()
     }
 }
