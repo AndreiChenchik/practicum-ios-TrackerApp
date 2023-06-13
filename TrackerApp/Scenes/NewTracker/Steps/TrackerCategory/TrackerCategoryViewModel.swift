@@ -1,15 +1,14 @@
 import Foundation
 import Combine
 
-final class TrackerCategoryViewModel: TrackerCategoryViewControllerModel {
-    var selectedCategory: TrackerCategory?
-    var categories: [TrackerCategory] = []
+final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewControllerModel {
+    @Published var selectedCategory: TrackerCategory?
+    @Published var categories: [TrackerCategory] = []
 
     let addNewCategory: () -> Void
     let onSelect: (TrackerCategory) -> Void
 
-    private var cancellable: Set<AnyCancellable> = []
-    private var onUpdate: () -> Void = {}
+    private var cancellable: AnyCancellable?
 
     init(
         _ categories: some Publisher<[TrackerCategory], Never>,
@@ -21,18 +20,12 @@ final class TrackerCategoryViewModel: TrackerCategoryViewControllerModel {
         self.onSelect = onSelect
         self.addNewCategory = addNewCategory
 
-        categories
+        cancellable = categories
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.categories = $0
-                self?.onUpdate()
             }
-            .store(in: &cancellable)
-    }
-
-    func bind(_ onUpdate: @escaping () -> Void) {
-        self.onUpdate = onUpdate
     }
 
     func selectCategory(_ index: Int) {

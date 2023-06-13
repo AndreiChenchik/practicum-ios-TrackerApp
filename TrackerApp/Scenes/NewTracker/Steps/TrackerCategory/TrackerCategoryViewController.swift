@@ -1,25 +1,22 @@
 import UIKit
+import Combine
 
-protocol TrackerCategoryViewControllerModel {
+protocol TrackerCategoryViewControllerModel: ObservableObject {
     var selectedCategory: TrackerCategory? { get }
     var categories: [TrackerCategory] { get }
 
-    func bind(_ onUpdate: @escaping () -> Void)
     func selectCategory(_ index: Int)
     func onNewCategory()
 }
 
 final class TrackerCategoryViewController: UIViewController {
-    private let viewModel: TrackerCategoryViewControllerModel
+    private let viewModel: any TrackerCategoryViewControllerModel
+    private var cancellable: AnyCancellable?
 
-    init(viewModel: TrackerCategoryViewControllerModel) {
+    init(viewModel: some TrackerCategoryViewControllerModel) {
         self.viewModel = viewModel
-
         super.init(nibName: nil, bundle: nil)
-
-        viewModel.bind { [weak self] in
-            self?.tableView.reloadData()
-        }
+        cancellable = viewModel.bind { [weak self] in self?.tableView.reloadData() }
     }
 
     required init?(coder: NSCoder) {
