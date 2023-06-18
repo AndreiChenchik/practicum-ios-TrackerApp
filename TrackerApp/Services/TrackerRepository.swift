@@ -100,15 +100,18 @@ extension TrackerRepository: TrackerStoring {
         categories.forEach { category in
             let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
 
-            let trackers = category.trackers.filter { tracker in
+            var trackers = category.trackers.filter { tracker in
                 let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
 
                 var isForDate = true
                 if let selectedWeekday {
                     isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
-
                 }
 
+                return (categoryIsInSearch || trackerIsInSearch) && isForDate
+            }
+
+            trackers = trackers.map { tracker in
                 var isCompletedForDate = false
                 if let dateString {
                     isCompletedForDate = completedTrackers[dateString]?.contains { record in
@@ -116,7 +119,13 @@ extension TrackerRepository: TrackerStoring {
                     } ?? false
                 }
 
-                return (categoryIsInSearch || trackerIsInSearch) && isForDate && !isCompletedForDate
+                return .init(id: tracker.id,
+                             label: tracker.label,
+                             emoji: tracker.emoji,
+                             color: tracker.color,
+                             schedule: tracker.schedule,
+                             completedCount: tracker.completedCount,
+                             isCompleted: isCompletedForDate)
             }
 
             if !trackers.isEmpty {

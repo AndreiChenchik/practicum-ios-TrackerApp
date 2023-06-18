@@ -135,7 +135,9 @@ private extension TrackerConfigViewController {
             label: trackerName,
             emoji: selectedEmoji,
             color: selectedColor,
-            schedule: type == .habit ? schedule : nil
+            schedule: type == .habit ? schedule : nil,
+            completedCount: 0,
+            isCompleted: false
         )
 
         trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)
