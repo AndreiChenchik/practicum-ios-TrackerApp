@@ -59,7 +59,7 @@ extension UICollectionViewCompositionalLayout {
                 group.interItemSpacing = .fixed(8)
 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 0, leading: 16, bottom: 16, trailing: 0)
+                section.contentInsets = .init(top: 0, leading: 16, bottom: 16, trailing: 16)
 
                 return section
             }
