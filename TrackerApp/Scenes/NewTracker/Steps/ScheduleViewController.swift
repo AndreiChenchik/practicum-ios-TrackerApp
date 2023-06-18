@@ -1,17 +1,17 @@
 import UIKit
 
 final class ScheduleViewController: UIViewController {
-    private let completion: (Set<WeekDay>) -> Void
+    private let repo: NewTrackerRepository
+
     private var schedule: Set<WeekDay>
 
     private var items: [WeekDay] { WeekDay.allCasesSortedForUserCalendar }
 
     init(
-        _ schedule: Set<WeekDay>,
-        completion: @escaping (Set<WeekDay>) -> Void
+        repo: NewTrackerRepository
     ) {
-        self.schedule = schedule
-        self.completion = completion
+        self.repo = repo
+        self.schedule = repo.selectedSchedule
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -132,7 +132,7 @@ private extension ScheduleViewController {
 
 private extension ScheduleViewController {
     @objc func done() {
-        completion(schedule)
+        repo.selectedSchedule = schedule
 
         if let navigationController {
             navigationController.popViewController(animated: true)
@@ -141,20 +141,3 @@ private extension ScheduleViewController {
         }
     }
 }
-
-// MARK: - Preview
-
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
-struct ScheduleViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        UIViewControllerPreview {
-            // Return whatever controller you want to preview
-            let viewController = ScheduleViewController(.mockOnWeekDays) { _ in }
-            return UINavigationController(
-                rootViewController: viewController
-            )
-        }
-    }
-}
-#endif

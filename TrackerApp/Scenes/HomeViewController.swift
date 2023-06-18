@@ -31,7 +31,8 @@ class HomeViewController: UITabBarController {
 private extension HomeViewController {
     private func setupTabs() {
         let repository = TrackerRepository()
-        let newTrackerCoordinator = TrackerCreationCoordinator(repo: repository)
+        let newTrackerCoordinator = TrackerCreationCoordinator(deps: .init(store: repository,
+                                                                           newTrackerRepo: .init()))
 
         let trackersVC = TrackersViewController(repo: repository,
                                                 creationCoordinator: newTrackerCoordinator)

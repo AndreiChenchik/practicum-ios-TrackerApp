@@ -25,6 +25,7 @@
 		381592BB299ED445006DF7EE /* TrackerConfigCollectionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381592BA299ED445006DF7EE /* TrackerConfigCollectionLayout.swift */; };
 		381592BD299ED514006DF7EE /* TrackerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381592BC299ED514006DF7EE /* TrackerConfig.swift */; };
 		3826C7442A38B24400BB4610 /* ObservableObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3826C7432A38B24400BB4610 /* ObservableObject+Extensions.swift */; };
+		3826C7462A3F516700BB4610 /* NewTrackerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3826C7452A3F516700BB4610 /* NewTrackerRepository.swift */; };
 		389A9BFA29AA4B2100FF6F2F /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 389A9BF829AA4B2100FF6F2F /* Model.xcdatamodeld */; };
 		389A9BFC29AD18FA00FF6F2F /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389A9BFB29AD18FA00FF6F2F /* Store.swift */; };
 		389A9BFE29AD1F1300FF6F2F /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389A9BFD29AD1F1300FF6F2F /* TrackerStore.swift */; };
@@ -88,6 +89,7 @@
 		381592BA299ED445006DF7EE /* TrackerConfigCollectionLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerConfigCollectionLayout.swift; sourceTree = "<group>"; };
 		381592BC299ED514006DF7EE /* TrackerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerConfig.swift; sourceTree = "<group>"; };
 		3826C7432A38B24400BB4610 /* ObservableObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableObject+Extensions.swift"; sourceTree = "<group>"; };
+		3826C7452A3F516700BB4610 /* NewTrackerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerRepository.swift; sourceTree = "<group>"; };
 		389A9BF929AA4B2100FF6F2F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		389A9BFB29AD18FA00FF6F2F /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		389A9BFD29AD1F1300FF6F2F /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				38C1AB6D2985BB1100AB7B0E /* TrackerCreationCoordinator.swift */,
 				38C1AB92298DBD9C00AB7B0E /* TrackerType.swift */,
 				381592BC299ED514006DF7EE /* TrackerConfig.swift */,
+				3826C7452A3F516700BB4610 /* NewTrackerRepository.swift */,
 			);
 			path = NewTracker;
 			sourceTree = "<group>";
@@ -492,6 +495,7 @@
 				38C1AB702985CE0600AB7B0E /* Tracker.swift in Sources */,
 				38C1AB5F2985710C00AB7B0E /* HomeViewController.swift in Sources */,
 				38C1AB502985291900AB7B0E /* OnboardingPageViewController.swift in Sources */,
+				3826C7462A3F516700BB4610 /* NewTrackerRepository.swift in Sources */,
 				38C1AB98298E47DA00AB7B0E /* UIViewControllerPreview.swift in Sources */,
 				38C1AB792985D01000AB7B0E /* TrackerRecord.swift in Sources */,
 				38C1AB6C2985BA3C00AB7B0E /* TrackerTypeViewController.swift in Sources */,

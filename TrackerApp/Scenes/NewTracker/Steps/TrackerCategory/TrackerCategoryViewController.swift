@@ -43,7 +43,7 @@ final class TrackerCategoryViewController: UIViewController {
         tableView.reloadData()
 
         if viewModel.isDismissed {
-            if let navigationController {
+            if let navigationController, navigationController.topViewController == self {
                 navigationController.popViewController(animated: true)
             } else {
                 dismiss(animated: true)

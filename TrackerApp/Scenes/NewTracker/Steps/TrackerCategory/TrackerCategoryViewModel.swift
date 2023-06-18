@@ -2,24 +2,23 @@ import Foundation
 import Combine
 
 final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewControllerModel {
+    let deps: Dependencies
+
     @Published var isDismissed = false
     @Published var selectedCategory: TrackerCategory?
     @Published var categories: [TrackerCategory] = []
 
     let onNewCategoryRequest: () -> Void
-    let onCategorySelect: (TrackerCategory) -> Void
 
     private var cancellable: AnyCancellable?
 
     init(
         deps: Dependencies,
-        selectedCategory: TrackerCategory?,
-        onNewCategoryRequest: @escaping () -> Void,
-        onCategorySelect: @escaping (TrackerCategory) -> Void
+        onNewCategoryRequest: @escaping () -> Void
     ) {
-        self.selectedCategory = selectedCategory
+        self.deps = deps
+        self.selectedCategory = deps.newTrackerRepository.selectedCategory
         self.onNewCategoryRequest = onNewCategoryRequest
-        self.onCategorySelect = onCategorySelect
 
         cancellable = deps.repo
             .categoriesPublisher
@@ -33,7 +32,7 @@ final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewContr
     func selectCategory(_ index: Int) {
         let category = categories[index]
 
-        onCategorySelect(category)
+        deps.newTrackerRepository.selectedCategory = category
 
         selectedCategory = category
         isDismissed = true
@@ -47,5 +46,6 @@ final class TrackerCategoryViewModel: ObservableObject, TrackerCategoryViewContr
 extension TrackerCategoryViewModel {
     struct Dependencies {
         var repo: TrackerStoring
+        var newTrackerRepository: NewTrackerRepository
     }
 }
