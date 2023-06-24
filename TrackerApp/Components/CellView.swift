@@ -14,7 +14,7 @@ final class CellView: UIView {
 
         super.init(frame: .zero)
 
-        backgroundColor = .asset(.background).withAlphaComponent(0.3)
+        backgroundColor = .asset(.background)
 
         layer.cornerRadius = 10
         layer.masksToBounds = true

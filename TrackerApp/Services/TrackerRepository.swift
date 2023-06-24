@@ -128,6 +128,8 @@ extension TrackerRepository: TrackerStoring {
                              isCompleted: isCompletedForDate)
             }
 
+            trackers.sort { $0.label > $1.label }
+
             if !trackers.isEmpty {
                 result.append(.init(id: category.id, label: category.label, trackers: trackers))
             }

@@ -40,6 +40,9 @@ final class TrackerConfigViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
+        newTrackerRepository.selectedCategory = nil
+        newTrackerRepository.selectedSchedule = []
+
         newTrackerRepository.$selectedSchedule
             .removeDuplicates()
             .receive(on: DispatchQueue.main)

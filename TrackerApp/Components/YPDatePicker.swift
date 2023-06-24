@@ -40,16 +40,16 @@ extension YPDatePicker {
             }
             .forEach { view in
                 guard let label = view as? UILabel else { return }
-                label.tintColor = .asset(.white)
-                label.textColor = .asset(.white)
+                label.tintColor = .asset(.contrast)
+                label.textColor = .asset(.contrast)
                 label.font = .asset(.ysDisplayRegular, size: 17)
 
                 kvObservers.insert(
                     label.observe(\.textColor) { [weak label] _, _ in
                         guard let label, let textColor = label.textColor else { return }
 
-                        if textColor != .asset(.white) {
-                            label.textColor = .asset(.white)
+                        if textColor != .asset(.contrast) {
+                            label.textColor = .asset(.contrast)
                         }
                     }
                 )

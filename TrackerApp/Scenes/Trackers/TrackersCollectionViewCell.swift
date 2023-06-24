@@ -48,7 +48,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 
         label.numberOfLines = 0
         label.font = .asset(.ysDisplayMedium, size: 12)
-        label.textColor = .asset(.white)
+        label.textColor = .asset(.contrast)
 
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -77,7 +77,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private var emojiBackground: UIView = {
         let view = UIView()
 
-        view.backgroundColor = .asset(.contrast)
+        view.backgroundColor = .asset(.contrast).withAlphaComponent(0.3)
         view.layer.cornerRadius = 12
         view.clipsToBounds = true
 

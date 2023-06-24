@@ -160,6 +160,7 @@ private extension TrackersViewController {
 
     func setupAppearance() {
         view.backgroundColor = .asset(.white)
+        collectionView.backgroundColor = .asset(.white)
 
         view.addSubview(collectionView)
         view.addSubview(startPlaceholderView)
