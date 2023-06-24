@@ -36,7 +36,7 @@ private extension HomeViewController {
 
         let trackersVC = TrackersViewController(repo: repository,
                                                 creationCoordinator: newTrackerCoordinator)
-        let statisticsVC = StatisticsViewController()
+        let statisticsVC = StatisticsViewController(repo: repository)
 
         let controllers = [UINavigationController(rootViewController: trackersVC),
                            UINavigationController(rootViewController: statisticsVC)]

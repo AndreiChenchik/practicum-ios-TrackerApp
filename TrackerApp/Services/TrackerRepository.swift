@@ -11,6 +11,8 @@ protocol TrackerStoring {
 
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
     var objectWillChange: ObservableObjectPublisher { get }
+
+    var statistics: Statistics? { get }
 }
 
 final class TrackerRepository: NSObject, ObservableObject {
@@ -147,6 +149,19 @@ extension TrackerRepository: TrackerStoring {
             recordCD.date = date
             recordCD.tracker = trackerCD
         }
+    }
+
+    // MARK: - Statistics
+
+    var statistics: Statistics? {
+        let count = recordStore.data.count
+
+        guard count > 0 else { return nil }
+
+        return .init(bestPeriod: count,
+                     idealDays: count,
+                     completedTrackers: count,
+                     averageValue: count)
     }
 }
 
