@@ -1,35 +1,23 @@
 import UIKit
 import Combine
 
+protocol TrackerCategoryViewControllerModel: ObservableObject {
+    var isDismissed: Bool { get }
+    var selectedCategory: TrackerCategory? { get }
+    var categories: [TrackerCategory] { get }
+
+    func selectCategory(_ index: Int)
+    func onNewCategory()
+}
+
 final class TrackerCategoryViewController: UIViewController {
-    private let onNewCategory: () -> Void
-    private let onSelect: (TrackerCategory) -> Void
+    private let viewModel: any TrackerCategoryViewControllerModel
+    private var cancellable: AnyCancellable?
 
-    private var categories: [TrackerCategory] = []
-    private var selectedCategory: TrackerCategory?
-
-    private var cancellable: Set<AnyCancellable> = []
-
-    init(
-        _ categories: some Publisher<[TrackerCategory], Never>,
-        selectedCategory: TrackerCategory?,
-        onNewCategory: @escaping () -> Void,
-        onSelect: @escaping (TrackerCategory) -> Void
-    ) {
-        self.selectedCategory = selectedCategory
-        self.onSelect = onSelect
-        self.onNewCategory = onNewCategory
-
+    init(viewModel: some TrackerCategoryViewControllerModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-
-        categories
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.categories = $0
-                self?.tableView.reloadData()
-            }
-            .store(in: &cancellable)
+        cancellable = viewModel.bind { [weak self] in self?.refreshView() }
     }
 
     required init?(coder: NSCoder) {
@@ -46,8 +34,20 @@ final class TrackerCategoryViewController: UIViewController {
         updatePlaceholderVisibility()
         tableView.reloadData()
 
-        if categories.count > 0 {
+        if viewModel.categories.count > 0 {
             tableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: false)
+        }
+    }
+
+    private func refreshView() {
+        tableView.reloadData()
+
+        if viewModel.isDismissed {
+            if let navigationController, navigationController.topViewController == self {
+                navigationController.popViewController(animated: true)
+            } else {
+                dismiss(animated: true)
+            }
         }
     }
 
@@ -92,15 +92,7 @@ final class TrackerCategoryViewController: UIViewController {
 // MARK: - UITableViewDelegate
 extension TrackerCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let category = categories[indexPath.row]
-        selectedCategory = category
-        onSelect(category)
-
-        if let navigationController {
-            navigationController.popViewController(animated: true)
-        } else {
-            dismiss(animated: true)
-        }
+        viewModel.selectCategory(indexPath.row)
     }
 }
 
@@ -112,7 +104,7 @@ extension TrackerCategoryViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        viewModel.categories.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -122,11 +114,11 @@ extension TrackerCategoryViewController: UITableViewDataSource {
             fatalError("Can't get cell for ImagesList")
         }
 
-        let category = categories[indexPath.row]
+        let category = viewModel.categories[indexPath.row]
 
         let isFirstCell = indexPath.row == 0
-        let isLastCell = indexPath.row == categories.count - 1
-        let isSelected = category == selectedCategory
+        let isLastCell = indexPath.row == viewModel.categories.count - 1
+        let isSelected = category == viewModel.selectedCategory
 
         cell.configure(
             label: category.label,
@@ -143,7 +135,7 @@ extension TrackerCategoryViewController: UITableViewDataSource {
 
 private extension TrackerCategoryViewController {
     func updatePlaceholderVisibility() {
-        self.startPlaceholderView.alpha = categories.count == 0 ? 1 : 0
+        self.startPlaceholderView.alpha = viewModel.categories.count == 0 ? 1 : 0
     }
 
     func setupAppearance() {
@@ -176,6 +168,6 @@ private extension TrackerCategoryViewController {
 
 private extension TrackerCategoryViewController {
     @objc func addCategory() {
-        onNewCategory()
+        viewModel.onNewCategory()
     }
 }

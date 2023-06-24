@@ -91,11 +91,19 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 extension TrackerCollectionViewCell {
     func configure(with model: Tracker?) {
         trackerLabel.text = model?.label
-        dayLabel.text = model != nil ? "?? день" : nil
+        dayLabel.text = model != nil ? "\(model?.completedCount ?? 0) дней" : nil
         emojiLabel.text = model?.emoji
 
         colorBackground.backgroundColor = model?.color.uiColor
         addButton.backgroundColor = model?.color.uiColor
+        addButton.isEnabled = model?.isCompleted != true
+        addButton.layer.opacity = model?.isCompleted != true ? 1 : 0.3
+
+        if model?.isCompleted != true {
+            addButton.setImage(UIImage(systemName: "plus"), for: .normal)
+        } else {
+            addButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+        }
     }
 }
 

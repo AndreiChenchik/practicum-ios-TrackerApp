@@ -4,65 +4,67 @@ protocol Coordinator {
     func start(over: UIViewController)
 }
 
-final class TrackerCreationCoordinator: Coordinator {
-    private var repo: TrackerStoring
-    private lazy var navigationController = UINavigationController()
+final class TrackerCreationCoordinator {
+    private var deps: Dependencies
+    private var navigationController = UINavigationController()
 
-    @Published private var selectedSchedule: Set<WeekDay> = []
-    @Published private var selectedCategory: TrackerCategory?
-
-    init(repo: TrackerStoring) {
-        self.repo = repo
+    init(deps: Dependencies) {
+        self.deps = deps
     }
+}
 
+extension TrackerCreationCoordinator {
+    struct Dependencies {
+        let store: TrackerStoring
+        let newTrackerRepo: NewTrackerRepository
+    }
+}
+
+extension TrackerCreationCoordinator: Coordinator {
     func start(over viewController: UIViewController) {
-        selectedSchedule = []
-        selectedCategory = nil
-
-        let trackerTypeVC = TrackerTypeViewController(completion: onTypeSelect)
+        let trackerTypeVC = TrackerTypeViewController { [weak self] type in
+            self?.onTypeSelect(type)
+        }
         navigationController.configureForYPModal()
 
         viewController.present(navigationController, animated: true)
-        navigationController.pushViewController(trackerTypeVC, animated: false)
+        navigationController.viewControllers = [trackerTypeVC]
     }
 
     func onTypeSelect(_ type: TrackerType) {
         let newTrackerVC = TrackerConfigViewController(
             type,
-            selectedSchedule: $selectedSchedule,
-            selectedCategory: $selectedCategory,
-            onCreate: repo.addTracker,
-            onCategory: selectCategory,
-            onSchedule: selectSchedule
-        )
+            newTrackerRepository: deps.newTrackerRepo,
+            trackerStore: deps.store
+        ) { [weak self] in
+            self?.selectCategory()
+        } onSchedule: { [weak self] in
+            self?.selectSchedule()
+        }
 
         navigationController.pushViewController(newTrackerVC, animated: true)
     }
 
     func selectCategory() {
-        let categoryVC = TrackerCategoryViewController(
-            repo.categoriesPublisher,
-            selectedCategory: selectedCategory,
-            onNewCategory: createCategory
-        ) { [weak self] selectedCategory in
-            self?.selectedCategory = selectedCategory
+        let viewModel = TrackerCategoryViewModel(
+            deps: .init(repo: deps.store, newTrackerRepository: deps.newTrackerRepo)
+        ) { [weak self] in
+            self?.createCategory()
         }
+
+        let categoryVC = TrackerCategoryViewController(viewModel: viewModel)
 
         navigationController.pushViewController(categoryVC, animated: true)
     }
 
     func selectSchedule() {
-        let scheduleVC = ScheduleViewController(selectedSchedule) { [weak self] newSchedule in
-            self?.selectedSchedule = newSchedule
-        }
+        let scheduleVC = ScheduleViewController(repo: deps.newTrackerRepo)
 
         navigationController.pushViewController(scheduleVC, animated: true)
     }
 
     func createCategory() {
-        let newCategoryVC = NewCategoryViewController { [weak self] newCategory in
-            self?.repo.addCategory(newCategory)
-        }
+        let newCategoryVC = NewCategoryViewController(store: deps.store)
 
         navigationController.pushViewController(newCategoryVC, animated: true)
     }

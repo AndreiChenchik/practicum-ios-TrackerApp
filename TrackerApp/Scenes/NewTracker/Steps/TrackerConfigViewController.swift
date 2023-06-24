@@ -9,9 +9,10 @@ final class TrackerConfigViewController: UIViewController {
 
     private let type: TrackerType
 
-    private let onCreate: (Tracker, UUID) -> Void
     private let onCategory: () -> Void
     private let onSchedule: () -> Void
+
+    private var trackerStore: TrackerStoring
 
     private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
@@ -27,20 +28,19 @@ final class TrackerConfigViewController: UIViewController {
 
     init(
         _ type: TrackerType,
-        selectedSchedule: Published<Set<WeekDay>>.Publisher,
-        selectedCategory: Published<TrackerCategory?>.Publisher,
-        onCreate: @escaping (Tracker, UUID) -> Void,
+        newTrackerRepository: NewTrackerRepository,
+        trackerStore: TrackerStoring,
         onCategory: @escaping () -> Void,
         onSchedule: @escaping () -> Void
     ) {
         self.type = type
-        self.onCreate = onCreate
         self.onCategory = onCategory
         self.onSchedule = onSchedule
+        self.trackerStore = trackerStore
 
         super.init(nibName: nil, bundle: nil)
 
-        selectedSchedule
+        newTrackerRepository.$selectedSchedule
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -49,7 +49,7 @@ final class TrackerConfigViewController: UIViewController {
             }
             .store(in: &cancellable)
 
-        selectedCategory
+        newTrackerRepository.$selectedCategory
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -135,10 +135,12 @@ private extension TrackerConfigViewController {
             label: trackerName,
             emoji: selectedEmoji,
             color: selectedColor,
-            schedule: type == .habit ? schedule : nil
+            schedule: type == .habit ? schedule : nil,
+            completedCount: 0,
+            isCompleted: false
         )
 
-        onCreate(newTracker, selectedCategory.id)
+        trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)
         dismiss(animated: true)
     }
 

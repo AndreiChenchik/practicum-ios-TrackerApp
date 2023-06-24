@@ -1,15 +1,14 @@
 import UIKit
 
 final class NewCategoryViewController: UIViewController {
-    private let completion: (TrackerCategory) -> Void
+    private let store: TrackerStoring
 
     private var categoryName: String? { didSet { updateButtonStatus() } }
 
     init(
-        completion: @escaping (TrackerCategory) -> Void
+        store: TrackerStoring
     ) {
-        self.completion = completion
-
+        self.store = store
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -82,7 +81,7 @@ private extension NewCategoryViewController {
             return
         }
 
-        completion(.init(label: categoryName, trackers: []))
+        store.addCategory(.init(label: categoryName, trackers: []))
 
         if let navigationController {
             navigationController.popViewController(animated: true)
