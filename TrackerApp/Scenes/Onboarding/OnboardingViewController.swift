@@ -5,8 +5,12 @@ final class OnboardingViewController: UIPageViewController {
     private var pages: [UIViewController] = []
 
     private let messages = [
-        (text: "Отслеживайте только то, что хотите", image: ImageAsset.onboarding1),
-        (text: "Даже если это\nне литры воды и йога", image: ImageAsset.onboarding2)
+        (text: NSLocalizedString("onboarding.slide1Text",
+                                 comment: "Content of first onboarding slide"),
+         image: ImageAsset.onboarding1),
+        (text: NSLocalizedString("onboarding.slide2Text",
+                                 comment: "Content of second onboarding slide"),
+         image: ImageAsset.onboarding2)
     ]
 
     private var isSwitchingPages = false
@@ -65,7 +69,9 @@ final class OnboardingViewController: UIPageViewController {
         return control
     }()
 
-    private let button = YPButton(label: "Вот это технологии!")
+    private let button = YPButton(
+        label: NSLocalizedString("onboarding.start",
+                                 comment: "Button label for closing onboarding and starting app"))
 
     private let pageBackground: UIImageView = {
         let imageView = UIImageView()

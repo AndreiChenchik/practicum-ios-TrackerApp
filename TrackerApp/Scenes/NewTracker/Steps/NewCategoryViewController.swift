@@ -17,14 +17,17 @@ final class NewCategoryViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        title = "Новая категория"
+        title = NSLocalizedString("newTracker.newCategory.title", comment: "Screen title")
         setupAppearance()
     }
 
     // MARK: Components
 
     private lazy var addButton: UIButton = {
-        let button = YPButton(label: "Готово")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.newCategory.create",
+                                     comment: "Button label for creating new category")
+        )
         button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
         button.isEnabled = false
         return button
@@ -35,7 +38,8 @@ final class NewCategoryViewController: UIViewController {
 
         input.font = .asset(.ysDisplayRegular, size: 17)
         input.clearButtonMode = .always
-        input.placeholder = "Введите название категории"
+        input.placeholder = NSLocalizedString("newTracker.newCategory.textPlaceholder",
+                                              comment: "Placeholder when text field is empty")
 
         input.addTarget(self, action: #selector(textChanged), for: .allEditingEvents)
 

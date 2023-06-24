@@ -12,7 +12,7 @@ final class OnboardingPageViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
 
         label.font = .asset(.ysDisplayBold, size: 32)
-        label.textColor = .asset(.black)
+        label.textColor = .asset(.blackUniversal)
 
         return label
     }()

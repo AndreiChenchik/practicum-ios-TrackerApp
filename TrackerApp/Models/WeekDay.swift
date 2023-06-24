@@ -7,49 +7,11 @@ enum WeekDay: Int, CaseIterable, Codable {
 
 extension WeekDay {
     var label: String {
-        let label: String
-
-        switch self {
-        case .sunday:
-            label = "Воскресенье"
-        case .monday:
-            label = "Понедельник"
-        case .tuesday:
-            label = "Вторник"
-        case .wednesday:
-            label = "Среда"
-        case .thursday:
-            label = "Четверг"
-        case .friday:
-            label = "Пятница"
-        case .saturday:
-            label = "Суббота"
-        }
-
-        return label
+        Calendar.current.weekdaySymbols[self.rawValue-1]
     }
 
     var shortLabel: String {
-        let label: String
-
-        switch self {
-        case .sunday:
-            label = "Вс"
-        case .monday:
-            label = "Пн"
-        case .tuesday:
-            label = "Вт"
-        case .wednesday:
-            label = "Ср"
-        case .thursday:
-            label = "Чт"
-        case .friday:
-            label = "Пт"
-        case .saturday:
-            label = "Сб"
-        }
-
-        return label
+        Calendar.current.shortWeekdaySymbols[self.rawValue-1]
     }
 }
 
@@ -78,9 +40,11 @@ extension Set where Element == WeekDay {
     }
 
     var shortDescription: String? {
+        let listOfDayLabels = Calendar.current.shortWeekdaySymbols
+
         let scheduleDescription = WeekDay.allCasesSortedForUserCalendar
             .filter { self.contains($0) }
-            .map { $0.shortLabel }
+            .map { listOfDayLabels[$0.rawValue-1] }
             .joined(separator: ", ")
         return scheduleDescription.isEmpty ? nil : scheduleDescription
     }

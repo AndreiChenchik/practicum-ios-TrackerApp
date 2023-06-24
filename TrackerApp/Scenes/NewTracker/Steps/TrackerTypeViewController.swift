@@ -15,21 +15,27 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        title = "Создание трекера"
+        title = NSLocalizedString("newTracker.title", comment: "Screen title")
         setupAppearance()
     }
 
     // MARK: Components
 
     private lazy var habitButton: UIButton = {
-        let button = YPButton(label: "Привычка")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.habit",
+                                     comment: "Button label for creating new habit")
+        )
         button.addTarget(self, action: #selector(addHabit), for: .touchUpInside)
 
         return button
     }()
 
     private lazy var eventButton: UIButton = {
-        let button = YPButton(label: "Нерегулярные событие")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.event",
+                                     comment: "Button label for creating new event")
+        )
         button.addTarget(self, action: #selector(addEvent), for: .touchUpInside)
 
         return button

@@ -91,7 +91,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 extension TrackerCollectionViewCell {
     func configure(with model: Tracker?) {
         trackerLabel.text = model?.label
-        dayLabel.text = model != nil ? "\(model?.completedCount ?? 0) дней" : nil
+
+        let localizedFormat = NSLocalizedString("days", comment: "Number of days")
+        let daysCountLabel = String(format: localizedFormat, model?.completedCount ?? 0)
+        dayLabel.text = daysCountLabel
         emojiLabel.text = model?.emoji
 
         colorBackground.backgroundColor = model?.color.uiColor

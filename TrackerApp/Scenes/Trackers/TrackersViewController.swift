@@ -124,7 +124,8 @@ final class TrackersViewController: UIViewController {
 
     private lazy var startPlaceholderView: UIView = {
         let view = UIView.placeholderView(
-            message: "Что будем отслеживать?",
+            message: NSLocalizedString("trackers.empty",
+                                       comment: "Placeholder text when there are no trackers"),
             icon: .trackerStartPlaceholder
         )
 
@@ -135,7 +136,10 @@ final class TrackersViewController: UIViewController {
 
     private lazy var emptyPlaceholderView: UIView = {
         let view = UIView.placeholderView(
-            message: "Ничего не найдено",
+            message: NSLocalizedString(
+                "trackers.not_found",
+                comment: "Placeholder text when there are no trackers found"
+            ),
             icon: .trackerEmptyPlaceholder
         )
 
@@ -151,7 +155,7 @@ final class TrackersViewController: UIViewController {
 private extension TrackersViewController {
 
     func configureNavigationBar() {
-        title = "Трекеры"
+        title = NSLocalizedString("trackers.title", comment: "Title of screen")
 
         navigationItem.leftBarButtonItem = addButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)

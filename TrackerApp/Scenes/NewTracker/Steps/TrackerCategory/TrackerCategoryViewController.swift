@@ -25,7 +25,7 @@ final class TrackerCategoryViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        title = "Категория"
+        title = NSLocalizedString("newTracker.categories.title", comment: "Category screen title")
         setupAppearance()
     }
 
@@ -71,7 +71,9 @@ final class TrackerCategoryViewController: UIViewController {
     }()
 
     private lazy var addButton: UIButton = {
-        let button = YPButton(label: "Добавить категорию")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.categories.addCategory",
+                                     comment: "Button label for adding category"))
         button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
 
         return button
@@ -79,7 +81,8 @@ final class TrackerCategoryViewController: UIViewController {
 
     private lazy var startPlaceholderView: UIView = {
         let view = UIView.placeholderView(
-            message: "Привычки и события можно\nобъединить по смыслу",
+            message: NSLocalizedString("newTracker.categories.empty",
+                                       comment: "Placeholder when there are no categories"),
             icon: .trackerStartPlaceholder
         )
 

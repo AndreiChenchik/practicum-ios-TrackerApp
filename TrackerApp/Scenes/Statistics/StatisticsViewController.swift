@@ -3,7 +3,7 @@ import UIKit
 final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Статистика"
+        title = NSLocalizedString("statistics.title", comment: "Screen title")
 
         addPlaceholder()
     }
@@ -11,7 +11,10 @@ final class StatisticsViewController: UIViewController {
     // MARK: - Components
 
     private lazy var placeholderView: UIView = .placeholderView(
-        message: "Анализировать пока нечего",
+        message: NSLocalizedString(
+            "statistics.no_data",
+            comment: "Placeholder text when there are no stats"
+        ),
         icon: .statsPlaceholder
     )
 }

@@ -46,12 +46,12 @@ private extension HomeViewController {
 
         if let listItem = tabBar.items?.first {
             listItem.image = .asset(.trackerTabIcon)
-            listItem.title = "Трекеры"
+            listItem.title = NSLocalizedString("trackers.title", comment: "Title of screen")
         }
 
         if let profileItem = tabBar.items?.last {
             profileItem.image = .asset(.statisticsTabIcon)
-            profileItem.title = "Статистика"
+            profileItem.title = NSLocalizedString("statistics.title", comment: "Screen title")
         }
     }
 }
