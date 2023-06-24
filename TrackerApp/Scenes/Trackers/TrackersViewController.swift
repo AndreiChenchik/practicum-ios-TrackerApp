@@ -2,8 +2,9 @@ import UIKit
 import Combine
 
 final class TrackersViewController: UIViewController {
-    private var repo: TrackerStoring
-    private var creationCoordinator: Coordinator
+    private let repo: TrackerStoring
+    private let creationCoordinator: Coordinator
+    private let analytics: AnalyticsService
     private lazy var dataSource = makeDataSource()
 
     @Published private var searchText = ""
@@ -11,31 +12,15 @@ final class TrackersViewController: UIViewController {
 
     private var cancellable: Set<AnyCancellable> = []
 
-    init(repo: TrackerStoring, creationCoordinator: Coordinator) {
+    init(repo: TrackerStoring, creationCoordinator: Coordinator, analytics: AnalyticsService) {
         self.repo = repo
         self.creationCoordinator = creationCoordinator
+        self.analytics = analytics
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        collectionView.frame = view.bounds
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupAppearance()
-        configureNavigationBar()
-
-        bindToUpdates()
-
-        collectionView.dataSource = dataSource
-        applySnapshot(animatingDifferences: false)
     }
 
     private func bindToUpdates() {
@@ -150,6 +135,37 @@ final class TrackersViewController: UIViewController {
 
 }
 
+// MARK: - Lifecycle
+
+extension TrackersViewController {
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        collectionView.frame = view.bounds
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupAppearance()
+        configureNavigationBar()
+
+        bindToUpdates()
+
+        collectionView.dataSource = dataSource
+        applySnapshot(animatingDifferences: false)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analytics.log(event: .open(scene: .main))
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analytics.log(event: .close(scene: .main))
+    }
+}
+
 // MARK: - Appearance
 
 private extension TrackersViewController {
@@ -207,6 +223,7 @@ extension TrackersViewController {
             return
         }
 
+        analytics.log(event: .tap(scene: .main, object: "track"))
         repo.markTrackerComplete(id: tracker.id, on: selectedDate)
     }
 
@@ -215,6 +232,7 @@ extension TrackersViewController {
     }
 
     @objc private func addTapped() {
+        analytics.log(event: .tap(scene: .main, object: "add_track"))
         creationCoordinator.start(over: self)
     }
 }
