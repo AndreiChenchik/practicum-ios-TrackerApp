@@ -2,12 +2,12 @@ import Foundation
 
 struct Tracker: Identifiable, Hashable {
     var id = UUID()
-    let label: String
-    let emoji: String
-    let color: TrackerColor
-    let schedule: Set<WeekDay>?
-    let completedCount: Int
-    let isCompleted: Bool
+    var label: String
+    var emoji: String
+    var color: TrackerColor
+    var schedule: Set<WeekDay>?
+    var completedCount: Int
+    var isCompleted: Bool
 }
 
 extension Tracker {

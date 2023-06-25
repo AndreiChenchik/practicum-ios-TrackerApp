@@ -5,6 +5,7 @@ import UIKit
 protocol TrackerStoring {
     func addCategory(_ category: TrackerCategory)
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
+    func updateTracker(_ tracker: Tracker)
     func markTrackerComplete(id: UUID, on date: Date)
 
     func filtered(
@@ -59,6 +60,7 @@ final class TrackerRepository: NSObject, ObservableObject {
 }
 
 extension TrackerRepository: TrackerStoring {
+
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { $categories }
 
     // MARK: - Creation
@@ -76,6 +78,23 @@ extension TrackerRepository: TrackerStoring {
         trackerStore.create { trackerCD in
             trackerCD.createdAt = Date()
             trackerCD.id = tracker.id
+            trackerCD.emoji = tracker.emoji
+            trackerCD.label = tracker.label
+            trackerCD.colorHex = tracker.color.uiColor.hexString
+            trackerCD.category = categoryCD
+
+            if let schedule = tracker.schedule {
+                trackerCD.schedule = try? jsonEncoder.encode(schedule)
+            }
+        }
+    }
+
+    // MARK: - Update
+
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID) {
+        guard let categoryCD = categoryStore.getById(id) else { return }
+
+        trackerStore.update(tracker.id) { trackerCD in
             trackerCD.emoji = tracker.emoji
             trackerCD.label = tracker.label
             trackerCD.colorHex = tracker.color.uiColor.hexString
