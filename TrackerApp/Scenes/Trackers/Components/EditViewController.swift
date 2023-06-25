@@ -8,12 +8,10 @@ final class EditViewController: UIViewController {
     typealias Section = TrackerConfig.Section
 
     private let type: TrackerType
+    private let trackerStore: TrackerStoring
+    private let newTrackerRepository: NewTrackerRepository
 
-    private let onCategory: () -> Void
-    private let onSchedule: () -> Void
-
-    private var trackerStore: TrackerStoring
-
+    private var tracker: Tracker
     private var schedule: Set<WeekDay> = [] { didSet { updateButtonStatus() } }
     private var trackerName: String? { didSet { updateButtonStatus() } }
     private var selectedCategory: TrackerCategory? { didSet { updateButtonStatus() } }
@@ -35,10 +33,10 @@ final class EditViewController: UIViewController {
         category: TrackerCategory
     ) {
         self.type = type
-        self.onCategory = {print("onCategory")}
-        self.onSchedule = {print("onSchedule")}
         self.trackerStore = trackerStore
         self.numberOfDays = tracker.completedCount
+        self.tracker = tracker
+        self.newTrackerRepository = newTrackerRepository
 
         super.init(nibName: nil, bundle: nil)
 
@@ -90,7 +88,7 @@ final class EditViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(
             frame: .zero,
-            collectionViewLayout: UICollectionViewCompositionalLayout.trackerConfig
+            collectionViewLayout: UICollectionViewCompositionalLayout.trackerEdit
         )
 
         collection.keyboardDismissMode = .onDrag
@@ -114,6 +112,20 @@ final class EditViewController: UIViewController {
 
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
+    }()
+
+    private lazy var countLabel: UILabel = {
+        let label = UILabel()
+
+        label.font = .asset(.ysDisplayBold, size: 32)
+        label.textAlignment = .center
+
+        let localizedFormat = NSLocalizedString("days", comment: "Number of days")
+        let daysCountLabel = String(format: localizedFormat, numberOfDays)
+        label.text = daysCountLabel
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
 
     private lazy var createButton: UIButton = {
@@ -140,22 +152,37 @@ final class EditViewController: UIViewController {
 // MARK: - Actions
 
 private extension EditViewController {
+    func onSchedule() {
+        let scheduleVC = ScheduleViewController(repo: newTrackerRepository)
+        navigationController?.pushViewController(scheduleVC, animated: true)
+    }
+
+    func onCategory() {
+        let viewModel = TrackerCategoryViewModel(
+            deps: .init(repo: trackerStore, newTrackerRepository: newTrackerRepository)
+        ) { [weak self] in
+            guard let self else { return }
+            let newCategoryVC = NewCategoryViewController(store: self.trackerStore)
+            self.navigationController?.pushViewController(newCategoryVC, animated: true)
+        }
+
+        let categoryVC = TrackerCategoryViewController(viewModel: viewModel)
+
+        navigationController?.pushViewController(categoryVC, animated: true)
+    }
+
     @objc func save() {
         guard let trackerName, let selectedColor, let selectedEmoji, let selectedCategory else {
             assertionFailure("Button should be disabled")
             return
         }
 
-        let newTracker = Tracker(
-            label: trackerName,
-            emoji: selectedEmoji,
-            color: selectedColor,
-            schedule: type == .habit ? schedule : nil,
-            completedCount: 0,
-            isCompleted: false
-        )
+        tracker.label = trackerName
+        tracker.emoji = selectedEmoji
+        tracker.color = selectedColor
+        tracker.schedule = type == .habit ? schedule : nil
 
-        trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)
+        trackerStore.updateTracker(tracker, withCategory: selectedCategory.id)
         dismiss(animated: true)
     }
 
@@ -171,7 +198,7 @@ private extension EditViewController {
             let selectedEmoji,
             let index = Emoji.list.firstIndex(of: selectedEmoji),
             let oldCell = collectionView.cellForItem(
-                at: .init(row: index, section: path.section)
+                at: .init(row: index, section: path.section-1)
             ) as? TrackerEmojiCollectionCell {
 
             oldCell.configure(selectedEmoji, isSelected: false)
@@ -192,7 +219,7 @@ private extension EditViewController {
             let selectedColor,
             let index = TrackerColor.allCases.firstIndex(of: selectedColor),
             let oldCell = collectionView.cellForItem(
-                at: .init(row: index, section: path.section)
+                at: .init(row: index, section: path.section-1)
             ) as? TrackerColorCollectionCell {
 
             oldCell.configure(selectedColor.uiColor, isSelected: false)
@@ -234,7 +261,7 @@ private extension EditViewController {
 
 extension EditViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let section = Section(rawValue: indexPath.section) else { return }
+        guard let section = Section(rawValue: indexPath.section-1) else { return }
 
         switch section {
         case .emojis:
@@ -253,14 +280,15 @@ extension EditViewController: UICollectionViewDelegate {
 
 extension EditViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        Section.allCases.count
+        Section.allCases.count + 1
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        guard let section = Section(rawValue: section) else { return 0 }
+        guard section > 0 else { return 1 }
+        guard let section = Section(rawValue: section-1) else { return 0 }
 
         switch section {
         case .name: return 1
@@ -275,7 +303,8 @@ extension EditViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let section = Section(rawValue: indexPath.section) else {
+        guard indexPath.section > 0 else { return getCountCell(collectionView, path: indexPath) }
+        guard let section = Section(rawValue: indexPath.section-1) else {
             fatalError("Unknown section")
         }
 
@@ -294,7 +323,6 @@ extension EditViewController: UICollectionViewDataSource {
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
         guard
-            let section = Section(rawValue: indexPath.section),
             let view = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: "\(YPSectionHeaderCollectionView.self)",
@@ -302,7 +330,7 @@ extension EditViewController: UICollectionViewDataSource {
             ) as? YPSectionHeaderCollectionView
         else { fatalError("Something went terribly wrong") }
 
-        view.titleLabel.text = section.label
+        view.titleLabel.text = Section(rawValue: indexPath.section-1)?.label
 
         return view
     }
@@ -397,6 +425,18 @@ private extension EditViewController {
         case .cancel: cell.configure(view: cancelButton)
         case .submit: cell.configure(view: createButton)
         }
+
+        return cell
+    }
+
+    func getCountCell(_ collection: UICollectionView, path: IndexPath) -> UICollectionViewCell {
+        guard
+            let cell = collection.dequeueReusableCell(
+            withReuseIdentifier: "\(WrapperCollectionCell.self)",
+            for: path
+        ) as? WrapperCollectionCell else { preconditionFailure("Something went terribly wrong") }
+
+        cell.configure(view: countLabel)
 
         return cell
     }

@@ -274,6 +274,25 @@ extension TrackersViewController {
     private func edit(_ indexPath: IndexPath) {
         analytics.log(event: .tap(scene: .main, object: "edit"))
 
+        let category = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+        let tracker = category.trackers[indexPath.row]
+
+        let editVC = EditViewController(
+            tracker.schedule == nil ? .event : .habit,
+            newTrackerRepository: .init(),
+            trackerStore: repo,
+            tracker: tracker,
+            category: category
+        )
+
+        let navigationController = UINavigationController()
+        navigationController.configureForYPModal()
+
+        present(navigationController, animated: true)
+        navigationController.viewControllers = [editVC]
     }
 
     private func requestDelete(_ indexPath: IndexPath) {
