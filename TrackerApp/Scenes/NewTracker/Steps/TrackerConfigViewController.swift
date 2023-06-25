@@ -127,7 +127,7 @@ final class TrackerConfigViewController: UIViewController {
         let button = YPButton(
             label: NSLocalizedString("newTracker.config.cancel",
                                      comment: "Button label for cancelling tracker creation"),
-            destructive: true
+            style: .destructive
         )
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         return button

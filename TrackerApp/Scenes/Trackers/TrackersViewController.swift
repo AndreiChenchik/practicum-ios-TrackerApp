@@ -9,6 +9,7 @@ final class TrackersViewController: UIViewController {
 
     @Published private var searchText = ""
     @Published private var selectedDate = Date()
+    @Published private var selectedFilter = TrackerFilter.today
 
     private var cancellable: Set<AnyCancellable> = []
 
@@ -35,15 +36,28 @@ final class TrackersViewController: UIViewController {
         $searchText
             .receive(on: DispatchQueue.main)
             .combineLatest($selectedDate)
+            .combineLatest($selectedFilter)
             .dropFirst()
-            .sink { [weak self] text, date in
+            .sink { [weak self] textDate, filter in
                 guard let self else { return }
-                self.applySnapshot(selectedDate: date, searchText: text)
+                let (text, date) = textDate
+                self.applySnapshot(selectedDate: date, searchText: text, filter: filter)
             }
             .store(in: &cancellable)
     }
 
     // MARK: UI Components
+
+    private lazy var filterButton: UIButton = {
+        let button = YPButton(
+            label: NSLocalizedString("trackers.filters",
+                                     comment: "Button label for selecting filters"),
+            style: .prominent
+        )
+        button.addTarget(self, action: #selector(openFilters), for: .touchUpInside)
+
+        return button
+    }()
 
     private lazy var addButton: UIBarButtonItem = {
         let addIcon = UIImage(
@@ -182,23 +196,29 @@ private extension TrackersViewController {
         view.backgroundColor = .asset(.white)
         collectionView.backgroundColor = .asset(.white)
 
+        let safeArea = view.safeAreaLayoutGuide
+
         view.addSubview(collectionView)
         view.addSubview(startPlaceholderView)
         view.addSubview(emptyPlaceholderView)
+        view.addSubview(filterButton)
 
         NSLayoutConstraint.activate([
             datePicker.widthAnchor.constraint(lessThanOrEqualToConstant: 100),
             startPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             startPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 
     func updatePlaceholderVisibility() {
         let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
         let haveNoTrackers = repo
-            .filtered(at: nil, with: "")
+            .filtered(at: nil, with: "", filteredBy: .all)
             .filter({ $0.trackers.count > 0 })
             .count == 0
 
@@ -234,6 +254,20 @@ extension TrackersViewController {
     @objc private func addTapped() {
         analytics.log(event: .tap(scene: .main, object: "add_track"))
         creationCoordinator.start(over: self)
+    }
+
+    @objc private func openFilters() {
+        analytics.log(event: .tap(scene: .main, object: "filter"))
+        let filterVC = FilterViewController(selected: selectedFilter) { [weak self] selectedFilter in
+            guard let self else { return }
+            self.selectedFilter = selectedFilter
+        }
+
+        let navigationController = UINavigationController()
+        navigationController.configureForYPModal()
+
+        present(navigationController, animated: true)
+        navigationController.viewControllers = [filterVC]
     }
 }
 
@@ -299,14 +333,16 @@ private extension TrackersViewController {
     private func applySnapshot(
         selectedDate: Date? = nil,
         searchText: String? = nil,
+        filter: TrackerFilter? = nil,
         animatingDifferences: Bool = true
     ) {
         var snapshot = Snapshot()
 
         let searchText = searchText ?? self.searchText
         let selectedDate = selectedDate ?? self.selectedDate
+        let filter = filter ?? self.selectedFilter
 
-        repo.filtered(at: selectedDate, with: searchText).forEach {
+        repo.filtered(at: selectedDate, with: searchText, filteredBy: filter).forEach {
             snapshot.appendSections([$0])
             snapshot.appendItems($0.trackers, toSection: $0)
         }

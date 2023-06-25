@@ -7,7 +7,11 @@ protocol TrackerStoring {
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
     func markTrackerComplete(id: UUID, on date: Date)
 
-    func filtered(at date: Date?, with searchText: String) -> [TrackerCategory]
+    func filtered(
+        at date: Date?,
+        with searchText: String,
+        filteredBy: TrackerFilter
+    ) -> [TrackerCategory]
 
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
     var objectWillChange: ObservableObjectPublisher { get }
@@ -85,7 +89,11 @@ extension TrackerRepository: TrackerStoring {
 
     // MARK: - Data
 
-    func filtered(at date: Date?, with searchText: String) -> [TrackerCategory] {
+    func filtered(
+        at date: Date?,
+        with searchText: String,
+        filteredBy: TrackerFilter
+    ) -> [TrackerCategory] {
         let selectedWeekday: WeekDay?
         let dateString: String?
         if let date {
@@ -105,12 +113,31 @@ extension TrackerRepository: TrackerStoring {
             var trackers = category.trackers.filter { tracker in
                 let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
 
-                var isForDate = true
-                if let selectedWeekday {
-                    isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
+                var isIncluded = true
+                var isCompletedForDate = false
+                if let dateString {
+                    isCompletedForDate = completedTrackers[dateString]?.contains { record in
+                        record.trackerId == tracker.id
+                    } ?? false
                 }
 
-                return (categoryIsInSearch || trackerIsInSearch) && isForDate
+                switch filteredBy {
+                case .all:
+                    break
+                case .today:
+                    if let selectedWeekday {
+                        isIncluded = tracker.schedule?.contains(selectedWeekday) ?? true
+                    }
+                case .done:
+                    isIncluded = isCompletedForDate
+                case .notDone:
+                    if let selectedWeekday {
+                        isIncluded = tracker.schedule?.contains(selectedWeekday) ?? true
+                        isIncluded = isIncluded && !isCompletedForDate
+                    }
+                }
+
+                return (categoryIsInSearch || trackerIsInSearch) && isIncluded
             }
 
             trackers = trackers.map { tracker in
