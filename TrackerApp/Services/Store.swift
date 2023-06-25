@@ -79,6 +79,19 @@ where Entity: NSManagedObject & CoreDataIdentifiable & CoreDataDated {
         }
     }
 
+    func delete(_ id: UUID) {
+        guard let entity = getById(id) else { return }
+
+        context.delete(entity)
+
+        do {
+            try context.save()
+        } catch {
+            print(error)
+            context.rollback()
+        }
+    }
+
     func getById(_ id: UUID) -> Entity? {
         guard let request = Entity.fetchRequest() as? NSFetchRequest<Entity> else {
             preconditionFailure("Can't create fetch request")

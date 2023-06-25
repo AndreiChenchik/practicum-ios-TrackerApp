@@ -5,7 +5,8 @@ import UIKit
 protocol TrackerStoring {
     func addCategory(_ category: TrackerCategory)
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
-    func updateTracker(_ tracker: Tracker)
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID)
+    func removeTracker(_ id: UUID)
     func markTrackerComplete(id: UUID, on date: Date)
 
     func filtered(
@@ -104,6 +105,12 @@ extension TrackerRepository: TrackerStoring {
                 trackerCD.schedule = try? jsonEncoder.encode(schedule)
             }
         }
+    }
+
+    // MARK: - Remove
+
+    func removeTracker(_ id: UUID) {
+        trackerStore.delete(id)
     }
 
     // MARK: - Data

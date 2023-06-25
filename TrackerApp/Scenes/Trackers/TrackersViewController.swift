@@ -117,6 +117,7 @@ final class TrackersViewController: UIViewController {
         )
 
         collection.alwaysBounceVertical = true
+        collection.delegate = self
 
         return collection
     }()
@@ -269,6 +270,49 @@ extension TrackersViewController {
         present(navigationController, animated: true)
         navigationController.viewControllers = [filterVC]
     }
+
+    private func edit(_ indexPath: IndexPath) {
+        analytics.log(event: .tap(scene: .main, object: "edit"))
+
+    }
+
+    private func requestDelete(_ indexPath: IndexPath) {
+        analytics.log(event: .tap(scene: .main, object: "delete"))
+
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString("trackers.deleteRequestTitle",
+                                       comment: "Tracker remove request title"),
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(.init(
+            title: NSLocalizedString("trackers.doDelete",
+                                     comment: "Tracker remove approval button"),
+            style: .destructive, handler: { [weak self] _ in
+                guard let self else { return }
+                let tracker = self.repo
+                    .filtered(at: self.selectedDate,
+                              with: self.searchText,
+                              filteredBy: self.selectedFilter)[indexPath.section]
+                    .trackers[indexPath.row]
+
+                repo.removeTracker(tracker.id)
+            }
+        ))
+
+        alert.addAction(.init(
+            title: NSLocalizedString("trackers.cancelDelete",
+                                     comment: "Tracker remove cancel button"),
+            style: .cancel
+        ))
+
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func delete(_ indexPath: IndexPath) {
+
+    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -350,5 +394,60 @@ private extension TrackersViewController {
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
 
         updatePlaceholderVisibility()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        configureContextMenu(path: indexPath)
+    }
+}
+
+// MARK: - Context Menu
+private extension TrackersViewController {
+    func configureContextMenu(path: IndexPath) -> UIContextMenuConfiguration {
+        let context = UIContextMenuConfiguration { [weak self] in
+            guard let self else { return UIViewController() }
+            let customView = self.makePreview(indexPath: path)
+            return customView
+        } actionProvider: { _ in
+            let edit = UIAction(
+                title: NSLocalizedString("trackers.edit", comment: "Tracker edit button label")
+            ) { _ in
+                self.edit(path)
+            }
+
+            let delete = UIAction(
+                title: NSLocalizedString("trackers.delete", comment: "Tracker delete button label"),
+                attributes: .destructive
+            ) { _ in
+                self.requestDelete(path)
+            }
+
+            return UIMenu(children: [edit, delete])
+        }
+
+        return context
+    }
+
+    func makePreview(indexPath: IndexPath) -> UIViewController {
+        let tracker = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+            .trackers[indexPath.row]
+
+        let viewController = UIViewController()
+        let preview = TrackerLabelView(frame: CGRect(x: 0, y: 0, width: 167, height: 90))
+        preview.configure(with: tracker)
+        viewController.view = preview
+        viewController.preferredContentSize = preview.frame.size
+
+        return viewController
     }
 }
