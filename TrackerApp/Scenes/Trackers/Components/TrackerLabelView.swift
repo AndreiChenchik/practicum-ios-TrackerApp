@@ -18,6 +18,16 @@ final class TrackerLabelView: UIView {
         return view
     }()
 
+    private var pinnedView: UIImageView = {
+        let view = UIImageView()
+
+        view.image = .asset(.pinned)
+        view.tintColor = .asset(.contrast)
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private var trackerLabel: UILabel = {
         let label = UILabel()
 
@@ -57,6 +67,7 @@ extension TrackerLabelView {
         trackerLabel.text = model?.label
         emojiLabel.text = model?.emoji
         colorBackground.backgroundColor = model?.color.uiColor
+        pinnedView.isHidden = model?.isPinned == true ? false : true
     }
 }
 
@@ -66,11 +77,16 @@ private extension TrackerLabelView {
     func setupAppearance() {
         addSubview(trackerLabel)
         addSubview(emojiLabel)
+        addSubview(pinnedView)
 
         insertSubview(emojiBackground, at: 0)
         insertSubview(colorBackground, at: 0)
 
         NSLayoutConstraint.activate([
+            pinnedView.heightAnchor.constraint(equalTo: pinnedView.widthAnchor),
+            pinnedView.widthAnchor.constraint(equalToConstant: 24),
+            pinnedView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            pinnedView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
             colorBackground.topAnchor.constraint(equalTo: topAnchor),
             colorBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
             colorBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
