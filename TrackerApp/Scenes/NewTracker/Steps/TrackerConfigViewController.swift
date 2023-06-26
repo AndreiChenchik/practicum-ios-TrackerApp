@@ -150,7 +150,8 @@ private extension TrackerConfigViewController {
             schedule: type == .habit ? schedule : nil,
             completedCount: 0,
             isCompleted: false,
-            isPinned: false
+            isPinned: false,
+            categoryId: selectedCategory.id
         )
 
         trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)

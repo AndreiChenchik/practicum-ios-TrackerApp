@@ -281,7 +281,7 @@ extension TrackersViewController {
         var tracker = category.trackers[indexPath.row]
         tracker.isPinned = !tracker.isPinned
 
-        repo.updateTracker(tracker, withCategory: category.id)
+        repo.updateTracker(tracker, withCategory: nil)
     }
 
     private func edit(_ indexPath: IndexPath) {

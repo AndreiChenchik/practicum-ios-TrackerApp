@@ -5,7 +5,7 @@ import UIKit
 protocol TrackerStoring {
     func addCategory(_ category: TrackerCategory)
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
-    func updateTracker(_ tracker: Tracker, withCategory id: UUID)
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID?)
     func removeTracker(_ id: UUID)
     func markTrackerComplete(id: UUID, on date: Date)
 
@@ -92,8 +92,9 @@ extension TrackerRepository: TrackerStoring {
 
     // MARK: - Update
 
-    func updateTracker(_ tracker: Tracker, withCategory id: UUID) {
-        guard let categoryCD = categoryStore.getById(id) else { return }
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID?) {
+        let categoryId = id ?? tracker.categoryId
+        guard let categoryCD = categoryStore.getById(categoryId) else { return }
 
         trackerStore.update(tracker.id) { trackerCD in
             trackerCD.emoji = tracker.emoji
@@ -134,6 +135,12 @@ extension TrackerRepository: TrackerStoring {
         let emptySearch = searchText.isEmpty
         var result = [TrackerCategory]()
 
+        var pinnedCategory = TrackerCategory(
+            label: NSLocalizedString("trackers.pinnedCategory",
+                                     comment: "Category with pinned trackers"),
+            trackers: categories.flatMap(\.trackers).filter { $0.isPinned }
+        )
+
         categories.forEach { category in
             let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
 
@@ -164,7 +171,7 @@ extension TrackerRepository: TrackerStoring {
                     }
                 }
 
-                return (categoryIsInSearch || trackerIsInSearch) && isIncluded
+                return (categoryIsInSearch || trackerIsInSearch) && isIncluded && !tracker.isPinned
             }
 
             trackers = trackers.map { tracker in
@@ -182,7 +189,8 @@ extension TrackerRepository: TrackerStoring {
                              schedule: tracker.schedule,
                              completedCount: tracker.completedCount,
                              isCompleted: isCompletedForDate,
-                             isPinned: tracker.isPinned)
+                             isPinned: tracker.isPinned,
+                             categoryId: tracker.categoryId)
             }
 
             trackers.sort { $0.label > $1.label }
@@ -190,6 +198,10 @@ extension TrackerRepository: TrackerStoring {
             if !trackers.isEmpty {
                 result.append(.init(id: category.id, label: category.label, trackers: trackers))
             }
+        }
+
+        if !pinnedCategory.trackers.isEmpty {
+            result.insert(pinnedCategory, at: 0)
         }
 
         return result

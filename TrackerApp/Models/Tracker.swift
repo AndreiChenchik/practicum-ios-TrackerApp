@@ -9,6 +9,7 @@ struct Tracker: Identifiable, Hashable {
     var completedCount: Int
     var isCompleted: Bool
     var isPinned: Bool
+    var categoryId: UUID
 }
 
 extension Tracker {
@@ -19,7 +20,8 @@ extension Tracker {
               schedule: nil,
               completedCount: 10,
               isCompleted: false,
-              isPinned: false)
+              isPinned: false,
+              categoryId: .init())
     }
 
     static var mockGrandma: Self {
@@ -29,7 +31,8 @@ extension Tracker {
               schedule: nil,
               completedCount: 125,
               isCompleted: false,
-              isPinned: false)
+              isPinned: false,
+              categoryId: .init())
     }
 
     static var mockDating: Self {
@@ -39,7 +42,8 @@ extension Tracker {
               schedule: .mockOnWeekends,
               completedCount: 0,
               isCompleted: false,
-              isPinned: true)
+              isPinned: true,
+              categoryId: .init())
     }
 
     static var mockPlants: Self {
@@ -49,7 +53,8 @@ extension Tracker {
               schedule: .mockEveryDay,
               completedCount: 120,
               isCompleted: false,
-              isPinned: true)
+              isPinned: true,
+              categoryId: .init())
     }
 }
 
@@ -61,7 +66,8 @@ extension Tracker {
             let emoji = data.emoji,
             let hex = data.colorHex,
             let completedCount = data.records?.count,
-            let color = TrackerColor(rawValue: hex)
+            let color = TrackerColor(rawValue: hex),
+            let categoryId = data.category?.id
         else { return nil }
 
         var schedule: Set<WeekDay>?
@@ -76,6 +82,7 @@ extension Tracker {
                      schedule: schedule,
                      completedCount: completedCount,
                      isCompleted: false,
-                     isPinned: data.isPinned)
+                     isPinned: data.isPinned,
+                     categoryId: categoryId)
     }
 }
