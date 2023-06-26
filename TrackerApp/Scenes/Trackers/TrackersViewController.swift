@@ -271,6 +271,19 @@ extension TrackersViewController {
         navigationController.viewControllers = [filterVC]
     }
 
+    private func togglePin(_ indexPath: IndexPath) {
+        analytics.log(.tap(.main(.pin)))
+
+        let category = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+        var tracker = category.trackers[indexPath.row]
+        tracker.isPinned = !tracker.isPinned
+
+        repo.updateTracker(tracker, withCategory: category.id)
+    }
+
     private func edit(_ indexPath: IndexPath) {
         analytics.log(.tap(.main(.edit)))
 
@@ -434,7 +447,23 @@ private extension TrackersViewController {
             guard let self else { return UIViewController() }
             let customView = self.makePreview(indexPath: path)
             return customView
-        } actionProvider: { _ in
+        } actionProvider: { [weak self] _ in
+            guard let self else { return nil }
+
+            let category = self.repo
+                .filtered(at: self.selectedDate,
+                          with: self.searchText,
+                          filteredBy: self.selectedFilter)[path.section]
+            let tracker = category.trackers[path.row]
+
+            let pin = UIAction(
+                title: tracker.isPinned
+                    ? NSLocalizedString("trackers.unPin", comment: "Tracker unpin button label")
+                    : NSLocalizedString("trackers.pin", comment: "Tracker pin button label")
+            ) { _ in
+                self.togglePin(path)
+            }
+
             let edit = UIAction(
                 title: NSLocalizedString("trackers.edit", comment: "Tracker edit button label")
             ) { _ in
@@ -448,7 +477,7 @@ private extension TrackersViewController {
                 self.requestDelete(path)
             }
 
-            return UIMenu(children: [edit, delete])
+            return UIMenu(children: [pin, edit, delete])
         }
 
         return context

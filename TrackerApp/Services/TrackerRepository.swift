@@ -100,6 +100,7 @@ extension TrackerRepository: TrackerStoring {
             trackerCD.label = tracker.label
             trackerCD.colorHex = tracker.color.uiColor.hexString
             trackerCD.category = categoryCD
+            trackerCD.isPinned = tracker.isPinned
 
             if let schedule = tracker.schedule {
                 trackerCD.schedule = try? jsonEncoder.encode(schedule)
