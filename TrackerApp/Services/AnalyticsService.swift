@@ -1,6 +1,16 @@
 import YandexMobileMetrica
 
 final class AnalyticsService {
+    static func activate() {
+        guard let configuration = YMMYandexMetricaConfiguration(
+            apiKey: "ca56bb94-8fbf-42cf-937e-c32f7d0e65ae"
+        ) else {
+            return
+        }
+
+        YMMYandexMetrica.activate(with: configuration)
+    }
+
     func log(event: Event) {
         YMMYandexMetrica.reportEvent("appEvent", parameters: paramsFor(event), onFailure: { error in
             print("REPORT ERROR: %@", error.localizedDescription)
