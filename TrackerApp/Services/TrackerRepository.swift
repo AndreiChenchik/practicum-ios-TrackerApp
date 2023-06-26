@@ -135,11 +135,15 @@ extension TrackerRepository: TrackerStoring {
         let emptySearch = searchText.isEmpty
         var result = [TrackerCategory]()
 
-        var pinnedCategory = TrackerCategory(
+        let pinnedCategory = TrackerCategory(
             label: NSLocalizedString("trackers.pinnedCategory",
                                      comment: "Category with pinned trackers"),
             trackers: categories.flatMap(\.trackers).filter { $0.isPinned }
         )
+
+        if !pinnedCategory.trackers.isEmpty {
+            result.append(pinnedCategory)
+        }
 
         categories.forEach { category in
             let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
@@ -198,10 +202,6 @@ extension TrackerRepository: TrackerStoring {
             if !trackers.isEmpty {
                 result.append(.init(id: category.id, label: category.label, trackers: trackers))
             }
-        }
-
-        if !pinnedCategory.trackers.isEmpty {
-            result.insert(pinnedCategory, at: 0)
         }
 
         return result
