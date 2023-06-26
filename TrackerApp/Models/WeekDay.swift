@@ -40,6 +40,11 @@ extension Set where Element == WeekDay {
     }
 
     var shortDescription: String? {
+        guard self != Set(WeekDay.allCases) else {
+            return NSLocalizedString("weekday.all_days.short",
+                                     comment: "Short description of full week schedule")
+        }
+
         let listOfDayLabels = Calendar.current.shortWeekdaySymbols
 
         let scheduleDescription = WeekDay.allCasesSortedForUserCalendar
