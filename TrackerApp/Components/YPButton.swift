@@ -21,7 +21,12 @@ final class YPButton: UIButton {
         layer.borderWidth = style == .destructive ? 1 : 0
         backgroundColor = style == .destructive ? .clear : .asset(.black)
 
-        setTitleColor(style == .destructive ? .asset(.red) : .asset(.white), for: .normal)
+        setTitleColor(style == .destructive
+                        ? .asset(.red)
+                        : style == .prominent
+                            ? .asset(.contrast)
+                            : .asset(.white),
+                      for: .normal)
         titleLabel?.font = .asset(.ysDisplayMedium, size: 16)
 
         setTitle(label, for: .normal)
