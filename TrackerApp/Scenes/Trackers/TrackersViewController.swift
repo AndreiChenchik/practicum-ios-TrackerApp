@@ -172,12 +172,12 @@ extension TrackersViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        analytics.log(event: .open(scene: .main))
+        analytics.log(.open(.main()))
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        analytics.log(event: .close(scene: .main))
+        analytics.log(.close(.main()))
     }
 }
 
@@ -244,7 +244,7 @@ extension TrackersViewController {
             return
         }
 
-        analytics.log(event: .tap(scene: .main, object: "track"))
+        analytics.log(.tap(.main(.track)))
         repo.markTrackerComplete(id: tracker.id, on: selectedDate)
     }
 
@@ -253,12 +253,12 @@ extension TrackersViewController {
     }
 
     @objc private func addTapped() {
-        analytics.log(event: .tap(scene: .main, object: "add_track"))
+        analytics.log(.tap(.main(.addTrack)))
         creationCoordinator.start(over: self)
     }
 
     @objc private func openFilters() {
-        analytics.log(event: .tap(scene: .main, object: "filter"))
+        analytics.log(.tap(.main(.filter)))
         let filterVC = FilterViewController(selected: selectedFilter) { [weak self] selectedFilter in
             guard let self else { return }
             self.selectedFilter = selectedFilter
@@ -272,7 +272,7 @@ extension TrackersViewController {
     }
 
     private func edit(_ indexPath: IndexPath) {
-        analytics.log(event: .tap(scene: .main, object: "edit"))
+        analytics.log(.tap(.main(.edit)))
 
         let category = self.repo
             .filtered(at: self.selectedDate,
@@ -296,7 +296,7 @@ extension TrackersViewController {
     }
 
     private func requestDelete(_ indexPath: IndexPath) {
-        analytics.log(event: .tap(scene: .main, object: "delete"))
+        analytics.log(.tap(.main(.delete)))
 
         let alert = UIAlertController(
             title: nil,

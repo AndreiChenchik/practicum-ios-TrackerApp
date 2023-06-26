@@ -85,6 +85,7 @@
 		38D617442A4830420030DBC5 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D617432A4830420030DBC5 /* EditViewController.swift */; };
 		38D617462A4844A60030DBC5 /* TrackerLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D617452A4844A60030DBC5 /* TrackerLabelView.swift */; };
 		38D617482A4852320030DBC5 /* TrackerEditCollectionLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D617472A4852320030DBC5 /* TrackerEditCollectionLayout.swift */; };
+		38D6174A2A497D350030DBC5 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D617492A497D350030DBC5 /* MainScene.swift */; };
 		82DC4180A01C0D03F9CFC1D7 /* Pods_TrackerAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB080DEB15B0564D1E5FE5B /* Pods_TrackerAppTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -184,6 +185,7 @@
 		38D617432A4830420030DBC5 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		38D617452A4844A60030DBC5 /* TrackerLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerLabelView.swift; sourceTree = "<group>"; };
 		38D617472A4852320030DBC5 /* TrackerEditCollectionLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerEditCollectionLayout.swift; sourceTree = "<group>"; };
+		38D617492A497D350030DBC5 /* MainScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
 		7E65300F77F2B3800C7B65AB /* Pods-TrackerAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerAppTests.debug.xcconfig"; path = "Target Support Files/Pods-TrackerAppTests/Pods-TrackerAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9AB38524A9C4D3606AD83822 /* Pods-TrackerAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerAppTests.release.xcconfig"; path = "Target Support Files/Pods-TrackerAppTests/Pods-TrackerAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		A7CBB1165C7B2ABF8EE239B5 /* Pods-TrackerApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerApp.release.xcconfig"; path = "Target Support Files/Pods-TrackerApp/Pods-TrackerApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 			children = (
 				38D617382A479F3B0030DBC5 /* Event.swift */,
 				38D6173B2A479F820030DBC5 /* EventScene.swift */,
+				38D617492A497D350030DBC5 /* MainScene.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -754,6 +757,7 @@
 				38C1AB882987B1EE00AB7B0E /* TrackerConfigViewController.swift in Sources */,
 				383126652A47847F00594780 /* UIImage+Gradient.swift in Sources */,
 				38D6173C2A479F820030DBC5 /* EventScene.swift in Sources */,
+				38D6174A2A497D350030DBC5 /* MainScene.swift in Sources */,
 				383126672A478C1D00594780 /* Statistics.swift in Sources */,
 				38D617392A479F3B0030DBC5 /* Event.swift in Sources */,
 				38083D99298EA7BF00D47E8A /* YPInputCollectionCell.swift in Sources */,

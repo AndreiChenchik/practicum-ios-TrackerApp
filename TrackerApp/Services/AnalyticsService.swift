@@ -11,7 +11,7 @@ final class AnalyticsService {
         YMMYandexMetrica.activate(with: configuration)
     }
 
-    func log(event: Event) {
+    func log(_ event: Event) {
         YMMYandexMetrica.reportEvent("appEvent", parameters: paramsFor(event), onFailure: { error in
             print("REPORT ERROR: %@", error.localizedDescription)
         })
@@ -20,13 +20,16 @@ final class AnalyticsService {
 
 private extension AnalyticsService {
     func paramsFor(_ event: Event) -> [String: String] {
+        var params = ["event": event.label]
+
         switch event {
-        case let .open(scene):
-            return ["event": "open", "screen": scene.rawValue]
-        case let .close(scene):
-            return ["event": "close", "screen": scene.rawValue]
-        case let .tap(scene, object):
-            return ["event": "click", "screen": scene.rawValue, "item": object]
+        case let .open(scene), let .tap(scene), let .close(scene):
+            params["screen"] = scene.label
+            if let objectLabel = scene.objetLabel {
+                params["item"] = objectLabel
+            }
         }
+
+        return params
     }
 }
