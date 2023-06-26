@@ -180,7 +180,8 @@ extension TrackerRepository: TrackerStoring {
                              color: tracker.color,
                              schedule: tracker.schedule,
                              completedCount: tracker.completedCount,
-                             isCompleted: isCompletedForDate)
+                             isCompleted: isCompletedForDate,
+                             isPinned: tracker.isPinned)
             }
 
             trackers.sort { $0.label > $1.label }

@@ -149,7 +149,8 @@ private extension TrackerConfigViewController {
             color: selectedColor,
             schedule: type == .habit ? schedule : nil,
             completedCount: 0,
-            isCompleted: false
+            isCompleted: false,
+            isPinned: false
         )
 
         trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)
