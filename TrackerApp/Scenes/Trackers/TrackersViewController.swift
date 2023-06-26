@@ -326,7 +326,7 @@ extension TrackersViewController {
             style: .cancel
         ))
 
-        self.present(alert, animated: true, completion: nil)
+        present(alert, animated: true)
     }
 
     private func delete(_ indexPath: IndexPath) {
