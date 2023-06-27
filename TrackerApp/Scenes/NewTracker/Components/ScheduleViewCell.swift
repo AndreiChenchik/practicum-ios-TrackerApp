@@ -79,7 +79,7 @@ final class ScheduleViewCell: UITableViewCell {
     private lazy var backView: UIView = {
         let view = UIView()
 
-        view.backgroundColor = .asset(.background).withAlphaComponent(0.3)
+        view.backgroundColor = .asset(.background)
 
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true

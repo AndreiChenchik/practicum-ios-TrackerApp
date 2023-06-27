@@ -5,12 +5,20 @@ import UIKit
 protocol TrackerStoring {
     func addCategory(_ category: TrackerCategory)
     func addTracker(_ tracker: Tracker, toCategory id: UUID)
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID?)
+    func removeTracker(_ id: UUID)
     func markTrackerComplete(id: UUID, on date: Date)
 
-    func filtered(at date: Date?, with searchText: String) -> [TrackerCategory]
+    func filtered(
+        at date: Date?,
+        with searchText: String,
+        filteredBy: TrackerFilter
+    ) -> [TrackerCategory]
 
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { get }
     var objectWillChange: ObservableObjectPublisher { get }
+
+    var statistics: Statistics? { get }
 }
 
 final class TrackerRepository: NSObject, ObservableObject {
@@ -53,6 +61,7 @@ final class TrackerRepository: NSObject, ObservableObject {
 }
 
 extension TrackerRepository: TrackerStoring {
+
     var categoriesPublisher: Published<[TrackerCategory]>.Publisher { $categories }
 
     // MARK: - Creation
@@ -81,9 +90,38 @@ extension TrackerRepository: TrackerStoring {
         }
     }
 
+    // MARK: - Update
+
+    func updateTracker(_ tracker: Tracker, withCategory id: UUID?) {
+        let categoryId = id ?? tracker.categoryId
+        guard let categoryCD = categoryStore.getById(categoryId) else { return }
+
+        trackerStore.update(tracker.id) { trackerCD in
+            trackerCD.emoji = tracker.emoji
+            trackerCD.label = tracker.label
+            trackerCD.colorHex = tracker.color.uiColor.hexString
+            trackerCD.category = categoryCD
+            trackerCD.isPinned = tracker.isPinned
+
+            if let schedule = tracker.schedule {
+                trackerCD.schedule = try? jsonEncoder.encode(schedule)
+            }
+        }
+    }
+
+    // MARK: - Remove
+
+    func removeTracker(_ id: UUID) {
+        trackerStore.delete(id)
+    }
+
     // MARK: - Data
 
-    func filtered(at date: Date?, with searchText: String) -> [TrackerCategory] {
+    func filtered(
+        at date: Date?,
+        with searchText: String,
+        filteredBy: TrackerFilter
+    ) -> [TrackerCategory] {
         let selectedWeekday: WeekDay?
         let dateString: String?
         if let date {
@@ -97,18 +135,47 @@ extension TrackerRepository: TrackerStoring {
         let emptySearch = searchText.isEmpty
         var result = [TrackerCategory]()
 
+        let pinnedCategory = TrackerCategory(
+            label: NSLocalizedString("trackers.pinnedCategory",
+                                     comment: "Category with pinned trackers"),
+            trackers: categories.flatMap(\.trackers).filter { $0.isPinned }
+        )
+
+        if !pinnedCategory.trackers.isEmpty {
+            result.append(pinnedCategory)
+        }
+
         categories.forEach { category in
             let categoryIsInSearch = emptySearch || category.label.lowercased().contains(searchText)
 
             var trackers = category.trackers.filter { tracker in
                 let trackerIsInSearch = emptySearch || tracker.label.lowercased().contains(searchText)
 
-                var isForDate = true
-                if let selectedWeekday {
-                    isForDate = tracker.schedule?.contains(selectedWeekday) ?? true
+                var isIncluded = true
+                var isCompletedForDate = false
+                if let dateString {
+                    isCompletedForDate = completedTrackers[dateString]?.contains { record in
+                        record.trackerId == tracker.id
+                    } ?? false
                 }
 
-                return (categoryIsInSearch || trackerIsInSearch) && isForDate
+                switch filteredBy {
+                case .all:
+                    break
+                case .today:
+                    if let selectedWeekday {
+                        isIncluded = tracker.schedule?.contains(selectedWeekday) ?? true
+                    }
+                case .done:
+                    isIncluded = isCompletedForDate
+                case .notDone:
+                    if let selectedWeekday {
+                        isIncluded = tracker.schedule?.contains(selectedWeekday) ?? true
+                        isIncluded = isIncluded && !isCompletedForDate
+                    }
+                }
+
+                return (categoryIsInSearch || trackerIsInSearch) && isIncluded && !tracker.isPinned
             }
 
             trackers = trackers.map { tracker in
@@ -125,8 +192,12 @@ extension TrackerRepository: TrackerStoring {
                              color: tracker.color,
                              schedule: tracker.schedule,
                              completedCount: tracker.completedCount,
-                             isCompleted: isCompletedForDate)
+                             isCompleted: isCompletedForDate,
+                             isPinned: tracker.isPinned,
+                             categoryId: tracker.categoryId)
             }
+
+            trackers.sort { $0.label > $1.label }
 
             if !trackers.isEmpty {
                 result.append(.init(id: category.id, label: category.label, trackers: trackers))
@@ -145,6 +216,19 @@ extension TrackerRepository: TrackerStoring {
             recordCD.date = date
             recordCD.tracker = trackerCD
         }
+    }
+
+    // MARK: - Statistics
+
+    var statistics: Statistics? {
+        let count = recordStore.data.count
+
+        guard count > 0 else { return nil }
+
+        return .init(bestPeriod: count,
+                     idealDays: count,
+                     completedTrackers: count,
+                     averageValue: count)
     }
 }
 

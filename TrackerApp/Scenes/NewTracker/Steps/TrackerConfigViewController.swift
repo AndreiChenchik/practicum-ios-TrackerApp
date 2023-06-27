@@ -40,6 +40,9 @@ final class TrackerConfigViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
+        newTrackerRepository.selectedCategory = nil
+        newTrackerRepository.selectedSchedule = []
+
         newTrackerRepository.$selectedSchedule
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
@@ -66,7 +69,9 @@ final class TrackerConfigViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .asset(.white)
 
-        title = type == .habit ? "Новая привычка" : "Новое нерегулярное событие"
+        title = type == .habit
+            ? NSLocalizedString("newTracker.config.habitTitle", comment: "Habit screen title")
+            : NSLocalizedString("newTracker.config.eventTitle", comment: "Event screen title")
         navigationItem.hidesBackButton = true
 
         view.addSubview(collectionView)
@@ -109,14 +114,21 @@ final class TrackerConfigViewController: UIViewController {
     }()
 
     private lazy var createButton: UIButton = {
-        let button = YPButton(label: "Готово")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.config.create",
+                                     comment: "Button label for creating new tracker")
+        )
         button.addTarget(self, action: #selector(create), for: .touchUpInside)
         button.isEnabled = false
         return button
     }()
 
     private lazy var cancelButton: UIButton = {
-        let button = YPButton(label: "Отменить", destructive: true)
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.config.cancel",
+                                     comment: "Button label for cancelling tracker creation"),
+            style: .destructive
+        )
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         return button
     }()
@@ -137,7 +149,9 @@ private extension TrackerConfigViewController {
             color: selectedColor,
             schedule: type == .habit ? schedule : nil,
             completedCount: 0,
-            isCompleted: false
+            isCompleted: false,
+            isPinned: false,
+            categoryId: selectedCategory.id
         )
 
         trackerStore.addTracker(newTracker, toCategory: selectedCategory.id)
@@ -304,7 +318,8 @@ private extension TrackerConfigViewController {
 
         cell.configure(
             text: trackerName,
-            placeholder: "Введите название трекера",
+            placeholder: NSLocalizedString("newTracker.config.textPlaceholder",
+                                           comment: "Placeholder when name field is empty"),
             outCorner: [.all]
         ) { [weak self] input in
             self?.trackerName = input

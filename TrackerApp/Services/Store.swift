@@ -67,6 +67,31 @@ where Entity: NSManagedObject & CoreDataIdentifiable & CoreDataDated {
         }
     }
 
+    func update(_ id: UUID, configure: (Entity) -> Void) {
+        guard let entity = getById(id) else { return }
+
+        configure(entity)
+
+        do {
+            try context.save()
+        } catch {
+            context.rollback()
+        }
+    }
+
+    func delete(_ id: UUID) {
+        guard let entity = getById(id) else { return }
+
+        context.delete(entity)
+
+        do {
+            try context.save()
+        } catch {
+            print(error)
+            context.rollback()
+        }
+    }
+
     func getById(_ id: UUID) -> Entity? {
         guard let request = Entity.fetchRequest() as? NSFetchRequest<Entity> else {
             preconditionFailure("Can't create fetch request")

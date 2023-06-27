@@ -1,18 +1,32 @@
 import UIKit
 
 final class YPButton: UIButton {
+    enum ButtonStyle {
+        case normal
+        case destructive
+        case prominent
+    }
+
     enum ButtonState {
         case normal
         case disabled
     }
 
-    init(label: String, destructive: Bool = false) {
+    init(label: String, style: ButtonStyle = .normal) {
         super.init(frame: .zero)
 
+        contentEdgeInsets = .init(top: 0, left: 20, bottom: 0, right: 20)
+
         layer.borderColor = UIColor.asset(.red).cgColor
-        layer.borderWidth = destructive ? 1 : 0
-        backgroundColor = destructive ? .clear : .asset(.black)
-        setTitleColor(destructive ? .asset(.red) : .asset(.white), for: .normal)
+        layer.borderWidth = style == .destructive ? 1 : 0
+        backgroundColor = style == .destructive ? .clear : .asset(.black)
+
+        setTitleColor(style == .destructive
+                        ? .asset(.red)
+                        : style == .prominent
+                            ? .asset(.contrast)
+                            : .asset(.white),
+                      for: .normal)
         titleLabel?.font = .asset(.ysDisplayMedium, size: 16)
 
         setTitle(label, for: .normal)
@@ -20,8 +34,9 @@ final class YPButton: UIButton {
         layer.cornerRadius = 16
         translatesAutoresizingMaskIntoConstraints = false
 
-        if !destructive {
-            setBackgroundColor(.asset(.black), for: .normal)
+        if style != .destructive {
+            let backgroundColor: UIColor = style == .prominent ? .asset(.blue) : .asset(.black)
+            setBackgroundColor(backgroundColor, for: .normal)
             setBackgroundColor(.asset(.gray), for: .disabled)
         }
     }

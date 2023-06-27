@@ -2,40 +2,26 @@ import UIKit
 import Combine
 
 final class TrackersViewController: UIViewController {
-    private var repo: TrackerStoring
-    private var creationCoordinator: Coordinator
+    private let repo: TrackerStoring
+    private let creationCoordinator: Coordinator
+    private let analytics: AnalyticsService
     private lazy var dataSource = makeDataSource()
 
     @Published private var searchText = ""
     @Published private var selectedDate = Date()
+    @Published private var selectedFilter = TrackerFilter.today
 
     private var cancellable: Set<AnyCancellable> = []
 
-    init(repo: TrackerStoring, creationCoordinator: Coordinator) {
+    init(repo: TrackerStoring, creationCoordinator: Coordinator, analytics: AnalyticsService) {
         self.repo = repo
         self.creationCoordinator = creationCoordinator
+        self.analytics = analytics
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        collectionView.frame = view.bounds
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupAppearance()
-        configureNavigationBar()
-
-        bindToUpdates()
-
-        collectionView.dataSource = dataSource
-        applySnapshot(animatingDifferences: false)
     }
 
     private func bindToUpdates() {
@@ -50,15 +36,28 @@ final class TrackersViewController: UIViewController {
         $searchText
             .receive(on: DispatchQueue.main)
             .combineLatest($selectedDate)
+            .combineLatest($selectedFilter)
             .dropFirst()
-            .sink { [weak self] text, date in
+            .sink { [weak self] textDate, filter in
                 guard let self else { return }
-                self.applySnapshot(selectedDate: date, searchText: text)
+                let (text, date) = textDate
+                self.applySnapshot(selectedDate: date, searchText: text, filter: filter)
             }
             .store(in: &cancellable)
     }
 
     // MARK: UI Components
+
+    private lazy var filterButton: UIButton = {
+        let button = YPButton(
+            label: NSLocalizedString("trackers.filters",
+                                     comment: "Button label for selecting filters"),
+            style: .prominent
+        )
+        button.addTarget(self, action: #selector(openFilters), for: .touchUpInside)
+
+        return button
+    }()
 
     private lazy var addButton: UIBarButtonItem = {
         let addIcon = UIImage(
@@ -118,13 +117,15 @@ final class TrackersViewController: UIViewController {
         )
 
         collection.alwaysBounceVertical = true
+        collection.delegate = self
 
         return collection
     }()
 
     private lazy var startPlaceholderView: UIView = {
         let view = UIView.placeholderView(
-            message: "Что будем отслеживать?",
+            message: NSLocalizedString("trackers.empty",
+                                       comment: "Placeholder text when there are no trackers"),
             icon: .trackerStartPlaceholder
         )
 
@@ -135,7 +136,10 @@ final class TrackersViewController: UIViewController {
 
     private lazy var emptyPlaceholderView: UIView = {
         let view = UIView.placeholderView(
-            message: "Ничего не найдено",
+            message: NSLocalizedString(
+                "trackers.not_found",
+                comment: "Placeholder text when there are no trackers found"
+            ),
             icon: .trackerEmptyPlaceholder
         )
 
@@ -146,12 +150,43 @@ final class TrackersViewController: UIViewController {
 
 }
 
+// MARK: - Lifecycle
+
+extension TrackersViewController {
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        collectionView.frame = view.bounds
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupAppearance()
+        configureNavigationBar()
+
+        bindToUpdates()
+
+        collectionView.dataSource = dataSource
+        applySnapshot(animatingDifferences: false)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analytics.log(.open(.main()))
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analytics.log(.close(.main()))
+    }
+}
+
 // MARK: - Appearance
 
 private extension TrackersViewController {
 
     func configureNavigationBar() {
-        title = "Трекеры"
+        title = NSLocalizedString("trackers.title", comment: "Title of screen")
 
         navigationItem.leftBarButtonItem = addButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -160,24 +195,31 @@ private extension TrackersViewController {
 
     func setupAppearance() {
         view.backgroundColor = .asset(.white)
+        collectionView.backgroundColor = .asset(.white)
+
+        let safeArea = view.safeAreaLayoutGuide
 
         view.addSubview(collectionView)
         view.addSubview(startPlaceholderView)
         view.addSubview(emptyPlaceholderView)
+        view.addSubview(filterButton)
 
         NSLayoutConstraint.activate([
             datePicker.widthAnchor.constraint(lessThanOrEqualToConstant: 100),
             startPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             startPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 
     func updatePlaceholderVisibility() {
         let viewIsEmpty = dataSource.numberOfSections(in: collectionView) == 0
         let haveNoTrackers = repo
-            .filtered(at: nil, with: "")
+            .filtered(at: nil, with: "", filteredBy: .all)
             .filter({ $0.trackers.count > 0 })
             .count == 0
 
@@ -202,6 +244,7 @@ extension TrackersViewController {
             return
         }
 
+        analytics.log(.tap(.main(.track)))
         repo.markTrackerComplete(id: tracker.id, on: selectedDate)
     }
 
@@ -210,7 +253,97 @@ extension TrackersViewController {
     }
 
     @objc private func addTapped() {
+        analytics.log(.tap(.main(.addTrack)))
         creationCoordinator.start(over: self)
+    }
+
+    @objc private func openFilters() {
+        analytics.log(.tap(.main(.filter)))
+        let filterVC = FilterViewController(selected: selectedFilter) { [weak self] selectedFilter in
+            guard let self else { return }
+            self.selectedFilter = selectedFilter
+        }
+
+        let navigationController = UINavigationController()
+        navigationController.configureForYPModal()
+
+        present(navigationController, animated: true)
+        navigationController.viewControllers = [filterVC]
+    }
+
+    private func togglePin(_ indexPath: IndexPath) {
+        analytics.log(.tap(.main(.pin)))
+
+        let category = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+        var tracker = category.trackers[indexPath.row]
+        tracker.isPinned = !tracker.isPinned
+
+        repo.updateTracker(tracker, withCategory: nil)
+    }
+
+    private func edit(_ indexPath: IndexPath) {
+        analytics.log(.tap(.main(.edit)))
+
+        let category = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+        let tracker = category.trackers[indexPath.row]
+
+        let editVC = EditViewController(
+            tracker.schedule == nil ? .event : .habit,
+            newTrackerRepository: .init(),
+            trackerStore: repo,
+            tracker: tracker,
+            category: category
+        )
+
+        let navigationController = UINavigationController()
+        navigationController.configureForYPModal()
+
+        present(navigationController, animated: true)
+        navigationController.viewControllers = [editVC]
+    }
+
+    private func requestDelete(_ indexPath: IndexPath) {
+        analytics.log(.tap(.main(.delete)))
+
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString("trackers.deleteRequestTitle",
+                                       comment: "Tracker remove request title"),
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(.init(
+            title: NSLocalizedString("trackers.doDelete",
+                                     comment: "Tracker remove approval button"),
+            style: .destructive, handler: { [weak self] _ in
+                guard let self else { return }
+                let tracker = self.repo
+                    .filtered(at: self.selectedDate,
+                              with: self.searchText,
+                              filteredBy: self.selectedFilter)[indexPath.section]
+                    .trackers[indexPath.row]
+
+                repo.removeTracker(tracker.id)
+            }
+        ))
+
+        alert.addAction(.init(
+            title: NSLocalizedString("trackers.cancelDelete",
+                                     comment: "Tracker remove cancel button"),
+            style: .cancel
+        ))
+
+        present(alert, animated: true)
+    }
+
+    private func delete(_ indexPath: IndexPath) {
+
     }
 }
 
@@ -276,14 +409,16 @@ private extension TrackersViewController {
     private func applySnapshot(
         selectedDate: Date? = nil,
         searchText: String? = nil,
+        filter: TrackerFilter? = nil,
         animatingDifferences: Bool = true
     ) {
         var snapshot = Snapshot()
 
         let searchText = searchText ?? self.searchText
         let selectedDate = selectedDate ?? self.selectedDate
+        let filter = filter ?? self.selectedFilter
 
-        repo.filtered(at: selectedDate, with: searchText).forEach {
+        repo.filtered(at: selectedDate, with: searchText, filteredBy: filter).forEach {
             snapshot.appendSections([$0])
             snapshot.appendItems($0.trackers, toSection: $0)
         }
@@ -291,5 +426,76 @@ private extension TrackersViewController {
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
 
         updatePlaceholderVisibility()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        configureContextMenu(path: indexPath)
+    }
+}
+
+// MARK: - Context Menu
+private extension TrackersViewController {
+    func configureContextMenu(path: IndexPath) -> UIContextMenuConfiguration {
+        let context = UIContextMenuConfiguration { [weak self] in
+            guard let self else { return UIViewController() }
+            let customView = self.makePreview(indexPath: path)
+            return customView
+        } actionProvider: { [weak self] _ in
+            guard let self else { return nil }
+
+            let category = self.repo
+                .filtered(at: self.selectedDate,
+                          with: self.searchText,
+                          filteredBy: self.selectedFilter)[path.section]
+            let tracker = category.trackers[path.row]
+
+            let pin = UIAction(
+                title: tracker.isPinned
+                    ? NSLocalizedString("trackers.unPin", comment: "Tracker unpin button label")
+                    : NSLocalizedString("trackers.pin", comment: "Tracker pin button label")
+            ) { _ in
+                self.togglePin(path)
+            }
+
+            let edit = UIAction(
+                title: NSLocalizedString("trackers.edit", comment: "Tracker edit button label")
+            ) { _ in
+                self.edit(path)
+            }
+
+            let delete = UIAction(
+                title: NSLocalizedString("trackers.delete", comment: "Tracker delete button label"),
+                attributes: .destructive
+            ) { _ in
+                self.requestDelete(path)
+            }
+
+            return UIMenu(children: [pin, edit, delete])
+        }
+
+        return context
+    }
+
+    func makePreview(indexPath: IndexPath) -> UIViewController {
+        let tracker = self.repo
+            .filtered(at: self.selectedDate,
+                      with: self.searchText,
+                      filteredBy: self.selectedFilter)[indexPath.section]
+            .trackers[indexPath.row]
+
+        let viewController = UIViewController()
+        let preview = TrackerLabelView(frame: CGRect(x: 0, y: 0, width: 167, height: 90))
+        preview.configure(with: tracker)
+        viewController.view = preview
+        viewController.preferredContentSize = preview.frame.size
+
+        return viewController
     }
 }

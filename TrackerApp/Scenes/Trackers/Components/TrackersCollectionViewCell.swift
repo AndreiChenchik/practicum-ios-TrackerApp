@@ -33,25 +33,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return button
     }()
 
-    private var colorBackground: UIView = {
-        let view = UIView()
+    private var trackerLabelView: TrackerLabelView = {
+        let view = TrackerLabelView()
 
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
 
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-
-    private var trackerLabel: UILabel = {
-        let label = UILabel()
-
-        label.numberOfLines = 0
-        label.font = .asset(.ysDisplayMedium, size: 12)
-        label.textColor = .asset(.white)
-
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
     }()
 
     private var dayLabel: UILabel = {
@@ -64,37 +53,18 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
-    private var emojiLabel: UILabel = {
-        let label = UILabel()
-
-        label.font = .asset(.ysDisplayMedium, size: 12)
-
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private var emojiBackground: UIView = {
-        let view = UIView()
-
-        view.backgroundColor = .asset(.contrast)
-        view.layer.cornerRadius = 12
-        view.clipsToBounds = true
-
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
 }
 
 // MARK: - Configuration
 
 extension TrackerCollectionViewCell {
     func configure(with model: Tracker?) {
-        trackerLabel.text = model?.label
-        dayLabel.text = model != nil ? "\(model?.completedCount ?? 0) дней" : nil
-        emojiLabel.text = model?.emoji
+        trackerLabelView.configure(with: model)
 
-        colorBackground.backgroundColor = model?.color.uiColor
+        let localizedFormat = NSLocalizedString("days", comment: "Number of days")
+        let daysCountLabel = String(format: localizedFormat, model?.completedCount ?? 0)
+        dayLabel.text = daysCountLabel
+
         addButton.backgroundColor = model?.color.uiColor
         addButton.isEnabled = model?.isCompleted != true
         addButton.layer.opacity = model?.isCompleted != true ? 1 : 0.3
@@ -120,32 +90,18 @@ private extension TrackerCollectionViewCell {
 private extension TrackerCollectionViewCell {
     func setupAppearance() {
         contentView.addSubview(addButton)
-        contentView.addSubview(trackerLabel)
+        contentView.addSubview(trackerLabelView)
         contentView.addSubview(dayLabel)
-        contentView.addSubview(emojiLabel)
-
-        contentView.insertSubview(emojiBackground, at: 0)
-        contentView.insertSubview(colorBackground, at: 0)
 
         NSLayoutConstraint.activate([
-            colorBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
-            colorBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            colorBackground.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            colorBackground.heightAnchor.constraint(equalToConstant: 90),
+            trackerLabelView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            trackerLabelView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            trackerLabelView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             addButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             addButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            addButton.topAnchor.constraint(equalTo: colorBackground.bottomAnchor, constant: 8),
+            addButton.topAnchor.constraint(equalTo: trackerLabelView.bottomAnchor, constant: 8),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor),
             addButton.heightAnchor.constraint(equalToConstant: 34),
-            emojiBackground.heightAnchor.constraint(equalTo: emojiBackground.widthAnchor),
-            emojiBackground.heightAnchor.constraint(equalToConstant: 24),
-            emojiBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            emojiBackground.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            emojiLabel.centerYAnchor.constraint(equalTo: emojiBackground.centerYAnchor),
-            emojiLabel.centerXAnchor.constraint(equalTo: emojiBackground.centerXAnchor),
-            trackerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            trackerLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            trackerLabel.bottomAnchor.constraint(equalTo: colorBackground.bottomAnchor, constant: -12),
             dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             dayLabel.centerYAnchor.constraint(equalTo: addButton.centerYAnchor)
         ])

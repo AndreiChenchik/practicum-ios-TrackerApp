@@ -7,6 +7,7 @@ enum ImageAsset: String, CaseIterable {
     case chevronIcon, checkmarkIcon
     case statsPlaceholder, trackerStartPlaceholder, trackerEmptyPlaceholder
     case addButton
+    case pinned
 }
 
 extension UIImage {

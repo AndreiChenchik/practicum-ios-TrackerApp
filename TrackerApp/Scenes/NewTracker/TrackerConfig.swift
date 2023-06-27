@@ -1,3 +1,5 @@
+import Foundation
+
 enum TrackerConfig {
     enum Section: Int, CaseIterable {
         case name, properties, emojis, colors, controls
@@ -5,9 +7,11 @@ enum TrackerConfig {
         var label: String? {
             switch self {
             case .emojis:
-                return "Emoji"
+                return NSLocalizedString("newTracker.config.emojiSectionTitle",
+                                         comment: "Section title")
             case .colors:
-                return "Цвет"
+                return NSLocalizedString("newTracker.config.colorSectionTitle",
+                                         comment: "Section title")
             case .name, .properties, .controls:
                 return nil
             }
@@ -20,9 +24,11 @@ enum TrackerConfig {
         var label: String {
             switch self {
             case .category:
-                return "Категория"
+                return NSLocalizedString("newTracker.config.categoryLinkText",
+                                         comment: "Link text")
             case .schedule:
-                return "Расписание"
+                return NSLocalizedString("newTracker.config.scheduleLinkText",
+                                         comment: "Link text")
             }
         }
 
@@ -33,15 +39,6 @@ enum TrackerConfig {
 
     enum Control: Int, CaseIterable {
         case cancel, submit
-
-        var label: String {
-            switch self {
-            case .cancel:
-                return "Отменить"
-            case .submit:
-                return "Создать"
-            }
-        }
     }
 
     enum Emoji {

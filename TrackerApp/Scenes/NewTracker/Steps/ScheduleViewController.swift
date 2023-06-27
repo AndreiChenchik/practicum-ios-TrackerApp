@@ -21,7 +21,7 @@ final class ScheduleViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        title = "Расписание"
+        title = NSLocalizedString("newTracker.schedule.title", comment: "Screen title")
         setupAppearance()
     }
 
@@ -43,7 +43,10 @@ final class ScheduleViewController: UIViewController {
     }()
 
     private lazy var doneButton: UIButton = {
-        let button = YPButton(label: "Готово")
+        let button = YPButton(
+            label: NSLocalizedString("newTracker.schedule.save",
+                                     comment: "Button label for saving selected schedule")
+        )
         button.addTarget(self, action: #selector(done), for: .touchUpInside)
 
         return button
@@ -87,7 +90,7 @@ extension ScheduleViewController: UITableViewDataSource {
         let day = items[indexPath.row]
 
         scheduleCell.configure(
-            label: day.label,
+            label: day.label.capitalized,
             isOn: schedule.contains(day),
             type: indexPath.row == 0
                 ? .first

@@ -2,12 +2,14 @@ import Foundation
 
 struct Tracker: Identifiable, Hashable {
     var id = UUID()
-    let label: String
-    let emoji: String
-    let color: TrackerColor
-    let schedule: Set<WeekDay>?
-    let completedCount: Int
-    let isCompleted: Bool
+    var label: String
+    var emoji: String
+    var color: TrackerColor
+    var schedule: Set<WeekDay>?
+    var completedCount: Int
+    var isCompleted: Bool
+    var isPinned: Bool
+    var categoryId: UUID
 }
 
 extension Tracker {
@@ -17,7 +19,9 @@ extension Tracker {
               color: .lightOrange,
               schedule: nil,
               completedCount: 10,
-              isCompleted: false)
+              isCompleted: false,
+              isPinned: false,
+              categoryId: .init())
     }
 
     static var mockGrandma: Self {
@@ -26,7 +30,9 @@ extension Tracker {
               color: .red,
               schedule: nil,
               completedCount: 125,
-              isCompleted: false)
+              isCompleted: false,
+              isPinned: false,
+              categoryId: .init())
     }
 
     static var mockDating: Self {
@@ -35,7 +41,9 @@ extension Tracker {
               color: .paleBlue,
               schedule: .mockOnWeekends,
               completedCount: 0,
-              isCompleted: false)
+              isCompleted: false,
+              isPinned: true,
+              categoryId: .init())
     }
 
     static var mockPlants: Self {
@@ -44,7 +52,9 @@ extension Tracker {
               color: .green,
               schedule: .mockEveryDay,
               completedCount: 120,
-              isCompleted: false)
+              isCompleted: false,
+              isPinned: true,
+              categoryId: .init())
     }
 }
 
@@ -56,7 +66,8 @@ extension Tracker {
             let emoji = data.emoji,
             let hex = data.colorHex,
             let completedCount = data.records?.count,
-            let color = TrackerColor(rawValue: hex)
+            let color = TrackerColor(rawValue: hex),
+            let categoryId = data.category?.id
         else { return nil }
 
         var schedule: Set<WeekDay>?
@@ -70,6 +81,8 @@ extension Tracker {
                      color: color,
                      schedule: schedule,
                      completedCount: completedCount,
-                     isCompleted: false)
+                     isCompleted: false,
+                     isPinned: data.isPinned,
+                     categoryId: categoryId)
     }
 }

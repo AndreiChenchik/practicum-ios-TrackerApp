@@ -5,8 +5,6 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
         let view = UIView()
 
         view.layer.borderWidth = 3
-        view.layer.borderColor = UIColor.asset(.black).withAlphaComponent(0.3).cgColor
-
         view.layer.cornerRadius = 12
         view.clipsToBounds = true
 
@@ -38,6 +36,7 @@ final class TrackerColorCollectionCell: UICollectionViewCell {
 
     func configure(_ color: UIColor?, isSelected: Bool = false) {
         colorView.backgroundColor = color
+        background.layer.borderColor = color?.withAlphaComponent(0.3).cgColor
 
         if isSelected {
             background.fadeIn()

@@ -7,7 +7,7 @@ final class DisclosureButton: UIButton {
 
         labelView.text = label
 
-        backgroundColor = .asset(.background).withAlphaComponent(0.3)
+        backgroundColor = .asset(.background)
 
         layer.cornerRadius = 10
         layer.masksToBounds = true

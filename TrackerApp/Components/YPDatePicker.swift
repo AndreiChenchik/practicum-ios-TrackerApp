@@ -21,14 +21,14 @@ extension YPDatePicker {
                 return backgroundColor.cgColor.alpha != 1
             }
             .forEach { view in
-                view.backgroundColor = .asset(.blue)
+                view.backgroundColor = .asset(.datePickerBackground)
 
                 kvObservers.insert(
                     view.observe(\.backgroundColor) { [weak view] _, _ in
                         guard let view, let backgroundColor = view.backgroundColor else { return }
 
-                        if backgroundColor != .asset(.blue) {
-                            view.backgroundColor = .asset(.blue)
+                        if backgroundColor != .asset(.datePickerBackground) {
+                            view.backgroundColor = .asset(.datePickerBackground)
                         }
                     }
                 )
@@ -40,16 +40,16 @@ extension YPDatePicker {
             }
             .forEach { view in
                 guard let label = view as? UILabel else { return }
-                label.tintColor = .asset(.white)
-                label.textColor = .asset(.white)
+                label.tintColor = .asset(.blackUniversal)
+                label.textColor = .asset(.blackUniversal)
                 label.font = .asset(.ysDisplayRegular, size: 17)
 
                 kvObservers.insert(
                     label.observe(\.textColor) { [weak label] _, _ in
                         guard let label, let textColor = label.textColor else { return }
 
-                        if textColor != .asset(.white) {
-                            label.textColor = .asset(.white)
+                        if textColor != .asset(.blackUniversal) {
+                            label.textColor = .asset(.blackUniversal)
                         }
                     }
                 )
